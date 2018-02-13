@@ -10,13 +10,10 @@ export class KeyValuePair {
 export class DataItem {
     private _fields: KeyValuePair[] = [];
 
-    constructor(properties?: string[], data?: any[]) {
-        let i = 0;
-        if (!properties) {return;}
-        properties.forEach(element => {
-            this._fields.push(new KeyValuePair(element, data ? data.length > i ? data[i] : null : null ));
-            i++;
-        });
+    constructor(initializator: Object) {
+        for (const prop of Object.keys(initializator)) {
+            this.SetValue(prop, initializator[prop]);
+        }
     }
 
     public GetValue(key: string): KeyValuePair {
