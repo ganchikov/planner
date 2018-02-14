@@ -32,6 +32,16 @@ export class DataItem {
         });
         return itm;
     }
+
+    public GetObject(): Object {
+        const resObj = new Object;
+        this._fields.forEach(val => {
+            if (val.key !== '_id') {
+                resObj[val.key] = val.value;
+            }
+        });
+        return resObj;
+    }
 }
 
 

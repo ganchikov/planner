@@ -17,7 +17,8 @@
     ]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "server/**/*"
   ],
   "files": [
     "node_modules/jqwidgets-scripts/jqwidgets-ts/angular_jqxgrid.ts",

@@ -22,5 +22,19 @@ export class TeamDataService {
         });
     }
 
-    public GetTeams() {}
+    public GetTeams(success: (teamItems: Team[]) => void, error: (err) => void) {
+        this._dataprovider.ReadItems<Team>(items => {
+            const resultItems: Team[] = [];
+            items.forEach(item => {
+                resultItems.push(item.GetTypedItem<Team>(Team));
+            });
+            this._logger.Log('Retrieved items count: ' + items.length);
+            success(resultItems);
+        }, err => {
+            this._logger.Log(err);
+            error(err);
+        });
+
+    }
+
 }

@@ -13,10 +13,10 @@ export class MongoProvider implements IDataProvider {
     private db: Db;
     private activeCollection: Collection<any>;
 
-    constructor(private _url?: string = 'mongodb://localhost:27017',
-                private _dbName?: string = 'sampledb',
-                private _collectionName?: string = 'samples',
-                private _countersKeyName?: string = 'samples_counter') {
+    constructor(private _url: string = 'mongodb://localhost:27017',
+                private _dbName: string = 'sampledb',
+                private _collectionName: string = 'samples',
+                private _countersKeyName: string = 'samples_counter') {
 
     }
 
@@ -104,21 +104,25 @@ export class MongoProvider implements IDataProvider {
     UpdateItem<T> (item: T, success: (item: DataItem) => void, failure: (err: any) => void) {
         this.checkConnection(() => {
             const dataItem = new DataItem(item);
-
             this.activeCollection.updateOne({'_id' : new ObjectId(dataItem.GetValue('_id'))},
-            {$set : {'id' : dataItem.GetValue('_id'), 'name': item.name}}).then(result => {
-                this.logger.Log(`updated hero with id ${item.id}`);
-                success();
+            {$set : dataItem.GetObject()}).then(result => {
+                success(dataItem);
             })
             .catch(err => {
-                this.logger.Log(`failed to update hero with id ${item.id}`);
                 fail(err);
             });
         });
     }
 
     DeleteItem<T> (item: T, success: (item: DataItem) => void, failure: (err: any) => void) {
-
+        this.checkConnection(() => {
+            const dataItem = new DataItem(item);
+            this.activeCollection.deleteOne({'_id': new ObjectId(dataItem.GetValue('_id'))}).then(result => {
+              success(dataItem);
+            })
+            .catch(err => {
+              failure(err);
+            });
+        });
     }
- }
 }
