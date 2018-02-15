@@ -1,6 +1,7 @@
 import {DataItem} from './DataItem';
 
 export interface IDataProvider {
+   Collection: string;
    Connect(callback: () => void): void;
    ReadItem<T> (key: any, success: (item: DataItem) => void, failure: (err: any) => void);
    ReadItems<T> (success: (items: DataItem[]) => void, fail: (err: any) => void );

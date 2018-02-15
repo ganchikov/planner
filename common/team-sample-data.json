@@ -1,0 +1,20 @@
+{
+    "name": "Alpha",
+    "members" : [
+        {
+            "name": "John",
+            "dateStart": "1.1.2018",
+            "absences": []
+        },
+        {
+            "name": "Smith",
+            "dateStart": "1.1.2018",
+            "absences": []
+        },
+        {
+            "name": "Paul",
+            "dateStart": "1.1.2018",
+            "absences": []
+        }
+    ]
+}

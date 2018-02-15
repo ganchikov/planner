@@ -39,7 +39,6 @@ export class MongoProvider implements IDataProvider {
         const that = this;
         MongoClient.connect(this._url, function(err, client) {
             assert.equal(null, err);
-            console.log('Successfully connected');
             that.dbClient = client;
             that.db = client.db(that._dbName);
             that.activeCollection = client.db(that._dbName).collection(that._collectionName);
@@ -67,7 +66,7 @@ export class MongoProvider implements IDataProvider {
             this.activeCollection.find().toArray()
             .then(foundItems => {
                 const resultSet: DataItem[] = [];
-                foundItems.array.forEach(element => {
+                foundItems.forEach(element => {
                     resultSet.push(new DataItem(element));
                 });
                 success(resultSet);
@@ -84,11 +83,12 @@ export class MongoProvider implements IDataProvider {
                 {'_id': this._countersKeyName}, {$inc: {'sequence_val': 1}}, {upsert: true, returnOriginal: false}
             )
             .then(incremental_result => {
-                this.activeCollection.insertOne(item)
+                const resultItem = new DataItem(item);
+                resultItem.SetValue('id', incremental_result.value.sequence_val);
+                this.activeCollection.insertOne(resultItem.GetObject())
                 .then(result => {
-                    const resultItem = new DataItem(item);
                     resultItem.SetValue('_id', result.ops[0]._id);
-                    resultItem.SetValue('id', incremental_result.value.sequence_val);
+
                     success(resultItem);
                 })
                 .catch(err => {

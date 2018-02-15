@@ -6,10 +6,11 @@ import {TeamDataService} from './services/TeamDataService';
 import {MongoProvider} from './providers/MongoProvider';
 
 import {Team} from '../common/models';
+import {ObjectParser} from './common/Objectparser';
 
 const app = express();
 
-const teamDS: TeamDataService = new TeamDataService(new MongoProvider());
+const teamDS: TeamDataService = new TeamDataService(new MongoProvider(undefined, 'plannerdb'));
 
 app.use(bodyParser.json());
 
@@ -30,12 +31,34 @@ app.get('/', (req, res) => {
 });
 
 // REST API
-app.get('api/teams/', (req, res) => {
+app.get('/api/teams/', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
     teamDS.GetTeams(teams => {
         res.status(200).json(teams);
     }, err => {
         res.status(404).send(err);
     });
+});
+
+app.post('/api/teams/', (req, res) => {
+    res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
+    try {
+        const item: Team = new Team();
+        ObjectParser.Parse(req.body, item);
+        teamDS.InsertTeam(item, resultItem => {
+            res.status(200).json(resultItem);
+        }, error => {
+            res.status(404).send(error);
+        });
+    } catch (err) {
+        res.status(404).send('bad request: ' + err);
+    }
+});
+
+
+
+const server = app.listen(8001, 'localhost', () => {
+    const {address, port} = server.address();
+    console.log('Listening on http://localhost:' + port);
 });
 

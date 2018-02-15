@@ -6,6 +6,7 @@ export class TeamDataService {
     private _logger: ConsoleLogger = new ConsoleLogger('TeamDataService', true);
 
     constructor(private _dataprovider: IDataProvider) {
+        _dataprovider.Collection = 'teams';
         _dataprovider.Connect(() => {
             this._logger.Log('connected');
         });
@@ -25,16 +26,28 @@ export class TeamDataService {
     public GetTeams(success: (teamItems: Team[]) => void, error: (err) => void) {
         this._dataprovider.ReadItems<Team>(items => {
             const resultItems: Team[] = [];
-            items.forEach(item => {
-                resultItems.push(item.GetTypedItem<Team>(Team));
-            });
-            this._logger.Log('Retrieved items count: ' + items.length);
+            if (items) {
+                items.forEach(item => {
+                    resultItems.push(item.GetTypedItem<Team>(Team));
+                });
+                this._logger.Log('Retrieved items count: ' + items.length);
+            }
             success(resultItems);
         }, err => {
             this._logger.Log(err);
             error(err);
         });
+    }
 
+    public InsertTeam(item: Team, success: (resitem: Team) => void, error: (err) => void) {
+
+        this._dataprovider.InsertItem<Team>(item, resultItem => {
+            const resItem: Team = resultItem.GetTypedItem<Team>(Team);
+            success(resItem);
+            this._logger.Log('Inserted item with id: ' + resItem._id);
+        }, err => {
+            error(err);
+        });
     }
 
 }
