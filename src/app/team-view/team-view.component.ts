@@ -12,47 +12,47 @@ export class MainViewComponent implements OnInit, AfterViewInit {
 
 @ViewChild('gridRef') grid: jqxGridComponent;
 
-  // teamData: Team[] = [];
-  // data: Object[] = [{id: 1, name: 'Alpha'}, {id: 2, name: 'Beta'}, {id: 3, name: 'Gamma'}];
-
-  source =
+  teamsDataSource =
   {
         datatype: 'json',
         datafields: [
             // { name: 'Id', type: 'int' },
             {name: 'id'},
-            { name: 'name'} // ,
-            // { name: 'HasMembers', type: 'bool' },
+            { name: 'name'}
         ],
         localdata: undefined
-        // localdata: this.teamData
   };
 
-  columns: any[] =
-  [
-    {
-        text: 'Id', datafield: 'id', width: 250, columngroup: 'TeamDetails'
-    },
-    {
-        text: 'Name', datafield: 'name', columngroup: 'TeamDetails',
-        cellsalign: 'right', align: 'right', width: 200
-    } // ,
-    // {
-    //     text: 'Has members', columngroup: 'TeamDetails',
-    //     datafield: 'HasMembers', align: 'right', cellsalign: 'right', cellsformat: 'c2', width: 200
-    // }
-  ];
-
-  columngroups: any[] = [ { text: 'Team Details', align: 'center', name: 'TeamDetails' } ];
+  membersDataSource = {
+    datatype: 'json',
+    datafields: [
+        {name: 'id'},
+        {name: 'name'},
+        {name: 'dateStart'},
+        {name: 'dateEnd'}
+    ],
+    localdata: undefined
+  }
 
   settings = {
     width: 850,
     editable: true,
     columnsresize: true,
     selectionmode: 'multiplecellsadvanced',
-    columns: this.columns,
-    columngroups: this.columngroups,
-    // source: new jqx.dataAdapter(this.source)
+    columns: [
+        {
+            text: 'Id', datafield: 'id', width: 250, columngroup: 'TeamDetails'
+        },
+        {
+            text: 'Name', datafield: 'name', columngroup: 'TeamDetails',
+            cellsalign: 'right', align: 'right', width: 200
+        } // ,
+        // {
+        //     text: 'Has members', columngroup: 'TeamDetails',
+        //     datafield: 'HasMembers', align: 'right', cellsalign: 'right', cellsformat: 'c2', width: 200
+        // }
+      ],
+    columngroups: [ { text: 'Team Details', align: 'center', name: 'TeamDetails' } ],
     source: undefined
     };
 
@@ -69,16 +69,13 @@ export class MainViewComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.teamService.getTeamData().subscribe(teams => {
-       
-        this.source.localdata = teams;
-        this.settings.source = new jqx.dataAdapter(this.source, {
+        this.teamsDataSource.localdata = teams;
+        this.settings.source = new jqx.dataAdapter(this.teamsDataSource, {
              beforeLoadComplete: function(loadedRecords: any[], originalRecords: any[]) {
                  return loadedRecords;
              }
         });
-        // this.grid.createComponent(this.settings);
         this.grid.setOptions(this.settings);
-        //this.grid.refreshdata();
     }, error => {
 
     }, () => {
@@ -86,9 +83,7 @@ export class MainViewComponent implements OnInit, AfterViewInit {
     });
   }
 
-  
   ngAfterViewInit(): void {
-    // const that = this;
     this.grid.createComponent(this.settings);
   }
 
