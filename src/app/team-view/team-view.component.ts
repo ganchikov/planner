@@ -23,16 +23,7 @@ export class MainViewComponent implements OnInit, AfterViewInit {
         localdata: undefined
   };
 
-  membersDataSource = {
-    datatype: 'json',
-    datafields: [
-        {name: 'id'},
-        {name: 'name'},
-        {name: 'dateStart'},
-        {name: 'dateEnd'}
-    ],
-    localdata: undefined
-  }
+  
 
   settings = {
     width: 850,
@@ -53,8 +44,39 @@ export class MainViewComponent implements OnInit, AfterViewInit {
         // }
       ],
     columngroups: [ { text: 'Team Details', align: 'center', name: 'TeamDetails' } ],
-    source: undefined
+    source: undefined,
+    rowdetails: true,
+    initrowdetails: this.initRowDetails,
+    rowdetailstemplate: { rowdetails: "<div id='grid' style='margin: 10px;'></div>", rowdetailsheight: 220, rowdetailshidden: true }
     };
+
+    initRowDetails (index: number, parentElement: any, gridElement: Object, record: any) {
+        const id = record.uid.toString();
+        const grid = parentElement.children[0];
+        const membersDataSource = {
+            datatype: 'json',
+            datafields: [
+                {name: 'id'},
+                {name: 'name'},
+                {name: 'dateStart'},
+                {name: 'dateEnd'}
+            ],
+            localdata: undefined
+          };
+
+        if (grid) {
+            grid.jxqGrid({
+                source: new jqx.dataAdapter(membersDataSource),
+                width: 780, height: 200,
+                columns: [
+                    { text: 'Id', datafield: 'id', width: 200 },
+                    { text: 'Name', datafield: 'name', width: 200 },
+                    { text: 'Date Start', datafield: 'dateStart', width: 150 },
+                    { text: 'Date End', datafield: 'dateEnd', width: 150 }
+                 ]
+            });
+        }
+    }
 
 //   cellsrenderer (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
 //         if (value < 20) {
