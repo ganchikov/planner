@@ -52,7 +52,7 @@ export class MongoProvider implements IDataProvider {
                 if (foundItem) {
                     success(new DataItem(foundItem));
                 } else {
-                    fail(null);
+                    error(null);
                 }
             })
             .catch(err => {
@@ -77,7 +77,7 @@ export class MongoProvider implements IDataProvider {
         });
     }
 
-    InsertItem<T> (item: T, success: (item: DataItem) => void, failure: (err: any) => void) {
+    InsertItem<T> (item: T, success: (item: DataItem) => void, error: (err: any) => void) {
         this.checkConnection(() => {
             this.db.collection(this._countersCollectionName).findOneAndUpdate(
                 {'_id': this._countersKeyName}, {$inc: {'sequence_val': 1}}, {upsert: true, returnOriginal: false}
@@ -92,16 +92,49 @@ export class MongoProvider implements IDataProvider {
                     success(resultItem);
                 })
                 .catch(err => {
-                    fail(err);
+                    error(err);
                 });
             })
             .catch(err => {
-                fail(err);
+                error(err);
             });
         });
     }
 
-    UpdateItem<T> (item: T, success: (item: DataItem) => void, failure: (err: any) => void) {
+    InsertItems<T> (items: T[], success: (items: DataItem[]) => void, error: (err: any) => void) {
+        this.checkConnection(() => {
+            this.db.collection(this._countersCollectionName).findOneAndUpdate(
+                {'_id': this._countersKeyName}, {$inc: {'sequence_val': items.length}}, {upsert: true, returnOriginal: false}
+            )
+            .then(incremental_result => {
+                const resultItems: DataItem[] = [];
+                const resObjects: Object[] = [];
+                let sequence_val = incremental_result.value.sequence_val - items.length;
+                for (const item of items) {
+                    const resultItem = new DataItem(item);
+                    resultItem.SetValue('id', sequence_val);
+                    resultItems.push(resultItem);
+                    resObjects.push(resultItem.GetObject());
+                    sequence_val++;
+                }
+                this.activeCollection.insertMany(resObjects).then(insItems => {
+                    let i = 0;
+                    for (const insItm of insItems) {
+                        resultItems[i].SetValue('_id', insItm.ops[0]._id);
+                        i++;
+                    }
+                    success(resultItems);
+                })
+                .catch(err => {
+                    error(err);
+                });
+            }).catch(err => {
+                error(err);
+            });
+        });
+    }
+
+    UpdateItem<T> (item: T, success: (item: DataItem) => void, error: (err: any) => void) {
         this.checkConnection(() => {
             const dataItem = new DataItem(item);
             this.activeCollection.updateOne({'_id' : new ObjectId(dataItem.GetValue('_id'))},
@@ -109,19 +142,19 @@ export class MongoProvider implements IDataProvider {
                 success(dataItem);
             })
             .catch(err => {
-                fail(err);
+                error(err);
             });
         });
     }
 
-    DeleteItem<T> (item: T, success: (item: DataItem) => void, failure: (err: any) => void) {
+    DeleteItem<T> (item: T, success: (item: DataItem) => void, error: (err: any) => void) {
         this.checkConnection(() => {
             const dataItem = new DataItem(item);
             this.activeCollection.deleteOne({'_id': new ObjectId(dataItem.GetValue('_id'))}).then(result => {
               success(dataItem);
             })
             .catch(err => {
-              failure(err);
+              error(err);
             });
         });
     }

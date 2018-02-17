@@ -50,4 +50,19 @@ export class TeamDataService {
         });
     }
 
+    public InsertTeams(items: Team[], success: (resitems: Team[]) => void, error: (err) => void) {
+        this._dataprovider.InsertItems<Team>(items, resultItems => {
+            const resitems: Team[] = [];
+            for (const itm of resultItems) {
+                const resItem = itm.GetTypedItem<Team>(Team);
+                resitems.push(resItem);
+            }
+            success(resitems);
+            this._logger.Log('Inserted items count: ' + resitems.length);
+        }, err => {
+            error(err);
+        });
+    }
+
+
 }

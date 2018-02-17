@@ -43,13 +43,24 @@ app.get('/api/teams/', (req, res) => {
 app.post('/api/teams/', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
     try {
+
+
         const item: Team = new Team();
-        ObjectParser.Parse(req.body, item);
-        teamDS.InsertTeam(item, resultItem => {
-            res.status(200).json(resultItem);
-        }, error => {
-            res.status(404).send(error);
-        });
+        const result = ObjectParser.Parse(req.body, item);
+        if (result instanceof Team) {
+            teamDS.InsertTeam(item, resultItem => {
+                res.status(200).json(resultItem);
+            }, error => {
+                res.status(404).send(error);
+            });
+        } else if (result instanceof Array) {
+            teamDS.InsertTeams(result, resultItem => {
+                res.status(200).json(resultItem);
+            }, error => {
+                res.status(404).send(error);
+            });
+        }
+
     } catch (err) {
         res.status(404).send('bad request: ' + err);
     }

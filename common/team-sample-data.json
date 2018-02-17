@@ -1,4 +1,4 @@
-{
+[{
     "name": "Alpha",
     "members" : [
         {
@@ -17,4 +17,49 @@
             "absences": []
         }
     ]
-}
+},
+{
+    "name": "Beta",
+    "members" : [
+        {
+            "name": "Erik",
+            "dateStart": "1.1.2018",
+            "absences": []
+        },
+        {
+            "name": "Patric",
+            "dateStart": "1.1.2018",
+            "absences": []
+        },
+        {
+            "name": "Raul",
+            "dateStart": "1.1.2018",
+            "absences": []
+        }
+    ]
+},
+{
+    "name": "Gamma",
+    "members" : [
+        {
+            "name": "Tom",
+            "dateStart": "1.1.2018",
+            "absences": []
+        },
+        {
+            "name": "GNom",
+            "dateStart": "1.1.2018",
+            "absences": []
+        },
+        {
+            "name": "BROm",
+            "dateStart": "1.1.2018",
+            "absences": []
+        },
+        {
+            "name": "HOM",
+            "dateStart": "1.1.2018",
+            "absences": []
+        }
+    ]
+}]
