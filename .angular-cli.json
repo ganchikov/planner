@@ -20,7 +20,11 @@
       "prefix": "app",
       "styles": [
         "styles.css",
-        "../node_modules/jqwidgets-scripts/jqwidgets/styles/jqx.base.css"
+        "../node_modules/jqwidgets-scripts/jqwidgets/styles/jqx.base.css",
+        "../node_modules/primeng/resources/themes/bootstrap/theme.css",
+        "../node_modules/primeng/resources/primeng.min.css",
+        "../node_modules/font-awesome/css/font-awesome.min.css",
+        "../src/assets/themes/dark-hive/theme.css"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",
