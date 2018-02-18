@@ -2,6 +2,11 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import {jqxGridComponent} from 'jqwidgets-scripts/jqwidgets-ts/angular_jqxgrid';
 import { TeamDataService } from '../services/team-data.service';
 import {Team} from '../../../common/models';
+// import * as $ from 'jquery';
+
+class DataHolder {
+    public static teams: Team[] = [];
+}
 
 @Component({
   selector: 'app-team-view',
@@ -16,14 +21,12 @@ export class MainViewComponent implements OnInit, AfterViewInit {
   {
         datatype: 'json',
         datafields: [
-            // { name: 'Id', type: 'int' },
+            {name: '_id'},
             {name: 'id'},
-            { name: 'name'}
+            {name: 'name'}
         ],
-        localdata: undefined
+        localdata: DataHolder.teams
   };
-
-  
 
   settings = {
     width: 850,
@@ -52,7 +55,7 @@ export class MainViewComponent implements OnInit, AfterViewInit {
 
     initRowDetails (index: number, parentElement: any, gridElement: Object, record: any) {
         const id = record.uid.toString();
-        const grid = parentElement.children[0];
+        const grid = $($(parentElement).children()[0]);
         const membersDataSource = {
             datatype: 'json',
             datafields: [
@@ -61,13 +64,13 @@ export class MainViewComponent implements OnInit, AfterViewInit {
                 {name: 'dateStart'},
                 {name: 'dateEnd'}
             ],
-            localdata: undefined
+            localdata: DataHolder.teams.find(item => item._id === record._id)
           };
 
         if (grid) {
-            grid.jxqGrid({
+            grid.jqxGrid({
                 source: new jqx.dataAdapter(membersDataSource),
-                width: 780, height: 200,
+                width: 700, height: 300,
                 columns: [
                     { text: 'Id', datafield: 'id', width: 200 },
                     { text: 'Name', datafield: 'name', width: 200 },
@@ -92,6 +95,7 @@ export class MainViewComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.teamService.getTeamData().subscribe(teams => {
         this.teamsDataSource.localdata = teams;
+        DataHolder.teams = teams;
         this.settings.source = new jqx.dataAdapter(this.teamsDataSource, {
              beforeLoadComplete: function(loadedRecords: any[], originalRecords: any[]) {
                  return loadedRecords;

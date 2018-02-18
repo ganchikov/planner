@@ -1,0 +1,1 @@
+curl -vX POST http://localhost:8001/api/teams -d @team-sample-data.json --header "Content-Type: application/json"
