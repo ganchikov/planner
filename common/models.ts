@@ -9,19 +9,21 @@ export class Team {
 
 export class Person {
     constructor(
-        _id: string,
-        name: string,
-        dateStart: Date,
-        dateEnd: Date,
-        absences: Absence[]
+        public _id: string,
+        public name: string,
+        public dateStart: Date,
+        public dateEnd: Date,
+        public absences: Absence[]
     ) {}
 }
 
-export interface Absence {
-    _id: string;
-    type: string;
-    name: string;
-    confirmed: boolean;
-    from: Date;
-    to: Date;
+export class Absence {
+    constructor(
+        public _id: string,
+        public type: string,
+        public name: string,
+        public confirmed: boolean,
+        public from: Date,
+        public to: Date
+    ) {}
 }

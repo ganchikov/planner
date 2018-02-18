@@ -16,12 +16,12 @@ export class DataItem {
         }
     }
 
-    public GetValue(key: string): KeyValuePair {
+    public GetValue(key: string): KeyValuePair | undefined {
         return this._fields.find(item => item.key === key);
     }
 
     public SetValue(key: string, value: any) {
-        const item: KeyValuePair = this._fields.find(i => i.key === key);
+        const item: KeyValuePair | undefined = this._fields.find(i => i.key === key);
         if (item) {item.value = value; } else {this._fields.push(new KeyValuePair(key, value)); }
     }
 

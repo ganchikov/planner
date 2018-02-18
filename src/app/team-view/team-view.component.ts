@@ -6,6 +6,7 @@ import {Team} from '../../../common/models';
 
 class DataHolder {
     public static teams: Team[] = [];
+    public static selectedTeam: Team | undefined;
 }
 
 @Component({
@@ -16,6 +17,10 @@ class DataHolder {
 export class MainViewComponent implements OnInit, AfterViewInit {
 
 @ViewChild('gridRef') grid: jqxGridComponent;
+
+  get team() {
+    return DataHolder.selectedTeam;
+  }
 
   teamsDataSource =
   {
@@ -66,7 +71,7 @@ export class MainViewComponent implements OnInit, AfterViewInit {
             ],
             localdata: DataHolder.teams.find(item => item._id === record._id)
           };
-
+        DataHolder.selectedTeam = DataHolder.teams.find(item => item._id === record._id);
         if (grid) {
             grid.jqxGrid({
                 source: new jqx.dataAdapter(membersDataSource),

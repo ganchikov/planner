@@ -1,0 +1,30 @@
+<div class="ui-fluid ui-corner-all">
+  <div class="ui-g">
+    <div class="ui-g ui-g-12 ui-md-6 ui-g-nopad">
+      <div class="ui-g-12 ui-md-3 ui-label">
+        Id
+      </div>
+      <div class="ui-g-12 ui-md-9">
+        <input pInputText type="text" [value]='team.id'/>
+      </div>
+    </div>
+    <div class="ui-g ui-g-12 ui-md-6 ui-g-nopad">
+      <div class="ui-g-12 ui-md-3 ui-label">
+        Name
+      </div>
+      <div class="ui-g-12 ui-md-9">
+        <input pInputText type="text" [(ngModel)]='team.name'/>
+      </div>
+    </div>
+  </div>
+  <div class="ui-g">
+    <div class="ui-g ui-g-12 ui-md-12 ui-g-nopad">
+      <div class="ui-g-12 ui-md-3 ui-label">
+        Members
+      </div>
+      <div class="ui-g-12 ui-md-9">
+        <p-listbox [options]="members"></p-listbox>
+      </div>
+    </div>
+  </div>
+</div>
