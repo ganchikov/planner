@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {catchError, tap} from 'rxjs/operators';
 import {of} from 'rxjs/observable/of';
 
-import {LoggerService} from './logger.service';
+import {LoggerService} from '../services/logger.service';
 
 import {Team, Person, Absence} from '../../../common/models';
 

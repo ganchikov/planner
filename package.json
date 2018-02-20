@@ -9,7 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "tsc": "tsc -w"
+    "tsc_c": "tsc -w", 
+    "tsc_s": "tsc -w -p server"
   },
   "private": true,
   "dependencies": {

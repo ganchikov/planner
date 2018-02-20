@@ -8,11 +8,11 @@ import {SelectItem} from 'primeng/api';
 import {Team} from '../../../../common/models';
 
 @Component({
-  selector: 'app-team',
-  templateUrl: './team.component.html',
-  styleUrls: ['./team.component.css']
+  selector: 'app-team-details',
+  templateUrl: './team-details.component.html',
+  styleUrls: ['./team-details.component.css']
 })
-export class TeamComponent implements OnInit {
+export class TeamDetailsComponent implements OnInit {
 
   constructor() { }
 

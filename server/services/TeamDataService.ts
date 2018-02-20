@@ -13,7 +13,7 @@ export class TeamDataService {
     }
 
     public GetTeam(id: number, success: (teamItem: Team) => void, error: (err) => void) {
-        this._dataprovider.ReadItem<Team>(id, item => {
+        this._dataprovider.ReadItem(id, item => {
             const teamItem: Team = item.GetTypedItem(Team);
             this._logger.Log('Retreved item id: ' + teamItem._id);
             success(teamItem);
@@ -24,7 +24,7 @@ export class TeamDataService {
     }
 
     public GetTeams(success: (teamItems: Team[]) => void, error: (err) => void) {
-        this._dataprovider.ReadItems<Team>(items => {
+        this._dataprovider.ReadItems(items => {
             const resultItems: Team[] = [];
             if (items) {
                 items.forEach(item => {

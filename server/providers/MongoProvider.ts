@@ -1,4 +1,4 @@
-import {KeyValuePair, DataItem} from '../common/DataItem';
+import {DataItem} from '../common/DataItem';
 import * as assert from 'assert';
 import { MongoClient, Db, Collection, ObjectId} from 'mongodb';
 import {IDataProvider} from '../common/IDataProvider';
@@ -45,7 +45,7 @@ export class MongoProvider implements IDataProvider {
             callback();
         });
     }
-    public ReadItem<T> (key: any, success: (item: DataItem) => void, error: (err: any) => void) {
+    public ReadItem (key: any, success: (item: DataItem) => void, error: (err: any) => void) {
         this.checkConnection(() => {
             this.activeCollection.findOne({id: key})
             .then(foundItem => {
@@ -61,7 +61,7 @@ export class MongoProvider implements IDataProvider {
         });
     }
 
-    public ReadItems<T>(success: (items: DataItem[]) => void, error: (err: any) => void) {
+    public ReadItems (success: (items: DataItem[]) => void, error: (err: any) => void) {
         this.checkConnection(() => {
             this.activeCollection.find().toArray()
             .then(foundItems => {
@@ -138,9 +138,7 @@ export class MongoProvider implements IDataProvider {
         this.checkConnection(() => {
             const dataItem = new DataItem(item);
             this.activeCollection.updateOne({'_id' : new ObjectId(dataItem.GetValue('_id'))},
-            {$set : dataItem.GetObject()}).then(result => {
-                success(dataItem);
-            })
+            {$set : dataItem.GetObject()}).then(success(dataItem))
             .catch(err => {
                 error(err);
             });
@@ -150,9 +148,9 @@ export class MongoProvider implements IDataProvider {
     DeleteItem<T> (item: T, success: (item: DataItem) => void, error: (err: any) => void) {
         this.checkConnection(() => {
             const dataItem = new DataItem(item);
-            this.activeCollection.deleteOne({'_id': new ObjectId(dataItem.GetValue('_id'))}).then(result => {
-              success(dataItem);
-            })
+            this.activeCollection.deleteOne({'_id': new ObjectId(dataItem.GetValue('_id'))}).then(
+                success(dataItem)
+            )
             .catch(err => {
               error(err);
             });

@@ -30,12 +30,12 @@ export class ObjectParser {
         }
     }
 
-    // unused method, may be deleted
-    private static _copyKeys(srcObj: Object, dstObj: Object) {
-        for (const key of Object.keys(srcObj)) {
-            if (!dstObj.hasOwnProperty(key)) {
-                Object.defineProperty(dstObj, key, {});
-            }
-        }
-    }
+    // // unused method, may be deleted
+    // private static _copyKeys(srcObj: Object, dstObj: Object) {
+    //     for (const key of Object.keys(srcObj)) {
+    //         if (!dstObj.hasOwnProperty(key)) {
+    //             Object.defineProperty(dstObj, key, {});
+    //         }
+    //     }
+    // }
 }
