@@ -156,4 +156,10 @@ export class MongoProvider implements IDataProvider {
             });
         });
     }
+
+    Disconnect() {
+        if (this.dbClient) {
+            this.dbClient.close();
+        }
+    }
 }

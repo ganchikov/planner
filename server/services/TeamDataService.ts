@@ -12,6 +12,10 @@ export class TeamDataService {
         });
     }
 
+    public Close() {
+        this._dataprovider.Disconnect();
+    }
+
     public GetTeam(id: number, success: (teamItem: Team) => void, error: (err) => void) {
         this._dataprovider.ReadItem(id, item => {
             const teamItem: Team = item.GetTypedItem(Team);
@@ -64,5 +68,8 @@ export class TeamDataService {
         });
     }
 
+    public Disconnect() {
+        this._dataprovider.Disconnect();
+    }
 
 }

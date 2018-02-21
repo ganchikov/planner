@@ -73,3 +73,15 @@ const server = app.listen(8001, 'localhost', () => {
     console.log('Listening on http://localhost:' + port);
 });
 
+const finalize = () => {
+    console.log('Finalizing');
+    teamDS.Disconnect();
+    process.exit(0);
+};
+
+process.on('SIGBREAK', finalize);
+process.on('SIGTERM', finalize);
+process.on('SIGHUP', finalize);
+process.on('SIGINT', finalize);
+
+
