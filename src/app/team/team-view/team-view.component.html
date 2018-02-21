@@ -1,7 +1,7 @@
 <p>
 Team View
 </p>
-<p-table [value]="teams" [columns]="cols">
+<p-table [value]="teams" [columns]="cols" selectionMode="single">
     <ng-template pTemplate="header" let-columns>
         <tr>
             <th *ngFor="let col of columns" >
@@ -9,15 +9,20 @@ Team View
             </th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-team let-columns="columns">
-        <tr>
-            <td *ngFor="let col of columns">
-                {{team[col.field]}}
+    <ng-template pTemplate="body" let-team let-member let-columns="columns">
+        <tr class="ui-widget-content">
+            <td colspan="6">
+                <span style="font-weight:bold">{{team.name}}</span> 
             </td>
         </tr>
         <tr *ngFor="let member of team.members">
             <td *ngFor="let col of columns">
                     {{member[col.field]}}
+            </td>
+        </tr>
+        <tr *ngFor="let absence of member.absences">
+            <td *ngFor="let col of columns">
+                    {{absence[col.field]}}
             </td>
         </tr>
     </ng-template>
