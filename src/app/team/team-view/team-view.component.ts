@@ -1,13 +1,9 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import {jqxGridComponent} from 'jqwidgets-scripts/jqwidgets-ts/angular_jqxgrid';
+import {TableModule} from 'primeng/table';
+
 import { TeamDataService } from '../team-data.service';
 import {Team} from '../../../../common/models';
 // import * as $ from 'jquery';
-
-class DataHolder {
-    public static teams: Team[] = [];
-    public static selectedTeam: Team | undefined;
-}
 
 @Component({
   selector: 'app-team-view',
@@ -16,23 +12,26 @@ class DataHolder {
 })
 export class TeamViewComponent implements OnInit, AfterViewInit {
 
-@ViewChild('gridRef') grid: jqxGridComponent;
-
-  get team() {
-    return DataHolder.selectedTeam;
-  }
-
+  teams: Team[];
+  cols: any[];
+ 
   constructor(private teamService: TeamDataService) {
    }
 
   ngOnInit() {
-    this.teamService.getTeamData().subscribe(teams => {
-        DataHolder.teams = teams;
-    }, error => {
+    this.initColumns();
+    this.teamService.getTeamData().toPromise().then(teams => this.teams = teams);
+  }
 
-    }, () => {
-
-    });
+  initColumns() {
+    this.cols = [
+      {field: 'id', header: 'Id'},
+      {field: 'name', header: 'Name'},
+      {field: 'from', header: 'From'},
+      {field: 'to', header: 'To'},
+      {field: 'type', header: 'Type'},
+      {field: 'confirmed', header: 'Confirmed'}
+    ];
   }
 
   ngAfterViewInit(): void {

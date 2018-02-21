@@ -5,6 +5,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {ListboxModule} from 'primeng/listbox';
+import {TableModule} from 'primeng/table';
 
 import {TeamViewComponent} from './team-view/team-view.component';
 import {TeamDataService} from './team-data.service';
@@ -22,6 +23,7 @@ import { TeamDetailsComponent } from './team-details/team-detals.component';
     ButtonModule,
     InputTextModule,
     ListboxModule,
+    TableModule,
     TeamRoutingModule
   ],
   declarations: [

@@ -1,11 +1,12 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <div style="text-align:center">
   <h1>
-    Welcome to {{ title }}!
+    Welcome to the {{ title }}!
   </h1>
 </div>
-<nav>
+<p-menubar [model]="menuitems"></p-menubar>
+<!-- <nav>
   <a routerLink="/team" routerLinkActive="active">Team View</a>
   <a routerLink="/prime-test" routerLinkActive="active"> PrimeNG Test</a>  
-</nav>
+</nav> -->
 <router-outlet></router-outlet>
