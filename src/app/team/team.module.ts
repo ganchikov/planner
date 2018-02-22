@@ -6,13 +6,15 @@ import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {ListboxModule} from 'primeng/listbox';
 import {TableModule} from 'primeng/table';
+import {TreeTableModule} from 'primeng/treetable';
+import {TreeNode} from 'primeng/api';
 
+import { TeamRoutingModule } from './team-routing.module';
 import {TeamViewComponent} from './team-view/team-view.component';
+import {TeamTreeViewComponent} from './team-tree-view/team-tree-view.component';
+import { TeamDetailsComponent } from './team-details/team-detals.component';
 import {TeamDataService} from './team-data.service';
 import { LoggerService } from '../services/logger.service';
-import { TeamRoutingModule } from './team-routing.module';
-import { TeamDetailsComponent } from './team-details/team-detals.component';
-
 
 @NgModule({
   imports: [
@@ -24,10 +26,12 @@ import { TeamDetailsComponent } from './team-details/team-detals.component';
     InputTextModule,
     ListboxModule,
     TableModule,
+    TreeTableModule,
     TeamRoutingModule
   ],
   declarations: [
     TeamViewComponent,
+    TeamTreeViewComponent,
     TeamDetailsComponent
   ],
   providers: [

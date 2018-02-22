@@ -1,0 +1,28 @@
+<p-treeTable [value]="Nodes" selectionMode="single" [(selection)]="SelectedNode">
+    <p-column field="id" header="Id"></p-column>
+    <p-column field="name" header="Name">
+        <ng-template let-col let-node="rowData" pTemplate="body">
+            <input [(ngModel)]="node.data.name" type="text" style="width:100%">
+        </ng-template>
+    </p-column>
+    <p-column field="type" header="Type">
+        <ng-template let-col let-node="rowData" pTemplate="body">
+            <input *ngIf="typeof node.data" [(ngModel)]="node.data.type" type="text" style="width:100%">
+        </ng-template>
+    </p-column>
+    <p-column field="from" header="From">
+        <ng-template let-col let-node="rowData" pTemplate="body">
+            <input [(ngModel)]="node.data.from" type="text" style="width:100%">
+        </ng-template>
+    </p-column>
+    <p-column field="to" header="To">
+        <ng-template let-col let-node="rowData" pTemplate="body">
+            <input [(ngModel)]="node.data.to" type="text" style="width:100%">
+        </ng-template>
+    </p-column>
+    <p-column field="confirmed" header="Confirmed">
+        <ng-template let-col let-node="rowData" pTemplate="body">
+            <input [(ngModel)]="node.data.confirmed" type="text" style="width:100%">
+        </ng-template>
+    </p-column>
+</p-treeTable>
