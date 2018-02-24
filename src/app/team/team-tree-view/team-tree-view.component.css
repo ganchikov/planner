@@ -1,3 +1,10 @@
 .ui-column-title {
     color: aliceblue
 }
+.ui-dropdown-items-wrapper {
+    overflow: visible
+}
+
+.undefined .ng-star-inserted {
+    overflow: visible
+}
