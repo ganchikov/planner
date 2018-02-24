@@ -7,7 +7,6 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "strictNullChecks": true,
     "target": "ES5",
     "typeRoots": [
       "../node_modules/@types"
@@ -19,11 +18,11 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "removeComments": false,
-    "strict": false,
     "allowUnreachableCode": false
 
   },
   "include": [
-    "**/*"
+    "**/*",
+    "../common/**/*"
   ]
 }
