@@ -1,6 +1,6 @@
 import {IDataProvider} from '../common/IDataProvider';
 import {Team} from '../../common/models';
-import {ConsoleLogger} from '../common/Logger';
+import {ConsoleLogger} from '../../common/Logger';
 
 export class TeamDataService {
     private _logger: ConsoleLogger = new ConsoleLogger('TeamDataService', true);
@@ -18,7 +18,7 @@ export class TeamDataService {
 
     public GetTeam(id: number, success: (teamItem: Team) => void, error: (err) => void) {
         this._dataprovider.ReadItem(id, item => {
-            const teamItem: Team = item.GetTypedItem(Team);
+            const teamItem: Team = item.GetTypedItem<Team>(Team);
             this._logger.Log('Retreved item id: ' + teamItem._id);
             success(teamItem);
         }, err => {
@@ -46,9 +46,8 @@ export class TeamDataService {
     public InsertTeam(item: Team, success: (resitem: Team) => void, error: (err) => void) {
 
         this._dataprovider.InsertItem<Team>(item, resultItem => {
-            const resItem: Team = resultItem.GetTypedItem<Team>(Team);
-            success(resItem);
-            this._logger.Log('Inserted item with id: ' + resItem._id);
+            success(resultItem as Team);
+            this._logger.Log('Inserted item with id: ' + (resultItem as Team)._id);
         }, err => {
             error(err);
         });
@@ -56,13 +55,8 @@ export class TeamDataService {
 
     public InsertTeams(items: Team[], success: (resitems: Team[]) => void, error: (err) => void) {
         this._dataprovider.InsertItems<Team>(items, resultItems => {
-            const resitems: Team[] = [];
-            for (const itm of resultItems) {
-                const resItem = itm.GetTypedItem<Team>(Team);
-                resitems.push(resItem);
-            }
-            success(resitems);
-            this._logger.Log('Inserted items count: ' + resitems.length);
+            success(resultItems as Team[]);
+            this._logger.Log('Inserted items count: ' + resultItems.length);
         }, err => {
             error(err);
         });

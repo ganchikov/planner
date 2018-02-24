@@ -1,4 +1,4 @@
-import {DataItem} from '../common/DataItem';
+import {DataItem} from '../../common/DataItem';
 import * as assert from 'assert';
 import { MongoClient, Db, Collection, ObjectId} from 'mongodb';
 import {IDataProvider} from '../common/IDataProvider';
@@ -45,12 +45,12 @@ export class MongoProvider implements IDataProvider {
             callback();
         });
     }
-    public ReadItem (key: any, success: (item: DataItem) => void, error: (err: any) => void) {
+    public ReadItem<T extends DataItem> (key: any, success: (item: T) => void, error: (err: any) => void) {
         this.checkConnection(() => {
             this.activeCollection.findOne({id: key})
             .then(foundItem => {
                 if (foundItem) {
-                    success(new DataItem(foundItem));
+                    success(new DataItem(foundItem) as T);
                 } else {
                     error(null);
                 }
@@ -61,13 +61,13 @@ export class MongoProvider implements IDataProvider {
         });
     }
 
-    public ReadItems (success: (items: DataItem[]) => void, error: (err: any) => void) {
+    public ReadItems<T extends DataItem> (success: (items: T[]) => void, error: (err: any) => void) {
         this.checkConnection(() => {
             this.activeCollection.find().toArray()
             .then(foundItems => {
-                const resultSet: DataItem[] = [];
+                const resultSet: T[] = [];
                 foundItems.forEach(element => {
-                    resultSet.push(new DataItem(element));
+                    resultSet.push(new DataItem(element) as T);
                 });
                 success(resultSet);
             })
@@ -77,19 +77,18 @@ export class MongoProvider implements IDataProvider {
         });
     }
 
-    InsertItem<T> (item: T, success: (item: DataItem) => void, error: (err: any) => void) {
+    InsertItem<T extends DataItem> (item: T, success: (item: T) => void, error: (err: any) => void) {
         this.checkConnection(() => {
             this.db.collection(this._countersCollectionName).findOneAndUpdate(
                 {'_id': this._countersKeyName}, {$inc: {'sequence_val': 1}}, {upsert: true, returnOriginal: false}
             )
             .then(incremental_result => {
-                const resultItem = new DataItem(item);
-                resultItem.SetValue('id', incremental_result.value.sequence_val);
-                this.activeCollection.insertOne(resultItem.GetObject())
+                item.SetValue('id', incremental_result.value.sequence_val);
+                this.activeCollection.insertOne(item.GetObject())
                 .then(result => {
-                    resultItem.SetValue('_id', result.ops[0]._id);
+                    item.SetValue('_id', result.ops[0]._id);
 
-                    success(resultItem);
+                    success(item);
                 })
                 .catch(err => {
                     error(err);
@@ -101,29 +100,26 @@ export class MongoProvider implements IDataProvider {
         });
     }
 
-    InsertItems<T> (items: T[], success: (items: DataItem[]) => void, error: (err: any) => void) {
+    InsertItems<T extends DataItem> (items: T[], success: (items: T[]) => void, error: (err: any) => void) {
         this.checkConnection(() => {
             this.db.collection(this._countersCollectionName).findOneAndUpdate(
                 {'_id': this._countersKeyName}, {$inc: {'sequence_val': items.length}}, {upsert: true, returnOriginal: false}
             )
             .then(incremental_result => {
-                const resultItems: DataItem[] = [];
                 const resObjects: Object[] = [];
                 let sequence_val = incremental_result.value.sequence_val - items.length;
                 for (const item of items) {
-                    const resultItem = new DataItem(item);
-                    resultItem.SetValue('id', sequence_val);
-                    resultItems.push(resultItem);
-                    resObjects.push(resultItem.GetObject());
+                    item.SetValue('id', sequence_val);
                     sequence_val++;
+                    resObjects.push(item.GetObject());
                 }
                 this.activeCollection.insertMany(resObjects).then(insItems => {
                     let i = 0;
                     for (const insItm of insItems) {
-                        resultItems[i].SetValue('_id', insItm.ops[0]._id);
+                        items[i].SetValue('_id', insItm.ops[0]._id);
                         i++;
                     }
-                    success(resultItems);
+                    success(items);
                 })
                 .catch(err => {
                     error(err);
@@ -134,22 +130,20 @@ export class MongoProvider implements IDataProvider {
         });
     }
 
-    UpdateItem<T> (item: T, success: (item: DataItem) => void, error: (err: any) => void) {
+    UpdateItem<T extends DataItem> (item: T, success: (item: T) => void, error: (err: any) => void) {
         this.checkConnection(() => {
-            const dataItem = new DataItem(item);
-            this.activeCollection.updateOne({'_id' : new ObjectId(dataItem.GetValue('_id'))},
-            {$set : dataItem.GetObject()}).then(success(dataItem))
+            this.activeCollection.updateOne({'_id' : new ObjectId(item.GetValue('_id'))},
+            {$set : item.GetObject()}).then(success(item))
             .catch(err => {
                 error(err);
             });
         });
     }
 
-    DeleteItem<T> (item: T, success: (item: DataItem) => void, error: (err: any) => void) {
+    DeleteItem<T extends DataItem> (item: T, success: (item: T) => void, error: (err: any) => void) {
         this.checkConnection(() => {
-            const dataItem = new DataItem(item);
-            this.activeCollection.deleteOne({'_id': new ObjectId(dataItem.GetValue('_id'))}).then(
-                success(dataItem)
+            this.activeCollection.deleteOne({'_id': new ObjectId(item.GetValue('_id'))}).then(
+                success(item)
             )
             .catch(err => {
               error(err);

@@ -6,7 +6,6 @@ import {TeamDataService} from './services/TeamDataService';
 import {MongoProvider} from './providers/MongoProvider';
 
 import {Team} from '../common/models';
-import {ObjectParser} from './common/Objectparser';
 
 const app = express();
 
@@ -34,7 +33,9 @@ app.get('/', (req, res) => {
 app.get('/api/teams/', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
     teamDS.GetTeams(teams => {
-        res.status(200).json(teams);
+        const jsonObjects: Object[] = [];
+        teams.forEach(team => jsonObjects.push(team.GetObject()));
+        res.status(200).json(jsonObjects);
     }, err => {
         res.status(404).send(err);
     });
@@ -43,30 +44,25 @@ app.get('/api/teams/', (req, res) => {
 app.post('/api/teams/', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
     try {
-
-
-        const item: Team = new Team();
-        const result = ObjectParser.Parse(req.body, item);
-        if (result instanceof Team) {
-            teamDS.InsertTeam(item, resultItem => {
-                res.status(200).json(resultItem);
+        if (req.body instanceof Array) {
+            const teams: Team[] = [];
+            (req.body as Array<any>).forEach(item => teams.push(new Team(item)));
+            teamDS.InsertTeams(teams, resultItems => {
+                res.status(200).json(resultItems);
             }, error => {
                 res.status(404).send(error);
             });
-        } else if (result instanceof Array) {
-            teamDS.InsertTeams(result, resultItem => {
+        } else {
+            teamDS.InsertTeam(new Team(req.body), resultItem => {
                 res.status(200).json(resultItem);
             }, error => {
                 res.status(404).send(error);
             });
         }
-
     } catch (err) {
         res.status(404).send('bad request: ' + err);
     }
 });
-
-
 
 const server = app.listen(8001, 'localhost', () => {
     const {address, port} = server.address();
