@@ -5,8 +5,9 @@ import {catchError, tap} from 'rxjs/operators';
 import {of} from 'rxjs/observable/of';
 
 import {LoggerService} from '../services/logger.service';
+import {Team} from '../../../common/models';
+import {ObjectParser} from '../../../common/Objectparser';
 
-import {Team, Person, Absence} from '../../../common/models';
 
 
 @Injectable()
@@ -28,11 +29,20 @@ export class TeamDataService {
     };
   }
 
-  getTeamData(): Observable<Team[]> {
-    return this.http.get<Team[]>(this.url).pipe(
-      tap ( teams => this.log('fetched teams')),
+  getTeamData(callback: (teams: Team[]) => void) {
+    this.http.get<Team[]>(this.url).pipe(
+      tap ( teams => {
+        this.log('fetched teams' + teams);
+      }),
       catchError(this.handleError('getTeamData', []))
-    );
+    ).subscribe(responseObjects => {
+        const results: Team[] = [];
+        for (const respObj of responseObjects) {
+          const team = new Team(respObj);
+          results.push(team);
+        }
+        callback(results);
+    });
   }
 
 }
