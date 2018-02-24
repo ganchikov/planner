@@ -1,4 +1,4 @@
-import {DataItem} from './DataItem';
+import {DataItem} from '../../common/DataItem';
 
 export interface IDataProvider {
    Collection: string;
