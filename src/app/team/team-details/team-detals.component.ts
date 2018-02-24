@@ -44,7 +44,7 @@ export class TeamDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-      this.team = new Team();
+      // this.team = new Team();
   }
 
 }

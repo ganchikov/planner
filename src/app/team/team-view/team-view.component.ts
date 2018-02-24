@@ -14,13 +14,13 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
 
   teams: Team[];
   cols: any[];
- 
+
   constructor(private teamService: TeamDataService) {
    }
 
   ngOnInit() {
     this.initColumns();
-    this.teamService.getTeamData().toPromise().then(teams => this.teams = teams);
+    this.teamService.getTeamData(teams => this.teams = teams);
   }
 
   initColumns() {
