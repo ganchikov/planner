@@ -7,7 +7,6 @@ import {of} from 'rxjs/observable/of';
 import {LoggerService} from '../services/logger.service';
 import {Team} from '../../../common/models';
 
-
 @Injectable()
 export class TeamDataService {
 
