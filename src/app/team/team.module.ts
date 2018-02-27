@@ -5,13 +5,17 @@ import {HttpClientModule} from '@angular/common/http';
 
 import {TreeNode} from 'primeng/api';
 
+import {TeamDataService} from './team-data.service';
+import { LoggerService } from '../services/logger.service';
+
+
 import {PrimeControlsModule} from '../primecontrols.module';
 import { TeamRoutingModule } from './team-routing.module';
 import {TeamViewComponent} from './team-view/team-view.component';
 import {TeamTreeViewComponent} from './team-tree-view/team-tree-view.component';
 import { TeamDetailsComponent } from './team-details/team-detals.component';
-import {TeamDataService} from './team-data.service';
-import { LoggerService } from '../services/logger.service';
+import { TeamGanttComponent } from './team-gantt/team-gantt.component';
+import { TeamGanttViewComponent } from './team-gantt-view/team-gantt-view.component';
 
 @NgModule({
   imports: [
@@ -25,7 +29,9 @@ import { LoggerService } from '../services/logger.service';
   declarations: [
     TeamViewComponent,
     TeamTreeViewComponent,
-    TeamDetailsComponent
+    TeamDetailsComponent,
+    TeamGanttComponent,
+    TeamGanttViewComponent
   ],
   providers: [
     TeamDataService, LoggerService
