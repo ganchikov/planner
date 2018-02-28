@@ -22,6 +22,7 @@ export class TeamGanttComponent implements OnInit {
 
   ngOnInit() {
     gantt.init(this.ganttContainer.nativeElement);
+    gantt.parse({});
   }
 
 }

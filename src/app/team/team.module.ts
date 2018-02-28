@@ -6,6 +6,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {TreeNode} from 'primeng/api';
 
 import {TeamDataService} from './team-data.service';
+import {TeamGanttDataService} from './team-gantt-data.service';
 import { LoggerService } from '../services/logger.service';
 
 
@@ -34,7 +35,7 @@ import { TeamGanttViewComponent } from './team-gantt-view/team-gantt-view.compon
     TeamGanttViewComponent
   ],
   providers: [
-    TeamDataService, LoggerService
+    TeamDataService, TeamGanttDataService, LoggerService
   ]
 })
 export class TeamModule { }
