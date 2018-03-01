@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {BaseItem, Team, Person, Absence} from '../../../common/models';
 import { TeamDataService } from './team-data.service';
 import { DataItem } from '../../../common/DataItem';
+import { unescapeIdentifier } from '@angular/compiler';
 
 export class GanttItem extends BaseItem  {
 
@@ -30,7 +31,11 @@ export class GanttItem extends BaseItem  {
   }
 
   get start_date(): Date {
-    return this.GetValue('start_date');
+    let date: Date = this.GetValue('start_date');
+    if (date === undefined) {
+        date = new Date(Date.now());
+    }
+    return date;
   }
 
   set start_date(val: Date) {
@@ -38,7 +43,11 @@ export class GanttItem extends BaseItem  {
   }
 
   get end_date(): Date {
-    return this.GetValue('end_date');
+    let date: Date = this.GetValue('end_date');
+    if (date === undefined) {
+      date = this.start_date;
+    }
+    return date;
   }
 
   set end_date(val: Date) {

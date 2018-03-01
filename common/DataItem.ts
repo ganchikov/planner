@@ -7,7 +7,7 @@ export class KeyValuePair {
 
 }
 
-export interface IConstructor<T> {
+interface IConstructor<T> {
     new(...args: any[]): T;
 }
 

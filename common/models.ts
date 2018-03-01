@@ -37,6 +37,9 @@ export class BaseItem extends DataItem {
 
 }
 
+const MAX_TEAM_MEMBERS = 100;
+const MAX_PERSON_ABSENCES = 1000;
+
 export class Team extends BaseItem {
     constructor(
         initializatorObj: Object
@@ -45,10 +48,13 @@ export class Team extends BaseItem {
 
         if (initializatorObj && initializatorObj.hasOwnProperty('members')) {
             const members: Person[] = [];
+            let memberId: number = MAX_TEAM_MEMBERS * this.id;
             for (const memberObj of initializatorObj['members']) {
                 const member = new Person(memberObj);
+                member.id = memberId;
                 member.parent_id = this.id;
                 members.push(member);
+                memberId++;
             }
             this.SetValue<Person[]>('members', members);
         }
@@ -70,10 +76,13 @@ export class Person extends BaseItem {
         super(initializatorObj);
         if (initializatorObj && initializatorObj.hasOwnProperty('absences')) {
             const absences: Absence[] = [];
+            let absenceId: number = MAX_PERSON_ABSENCES * this.id;
             for (const absObj of initializatorObj['absences']) {
                 const absence = new Absence(absObj);
                 absence.parent_id = this.id;
+                absence.id = absenceId;
                 absences.push(absence);
+                absenceId++;
             }
             this.SetValue<Absence[]>('absences', absences);
         }

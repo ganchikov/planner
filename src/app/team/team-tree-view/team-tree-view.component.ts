@@ -54,7 +54,7 @@ export class TeamTreeViewComponent implements OnInit {
       for (const absence of member.absences) {
         const absenceNode: TreeNode = {
           data: {_type: 'Absence', _id: absence._id, name: absence.name,
-                  type: absence.type,
+                  type: absence.name,
                   from: new Date(absence.start_date),
                   to: new Date(absence.end_date),
                   confirmed: absence.confirmed
