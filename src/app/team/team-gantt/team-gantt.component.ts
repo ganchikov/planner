@@ -1,5 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import 'dhtmlx-gantt';
+import { TeamGanttDataService } from '../team-gantt-data.service';
 
 @Component({
   selector: 'app-team-gantt',
@@ -18,11 +19,14 @@ export class TeamGanttComponent implements OnInit {
 
   @ViewChild('gantt_here') ganttContainer: ElementRef;
 
-  constructor() { }
+  constructor(private ganttData: TeamGanttDataService) { }
 
   ngOnInit() {
     gantt.init(this.ganttContainer.nativeElement);
-    gantt.parse({});
+    this.ganttData.getGanttTeamData(items => {
+      gantt.parse({tasks: items, links: []});
+    });
+
   }
 
 }

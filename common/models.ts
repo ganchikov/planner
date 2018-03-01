@@ -1,6 +1,6 @@
 import {DataItem} from './DataItem';
 
-class BaseItem extends DataItem {
+export class BaseItem extends DataItem {
     constructor(initializatorObj: Object) {
         super (initializatorObj);
     }
@@ -26,6 +26,14 @@ class BaseItem extends DataItem {
         this.SetValue<string>('name', val);
     }
 
+    get parent_id(): number {
+        return this.GetValue('parent_id');
+    }
+
+    set parent_id(val: number) {
+        this.SetValue<number>('parent_id', val);
+    }
+
 
 }
 
@@ -39,6 +47,7 @@ export class Team extends BaseItem {
             const members: Person[] = [];
             for (const memberObj of initializatorObj['members']) {
                 const member = new Person(memberObj);
+                member.parent_id = this.id;
                 members.push(member);
             }
             this.SetValue<Person[]>('members', members);
@@ -63,24 +72,25 @@ export class Person extends BaseItem {
             const absences: Absence[] = [];
             for (const absObj of initializatorObj['absences']) {
                 const absence = new Absence(absObj);
+                absence.parent_id = this.id;
                 absences.push(absence);
             }
             this.SetValue<Absence[]>('absences', absences);
         }
     }
 
-    get dateStart(): Date {
-        return this.GetValue('dateStart');
+    get start_date(): Date {
+        return this.GetValue('start_date');
     }
-    set dateStart(val: Date) {
-        this.SetValue<Date>('dateStart', val);
+    set start_date(val: Date) {
+        this.SetValue<Date>('start_date', val);
     }
 
-    get dateEnd(): Date {
-        return this.GetValue('dateEnd');
+    get end_date(): Date {
+        return this.GetValue('end_date');
     }
-    set dateEnd(val: Date) {
-        this.SetValue<Date>('dateEnd', val);
+    set end_date(val: Date) {
+        this.SetValue<Date>('end_date', val);
     }
 
     get absences(): Absence[] {
@@ -96,13 +106,6 @@ export class Absence extends BaseItem {
         initializatorObj: Object
     ) {
         super(initializatorObj);
-    }
-
-    get type(): string {
-        return this.GetValue('type');
-    }
-    set type(val: string) {
-        this.SetValue<string>('type', val);
     }
 
     get confirmed(): boolean {
