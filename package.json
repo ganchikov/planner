@@ -28,6 +28,7 @@
     "dhtmlx-gantt": "^5.1.0",
     "express": "^4.16.2",
     "font-awesome": "^4.7.0",
+    "moment": "^2.20.1",
     "mongodb": "^3.0.2",
     "primeng": "^5.2.0",
     "rxjs": "^5.5.6",
