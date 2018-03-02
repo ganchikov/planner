@@ -3,8 +3,11 @@ import {BaseItem, Team, Person, Absence} from '../../../common/models';
 import { TeamDataService } from './team-data.service';
 import { DataItem } from '../../../common/DataItem';
 import { unescapeIdentifier } from '@angular/compiler';
+import { isDate } from 'util';
 
 export class GanttItem extends BaseItem  {
+
+  private _unscheduled: boolean;
 
   get text(): string {
     return this.name;
@@ -31,8 +34,9 @@ export class GanttItem extends BaseItem  {
   }
 
   get start_date(): Date {
-    let date: Date = this.GetValue('start_date');
-    if (date === undefined) {
+    let date: Date = new Date(this.GetValue('start_date'));
+    if (date === undefined || isNaN(date.getDate())) {
+        this._unscheduled = true;
         date = new Date(Date.now());
     }
     return date;
@@ -43,15 +47,32 @@ export class GanttItem extends BaseItem  {
   }
 
   get end_date(): Date {
-    let date: Date = this.GetValue('end_date');
-    if (date === undefined) {
-      date = this.start_date;
+    let date: Date = new Date(this.GetValue('end_date'));
+    if (date === undefined || isNaN(date.getDate())) {
+      this._unscheduled = true;
+      date = new Date(Date.now());
     }
     return date;
   }
 
   set end_date(val: Date) {
     this.SetValue<Date>('end_date', val);
+  }
+
+  get confirmed(): boolean {
+    return this.GetValue('confirmed');
+  }
+
+  set confirmed(val: boolean) {
+    this.SetValue('confirmed', val);
+  }
+
+  get unscheduled(): boolean {
+    return this._unscheduled;
+  }
+
+  set unscheduled(val: boolean) {
+    this._unscheduled = val;
   }
 
 }
