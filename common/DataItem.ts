@@ -17,7 +17,7 @@ export class DataItem {
     constructor(initializator: Object) {
         if (initializator) {
             for (const prop of Object.keys(initializator)) {
-                this.SetValue(prop, initializator[prop]);
+               this.SetValue(prop, initializator[prop]);
             }
         }
     }
@@ -63,6 +63,27 @@ export class DataItem {
             }
         });
         return resObj;
+    }
+
+    public GetItemAndFlatChildren(): DataItem[] {
+        return this.GetTypedItemAndFlatChildren<DataItem>(DataItem);
+    }
+
+    public GetTypedItemAndFlatChildren<T>(type: IConstructor<T>): T[] {
+        const results: T[] = [];
+        results.push(this.GetTypedItem<T>(type));
+        for (const kvp of this._fields) {
+            if (kvp.value instanceof Array) {
+                kvp.value.forEach(val => {
+                    if (val instanceof DataItem) {
+                        results.push(...val.GetTypedItemAndFlatChildren<T>(type));
+                    }
+                });
+            } else if (kvp.value instanceof DataItem) {
+                results.push(kvp.value.GetTypedItem<T>(type));
+            }
+        }
+        return results;
     }
 }
 

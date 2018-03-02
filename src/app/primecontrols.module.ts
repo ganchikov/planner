@@ -9,13 +9,12 @@ import {TreeTableModule} from 'primeng/treetable';
 import {DropdownModule} from 'primeng/dropdown';
 import {CalendarModule} from 'primeng/calendar';
 import {CheckboxModule} from 'primeng/checkbox';
+import {ToolbarModule} from 'primeng/toolbar';
+import {SelectButtonModule} from 'primeng/selectbutton';
 
 @NgModule({
   imports: [
-    CommonModule,
-    ButtonModule,
-    InputTextModule,
-    MenubarModule
+    CommonModule
   ],
   exports: [
     CommonModule,
@@ -27,7 +26,9 @@ import {CheckboxModule} from 'primeng/checkbox';
     TreeTableModule,
     DropdownModule,
     CalendarModule,
-    CheckboxModule
+    CheckboxModule,
+    ToolbarModule,
+    SelectButtonModule
   ],
   declarations: []
 })

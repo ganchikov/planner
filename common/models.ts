@@ -1,19 +1,8 @@
 import {DataItem} from './DataItem';
 
-export class Team extends DataItem {
-    constructor(
-        initializatorObj: Object
-    ) {
-        super(initializatorObj);
-
-        if (initializatorObj && initializatorObj.hasOwnProperty('members')) {
-            const members: Person[] = [];
-            for (const memberObj of initializatorObj['members']) {
-                const member = new Person(memberObj);
-                members.push(member);
-            }
-            this.SetValue<Person[]>('members', members);
-        }
+export class BaseItem extends DataItem {
+    constructor(initializatorObj: Object) {
+        super (initializatorObj);
     }
 
     get _id(): Object {
@@ -35,6 +24,40 @@ export class Team extends DataItem {
     }
     set name(val: string) {
         this.SetValue<string>('name', val);
+    }
+
+    get parent_id(): number {
+        return this.GetValue('parent_id');
+    }
+
+    set parent_id(val: number) {
+        this.SetValue<number>('parent_id', val);
+    }
+
+
+}
+
+const MAX_TEAM_MEMBERS = 100;
+const MAX_PERSON_ABSENCES = 1000;
+
+export class Team extends BaseItem {
+    constructor(
+        initializatorObj: Object
+    ) {
+        super(initializatorObj);
+
+        if (initializatorObj && initializatorObj.hasOwnProperty('members')) {
+            const members: Person[] = [];
+            let memberId: number = MAX_TEAM_MEMBERS * this.id;
+            for (const memberObj of initializatorObj['members']) {
+                const member = new Person(memberObj);
+                member.id = memberId;
+                member.parent_id = this.id;
+                members.push(member);
+                memberId++;
+            }
+            this.SetValue<Person[]>('members', members);
+        }
     }
 
     get members(): Person[] {
@@ -46,54 +69,37 @@ export class Team extends DataItem {
 
 }
 
-export class Person extends DataItem {
+export class Person extends BaseItem {
     constructor(
         initializatorObj: Object
     ) {
         super(initializatorObj);
         if (initializatorObj && initializatorObj.hasOwnProperty('absences')) {
             const absences: Absence[] = [];
+            let absenceId: number = MAX_PERSON_ABSENCES * this.id;
             for (const absObj of initializatorObj['absences']) {
                 const absence = new Absence(absObj);
+                absence.parent_id = this.id;
+                absence.id = absenceId;
                 absences.push(absence);
+                absenceId++;
             }
             this.SetValue<Absence[]>('absences', absences);
         }
     }
 
-    get _id(): Object {
-        return this.GetValue('_id');
+    get start_date(): Date {
+        return this.GetValue('start_date');
     }
-    set _id(val: Object) {
-        this.SetValue<Object>('_id', val);
-    }
-
-    get id(): number {
-        return this.GetValue('id');
-    }
-    set id(val: number) {
-        this.SetValue<number>('id', val);
+    set start_date(val: Date) {
+        this.SetValue<Date>('start_date', val);
     }
 
-    get name(): string {
-        return this.GetValue('name');
+    get end_date(): Date {
+        return this.GetValue('end_date');
     }
-    set name(val: string) {
-        this.SetValue<string>('name', val);
-    }
-
-    get dateStart(): Date {
-        return this.GetValue('dateStart');
-    }
-    set dateStart(val: Date) {
-        this.SetValue<Date>('dateStart', val);
-    }
-
-    get dateEnd(): Date {
-        return this.GetValue('dateEnd');
-    }
-    set dateEnd(val: Date) {
-        this.SetValue<Date>('dateEnd', val);
+    set end_date(val: Date) {
+        this.SetValue<Date>('end_date', val);
     }
 
     get absences(): Absence[] {
@@ -104,32 +110,11 @@ export class Person extends DataItem {
     }
 }
 
-export class Absence extends DataItem {
+export class Absence extends BaseItem {
     constructor(
         initializatorObj: Object
     ) {
         super(initializatorObj);
-    }
-
-    get _id(): Object {
-        return this.GetValue('_id');
-    }
-    set _id(val: Object) {
-        this.SetValue<Object>('_id', val);
-    }
-
-    get type(): string {
-        return this.GetValue('type');
-    }
-    set type(val: string) {
-        this.SetValue<string>('type', val);
-    }
-
-    get name(): string {
-        return this.GetValue('name');
-    }
-    set name(val: string) {
-        this.SetValue<string>('name', val);
     }
 
     get confirmed(): boolean {
@@ -143,18 +128,18 @@ export class Absence extends DataItem {
         this.SetValue<boolean>('confirmed', val);
     }
 
-    get from(): Date {
-        return this.GetValue('from');
+    get start_date(): Date {
+        return this.GetValue('start_date');
     }
-    set from(val: Date) {
-        this.SetValue<Date>('from', val);
+    set start_date(val: Date) {
+        this.SetValue<Date>('start_date', val);
     }
 
-    get to(): Date {
-        return this.GetValue('to');
+    get end_date(): Date {
+        return this.GetValue('end_date');
     }
-    set to(val: Date) {
-        this.SetValue<Date>('to', val);
+    set end_date(val: Date) {
+        this.SetValue<Date>('end_date', val);
     }
 }
 

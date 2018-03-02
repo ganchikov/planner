@@ -33,8 +33,8 @@ export class TeamDetailsComponent implements OnInit {
           const val: SelectItem = {label: member.name,
             value: {id: member._id,
                     name: member.name,
-                    dateStart: member.dateStart,
-                    dateEnd: member.dateEnd}};
+                    dateStart: member.start_date,
+                    dateEnd: member.end_date}};
           return val;
         });
         return items;
