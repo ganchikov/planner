@@ -1,11 +1,19 @@
 import { Component, OnInit, OnChanges, SimpleChanges, ElementRef, ViewChild, Input } from '@angular/core';
 import 'dhtmlx-gantt';
-import { TeamGanttDataService } from '../team-gantt-data.service';
+import {} from '@types/dhtmlxgantt';
+import { TeamGanttDataService, GanttItem } from '../team-gantt-data.service';
+import * as moment from 'moment';
 
 export enum ScaleMode {
   Day = 0,
   Week = 1,
   Month = 2
+}
+
+class Duration {
+  constructor(
+    offset: number,
+    duration: number) {}
 }
 
 @Component({
@@ -18,7 +26,8 @@ export enum ScaleMode {
       height: 600px;
       position: relative;
       width: 100%
-    }`],
+    }
+    `],
     template: `<div #gantt_here style='width: 100%; height: 100%;'></div>`
 })
 export class TeamGanttComponent implements OnInit, OnChanges {
@@ -36,9 +45,9 @@ export class TeamGanttComponent implements OnInit, OnChanges {
   constructor(private ganttData: TeamGanttDataService) { }
 
   ngOnInit() {
+    this.configureChart();
     gantt.init(this.ganttContainer.nativeElement, this.rangeDates[0], this.rangeDates[1]);
     this._isInitialized = true;
-    this.configureChart();
     this.ganttData.getGanttTeamData(items => {
       gantt.parse({data: items, links: []});
     });
@@ -72,13 +81,42 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     ];
     gantt.config.min_column_width = 50;
     gantt.config.show_unscheduled = true;
+    gantt.templates.task_row_class = this.memberTaskClassTemplate;
     this.setScaleMode(ScaleMode.Day);
   }
 
+  memberTaskClassTemplate(start: Date, end: Date, task: GanttItem): string {
+    if (task.is_complex) {
+      return 'member_row_style';
+    } else {
+      return '';
+    }
+  }
+
+  renderComplexTask(task: GanttItem): string {
+    if (!task.is_complex) {return ''; }
+    const absences: GanttItem[] = task.GetValue('absences') as GanttItem[];
+    const durations: Duration[] = [];
+    let min_date, max_date: Date;
+
+    for (const absence of absences) {
+      if (absence.start_date < min_date) {min_date = absence.start_date; }
+      if (absence.end_date > max_date) {max_date = absence.end_date; }
+      const offset: number = moment(absence.start_date).diff(moment(min_date), 'days');
+      // const duration: number 
+      durations.push(  );
+    }
+
+    const total_duration: number = moment(max_date).diff(moment(min_date), 'days');
+
+
+
+
+  }
+
   weekScaleTemplate(date: Date) {
-    const dateToStr = gantt.date.date_to_str('%d %M');
-    const endDate = gantt.date.add(gantt.date.add(date, 1, 'week'), -1, 'day');
-    return dateToStr(date) + ' - ' + dateToStr(endDate);
+    const weekNum = moment(date).isoWeek();
+    return 'WW' + weekNum;
   }
 
   setScaleMode(scaleMode: ScaleMode) {

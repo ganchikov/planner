@@ -8,6 +8,7 @@ import { isDate } from 'util';
 export class GanttItem extends BaseItem  {
 
   private _unscheduled: boolean;
+  private _iscomplex: boolean;
 
   get text(): string {
     return this.name;
@@ -73,6 +74,19 @@ export class GanttItem extends BaseItem  {
 
   set unscheduled(val: boolean) {
     this._unscheduled = val;
+  }
+
+  get is_complex(): boolean {
+
+    if (this._iscomplex === undefined) {
+      if (this.GetValue('absences') !== undefined &&
+      (this.GetValue('absences') as Array<Object>).length > 0 ) {
+        this._iscomplex = true;
+      } else {
+        this._iscomplex = false;
+      }
+    }
+    return this._iscomplex;
   }
 
 }
