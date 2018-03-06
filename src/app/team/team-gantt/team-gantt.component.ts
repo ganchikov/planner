@@ -1,8 +1,9 @@
 import { Component, OnInit, OnChanges, SimpleChanges, ElementRef, ViewChild, Input } from '@angular/core';
 import 'dhtmlx-gantt';
 import {} from '@types/dhtmlxgantt';
-import { TeamGanttDataService, GanttItem } from '../team-gantt-data.service';
 import * as moment from 'moment';
+import { TeamGanttDataService} from '../team-gantt-data.service';
+import {GanttItem} from '../../common/ganttitem';
 
 export enum ScaleMode {
   Day = 0,
