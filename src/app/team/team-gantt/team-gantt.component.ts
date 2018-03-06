@@ -12,8 +12,8 @@ export enum ScaleMode {
 
 class Duration {
   constructor(
-    offset: number,
-    duration: number) {}
+    public offset: number,
+    public duration: number) {}
 }
 
 @Component({
@@ -43,6 +43,32 @@ export class TeamGanttComponent implements OnInit, OnChanges {
   private _isInitialized = false;
 
   constructor(private ganttData: TeamGanttDataService) { }
+
+  static renderComplexTask(task: GanttItem): string {
+    if (!task.is_complex) {return ''; }
+    const absences: GanttItem[] = task.GetValue('absences') as GanttItem[];
+    const durations: Duration[] = [];
+    let min_date: Date;
+    let max_date: Date;
+
+    for (const absence of absences) {
+      if (moment(absence.start_date).isBefore(min_date)) {min_date = absence.start_date; }
+      if (moment(absence.end_date).isAfter(max_date)) {max_date = absence.end_date; }
+      const offset: number = moment(absence.start_date).diff(moment(min_date), 'days');
+      const duration: number = moment(absence.end_date).diff(moment(absence.start_date), 'days');
+      durations.push(new Duration(offset, duration));
+    }
+
+    const total_duration: number = moment(max_date).diff(moment(min_date), 'days');
+    let taskHTML = '';
+    for (const duration of durations) {
+      duration.offset = Math.round(duration.offset * 100 / total_duration);
+      duration.duration = Math.round(duration.duration * 100 / total_duration);
+      taskHTML += `<div class='member_row_style' style='left:${duration.offset}%; width:${duration.duration}%;'>`;
+    }
+    return taskHTML;
+  }
+
 
   ngOnInit() {
     this.configureChart();
@@ -87,31 +113,11 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   memberTaskClassTemplate(start: Date, end: Date, task: GanttItem): string {
     if (task.is_complex) {
-      return 'member_row_style';
+      const str = TeamGanttComponent.renderComplexTask(task);
+      return str;
     } else {
       return '';
     }
-  }
-
-  renderComplexTask(task: GanttItem): string {
-    if (!task.is_complex) {return ''; }
-    const absences: GanttItem[] = task.GetValue('absences') as GanttItem[];
-    const durations: Duration[] = [];
-    let min_date, max_date: Date;
-
-    for (const absence of absences) {
-      if (absence.start_date < min_date) {min_date = absence.start_date; }
-      if (absence.end_date > max_date) {max_date = absence.end_date; }
-      const offset: number = moment(absence.start_date).diff(moment(min_date), 'days');
-      // const duration: number 
-      durations.push(  );
-    }
-
-    const total_duration: number = moment(max_date).diff(moment(min_date), 'days');
-
-
-
-
   }
 
   weekScaleTemplate(date: Date) {
