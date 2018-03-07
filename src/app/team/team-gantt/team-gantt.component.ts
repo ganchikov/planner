@@ -3,7 +3,7 @@ import 'dhtmlx-gantt';
 import {} from '@types/dhtmlxgantt';
 import * as moment from 'moment';
 import { TeamGanttDataService} from '../team-gantt-data.service';
-import {GanttItem} from '../../common/ganttitem';
+import {TeamGanttItem} from '../../common/ganttitem';
 
 export enum ScaleMode {
   Day = 0,
@@ -45,9 +45,9 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   constructor(private ganttData: TeamGanttDataService) { }
 
-  static renderComplexTask(task: GanttItem): string {
+  static renderComplexTask(task: TeamGanttItem): string {
     if (!task.is_complex) {return ''; }
-    const absences: GanttItem[] = task.GetValue('absences') as GanttItem[];
+    const absences: TeamGanttItem[] = task.GetValue('absences') as TeamGanttItem[];
     const durations: Duration[] = [];
     let min_date: Date;
     let max_date: Date;
@@ -112,7 +112,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     this.setScaleMode(ScaleMode.Day);
   }
 
-  memberTaskClassTemplate(start: Date, end: Date, task: GanttItem): string {
+  memberTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
     if (task.is_complex) {
       const str = TeamGanttComponent.renderComplexTask(task);
       return str;
