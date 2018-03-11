@@ -3,29 +3,29 @@
     "members" : [
         {
             "name": "John",
-            "start_date": "1.1.2018",
+            "start_date": "2018-01-01",
             "absences": [
                 {
-                    "start_date": "2018-01-01T00:00:00Z",
-                    "end_date": "2018-01-31T00:00:00Z",
+                    "start_date": "2018-01-01",
+                    "end_date": "2018-01-31",
                     "name": "vacation",
                     "confirmed": "true"
                 },
                 {
-                    "start_date": "2018-02-01T00:00:00Z",
-                    "end_date": "2018-02-25T00:00:00Z",
+                    "start_date": "2018-02-01",
+                    "end_date": "2018-02-25",
                     "name": "vacation",
                     "confirmed": "false"
                 },
                 {
-                    "start_date": "2018-03-01T00:00:00Z",
-                    "end_date": "2018-03-31T00:00:00Z",
+                    "start_date": "2018-03-01",
+                    "end_date": "2018-03-31",
                     "name": "vacation",
                     "confirmed": "false"
                 },
                 {
-                    "start_date": "2018-04-01T00:00:00Z",
-                    "end_date": "2018-04-25T00:00:00Z",
+                    "start_date": "2018-04-01",
+                    "end_date": "2018-04-25",
                     "name": "vacation",
                     "confirmed": "true"
                 }                                
@@ -33,12 +33,12 @@
         },
         {
             "name": "Smith",
-            "start_date": "1.1.2018",
+            "start_date": "2018-01-01",
             "absences": []
         },
         {
             "name": "Paul",
-            "start_date": "1.1.2018",
+            "start_date": "2018-01-01",
             "absences": []
         }
     ]
@@ -48,17 +48,17 @@
     "members" : [
         {
             "name": "Erik",
-            "start_date": "1.1.2018",
+            "start_date": "2018-01-01",
             "absences": []
         },
         {
             "name": "Patric",
-            "start_date": "1.1.2018",
+            "start_date": "2018-01-01",
             "absences": []
         },
         {
             "name": "Raul",
-            "start_date": "1.1.2018",
+            "start_date": "2018-01-01",
             "absences": []
         }
     ]
@@ -68,22 +68,22 @@
     "members" : [
         {
             "name": "Tom",
-            "start_date": "1.1.2018",
+            "start_date": "2018-01-01",
             "absences": []
         },
         {
             "name": "GNom",
-            "start_date": "1.1.2018",
+            "start_date": "2018-01-01",
             "absences": []
         },
         {
             "name": "BROm",
-            "start_date": "1.1.2018",
+            "start_date": "2018-01-01",
             "absences": []
         },
         {
             "name": "HOM",
-            "start_date": "1.1.2018",
+            "start_date": "2018-01-01",
             "absences": []
         }
     ]

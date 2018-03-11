@@ -34,6 +34,42 @@ export class BaseItem extends DataItem {
         this.SetValue<number>('parent_id', val);
     }
 
+}
+
+export class BaseScheduledItem extends BaseItem {
+
+    get start_date(): Date {
+        return this.GetValue('start_date');
+    }
+    set start_date(val: Date) {
+        this.SetValue<Date>('start_date', val);
+    }
+
+    get end_date(): Date {
+        return this.GetValue('end_date');
+    }
+    set end_date(val: Date) {
+        this.SetValue<Date>('end_date', val);
+    }
+}
+
+export class ScheduledConfirmableItem extends BaseScheduledItem {
+    constructor(
+        initializatorObj: Object
+    ) {
+        super(initializatorObj);
+    }
+
+    get confirmed(): boolean {
+        if (this.GetValue('confirmed') === 'true') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    set confirmed(val: boolean) {
+        this.SetValue<boolean>('confirmed', val);
+    }
 
 }
 
@@ -69,77 +105,30 @@ export class Team extends BaseItem {
 
 }
 
-export class Person extends BaseItem {
+export class Person extends BaseScheduledItem {
     constructor(
         initializatorObj: Object
     ) {
         super(initializatorObj);
         if (initializatorObj && initializatorObj.hasOwnProperty('absences')) {
-            const absences: Absence[] = [];
+            const absences: ScheduledConfirmableItem[] = [];
             let absenceId: number = MAX_PERSON_ABSENCES * this.id;
             for (const absObj of initializatorObj['absences']) {
-                const absence = new Absence(absObj);
+                const absence = new ScheduledConfirmableItem(absObj);
                 absence.parent_id = this.id;
                 absence.id = absenceId;
                 absences.push(absence);
                 absenceId++;
             }
-            this.SetValue<Absence[]>('absences', absences);
+            this.SetValue<ScheduledConfirmableItem[]>('absences', absences);
         }
     }
 
-    get start_date(): Date {
-        return this.GetValue('start_date');
-    }
-    set start_date(val: Date) {
-        this.SetValue<Date>('start_date', val);
-    }
-
-    get end_date(): Date {
-        return this.GetValue('end_date');
-    }
-    set end_date(val: Date) {
-        this.SetValue<Date>('end_date', val);
-    }
-
-    get absences(): Absence[] {
+    get absences(): ScheduledConfirmableItem[] {
         return this.GetValue('absences');
     }
-    set absences(val: Absence[]) {
-        this.SetValue<Absence[]>('dateEnd', val);
-    }
-}
-
-export class Absence extends BaseItem {
-    constructor(
-        initializatorObj: Object
-    ) {
-        super(initializatorObj);
-    }
-
-    get confirmed(): boolean {
-        if (this.GetValue('confirmed') === 'true') {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    set confirmed(val: boolean) {
-        this.SetValue<boolean>('confirmed', val);
-    }
-
-    get start_date(): Date {
-        return this.GetValue('start_date');
-    }
-    set start_date(val: Date) {
-        this.SetValue<Date>('start_date', val);
-    }
-
-    get end_date(): Date {
-        return this.GetValue('end_date');
-    }
-    set end_date(val: Date) {
-        this.SetValue<Date>('end_date', val);
+    set absences(val: ScheduledConfirmableItem[]) {
+        this.SetValue<ScheduledConfirmableItem[]>('dateEnd', val);
     }
 }
 
