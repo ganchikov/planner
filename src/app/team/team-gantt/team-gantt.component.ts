@@ -19,8 +19,6 @@ class Duration {
 
 @Component({
   selector: 'app-team-gantt',
-  templateUrl: './team-gantt.component.html',
-  styleUrls: ['./team-gantt.component.css'],
   styles: [
     `:host {
       display: block;
@@ -45,6 +43,8 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   constructor(private ganttData: TeamGanttDataService) { }
 
+
+
   static renderComplexTask(task: TeamGanttItem): string {
     if (!task.is_complex) {return ''; }
     const absences: TeamGanttItem[] = task.GetValue('absences') as TeamGanttItem[];
@@ -68,33 +68,6 @@ export class TeamGanttComponent implements OnInit, OnChanges {
       taskHTML += `<div class='gantt_task_line' style='left:${duration.offset}%; width:${duration.duration}%; height: 15px; margin-top: 7.5px;'></div>`;
     }
     return taskHTML;
-  }
-
-
-  ngOnInit() {
-    this.configureChart();
-    gantt.init(this.ganttContainer.nativeElement, this.rangeDates[0], this.rangeDates[1]);
-    this._isInitialized = true;
-    this.ganttData.getGanttTeamData(items => {
-      gantt.parse({data: items, links: []});
-    });
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    for (const propName in changes) {
-      if (this._isInitialized) {
-        switch (propName) {
-          case 'rangeDates':
-            gantt.config.start_date = this.rangeDates[0];
-            gantt.config.end_date = this.rangeDates[1];
-            gantt.render();
-            break;
-          case 'scaleMode':
-            this.setScaleMode(this.scaleMode);
-            gantt.render();
-        }
-      }
-    }
   }
 
   configureChart() {
@@ -140,26 +113,6 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     this.setScaleMode(ScaleMode.Day);
   }
 
-  memberTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
-    if (task.is_complex) {
-      return 'complex_gantt_bar';
-    }
-  }
-
-  memberTaskTextTemplate(start: Date, end: Date, task: TeamGanttItem): string {
-    if (task.is_complex) {
-      const str = TeamGanttComponent.renderComplexTask(task);
-      return str;
-    } else {
-      return '';
-    }
-  }
-
-  weekScaleTemplate(date: Date) {
-    const weekNum = moment(date).isoWeek();
-    return 'WW' + weekNum;
-  }
-
   setScaleMode(scaleMode: ScaleMode) {
     switch (scaleMode) {
       case ScaleMode.Day:
@@ -188,6 +141,53 @@ export class TeamGanttComponent implements OnInit, OnChanges {
         gantt.templates.date_scale = null;
         gantt.config.scale_height = 50;
         gantt.config.subscales = [];
+    }
+  }
+
+  memberTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
+    if (task.is_complex) {
+      return 'complex_gantt_bar';
+    }
+  }
+
+  memberTaskTextTemplate(start: Date, end: Date, task: TeamGanttItem): string {
+    if (task.is_complex) {
+      const str = TeamGanttComponent.renderComplexTask(task);
+      return str;
+    } else {
+      return '';
+    }
+  }
+
+  weekScaleTemplate(date: Date) {
+    const weekNum = moment(date).isoWeek();
+    return 'WW' + weekNum;
+  }
+
+
+  ngOnInit() {
+    this.configureChart();
+    gantt.init(this.ganttContainer.nativeElement, this.rangeDates[0], this.rangeDates[1]);
+    this._isInitialized = true;
+    this.ganttData.getGanttTeamData(items => {
+      gantt.parse({data: items, links: []});
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    for (const propName in changes) {
+      if (this._isInitialized) {
+        switch (propName) {
+          case 'rangeDates':
+            gantt.config.start_date = this.rangeDates[0];
+            gantt.config.end_date = this.rangeDates[1];
+            gantt.render();
+            break;
+          case 'scaleMode':
+            this.setScaleMode(this.scaleMode);
+            gantt.render();
+        }
+      }
     }
   }
 
