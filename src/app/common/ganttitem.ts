@@ -1,9 +1,7 @@
-import {BaseItem, Absence} from '../../../common/models';
+import {ScheduledConfirmableItem} from '../../../common/models';
 import * as moment from 'moment';
 
-export class GanttItem extends BaseItem  {
-
-      protected _unscheduled: boolean;
+export class GanttItem extends ScheduledConfirmableItem  {
 
       get text(): string {
         return this.name;
@@ -29,81 +27,65 @@ export class GanttItem extends BaseItem  {
         return true;
       }
 
-      get start_date(): Date {
-        let date: Date = new Date(this.GetValue('start_date'));
-        if (date === undefined || isNaN(date.getDate())) {
-            this._unscheduled = true;
-            date = new Date(Date.now());
-        }
-        return date;
-      }
-
-      set start_date(val: Date) {
-        this.SetValue<Date>('start_date', val);
-      }
-
-      get end_date(): Date {
-        let date: Date = new Date(this.GetValue('end_date'));
-        if (date === undefined || isNaN(date.getDate())) {
-            this._unscheduled = true;
-            date = new Date(Date.now());
-        }
-        return date;
-      }
-
-      set end_date(val: Date) {
-        this.SetValue<Date>('end_date', val);
-      }
-
-      get confirmed(): boolean {
-        return this.GetValue('confirmed');
-      }
-
-      set confirmed(val: boolean) {
-        this.SetValue('confirmed', val);
-      }
-
       get unscheduled(): boolean {
-        return this._unscheduled;
+        return this.GetValue('unscheduled');
       }
 
       set unscheduled(val: boolean) {
-        this._unscheduled = val;
+        this.SetValue('unscheduled', val);
       }
 
 }
 
 export class TeamGanttItem extends GanttItem {
-    private _iscomplex: boolean;
 
     get is_complex(): boolean {
-        if (this._iscomplex === undefined) {
-            if (this.GetValue('absences') !== undefined &&
-            (this.GetValue('absences') as Array<Absence>).length > 0 ) {
-            this._iscomplex = true;
-            } else {
-            this._iscomplex = false;
+        if (this.GetValue('absences') !== undefined && (this.GetValue('absences') as Array<ScheduledConfirmableItem>).length > 0 ) {
+          return true;
+        } else {
+          return false;
+        }
+    }
+
+    get start_date(): Date {
+      let date: Date;
+      if (this.is_complex) {
+        const absences: ScheduledConfirmableItem[] = this.GetValue('absences');
+        date = moment(absences[0].start_date).toDate();
+        for (const absence of absences) {
+            if (moment(absence.start_date).isBefore(moment(date))) {
+                date = moment(absence.start_date).toDate();
             }
         }
-        return this._iscomplex;
+      } else {
+        if (this.GetValue('start_date') === undefined) {
+            this.unscheduled = true;
+            date = new Date(Date.now());
+        } else {
+          date = moment(this.GetValue('start_date')).toDate();
+        }
+      }
+      return date;
     }
 
     get end_date(): Date {
-        let date: Date = new Date(this.GetValue('end_date'));
-        if (date === undefined || isNaN(date.getDate())) {
-            if (this.is_complex) {
-                const absences: Absence[] = this.GetValue('absences');
-                date = absences[0].end_date;
-                for (const absence of absences) {
-                    if (moment(absence.end_date).isAfter(moment(date))) {
-                        date = absence.end_date;
-                    }
-                }
-            } else {
-                this._unscheduled = true;
-                date = new Date(Date.now());
-            }
+      let date: Date;
+      if (this.is_complex) {
+          const absences: ScheduledConfirmableItem[] = this.GetValue('absences');
+          date = moment(absences[0].end_date).toDate();
+          for (const absence of absences) {
+              if (moment(absence.end_date).isAfter(moment(date))) {
+                  date = moment(absence.end_date).toDate();
+              }
+          }
+      } else {
+        if (this.GetValue('end_date') === undefined) {
+            this.unscheduled = true;
+            date = new Date(Date.now());
+        } else {
+          date = moment(this.GetValue('end_date')).toDate();
         }
-        return date;
       }
+      return date;
+    }
 }
