@@ -25,3 +25,6 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+to fix blurry font in VS Code in Win7 add to target command in shortcut: --disable-gpu --enable-use-zoom-for-dsf
+refer: https://wpdevkvk.wordpress.com/2016/11/06/fix-text-becomes-blurry-when-vs-code-application-loses-focus-issue-on-windows/
