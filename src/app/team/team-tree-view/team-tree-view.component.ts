@@ -3,7 +3,7 @@ import {} from '@angular/core';
 
 import {TreeNode} from 'primeng/api';
 import {TeamDataService} from '../team-data.service';
-import {Team, Person, Absence, AbsenceTypes} from '../../../../common/models';
+import {Team, Person, AbsenceTypes} from '../../../../common/models';
 
 interface AbsenceTypeItem {
   name: string;

@@ -63,9 +63,9 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     const total_duration: number = moment(max_date).diff(moment(min_date), 'days');
     let taskHTML = '';
     for (const duration of durations) {
-      duration.offset = Math.round(duration.offset * 100 / total_duration);
-      duration.duration = Math.round(duration.duration * 100 / total_duration);
-      taskHTML += `<div class='member_row_style' style='left:${duration.offset}%; width:${duration.duration}%;'>`;
+      duration.offset =  duration.offset * 100 / total_duration;
+      duration.duration = duration.duration * 100 / total_duration;
+      taskHTML += `<div class='gantt_task_line' style='left:${duration.offset}%; width:${duration.duration}%; height: 15px; margin-top: 7.5px;'></div>`;
     }
     return taskHTML;
   }
@@ -98,6 +98,32 @@ export class TeamGanttComponent implements OnInit, OnChanges {
   }
 
   configureChart() {
+    gantt.config.layout = {
+      css: 'gantt_container',
+      rows: [
+        {
+          cols: [
+            {
+              view: 'grid',
+              scrollY: 'scrollVer',
+              scrollable: true
+            },
+            { resizer: true, width: 1 },
+            {
+              view: 'timeline',
+              scrollY: 'scrollVer',
+              scrollX: 'scrollHor',
+              scrollable: true
+            },
+            {
+              view: 'scrollbar',
+              id: 'scrollVer'
+            }
+          ]
+        },
+        {view: 'scrollbar', id: 'scrollHor', height: 20}
+      ]
+    };
     gantt.config.columns = [
       {name: 'text', label: 'Item', tree: true, width: 180},
       {name: 'start_date', label: 'From', width: 110},
@@ -108,11 +134,19 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     ];
     gantt.config.min_column_width = 50;
     gantt.config.show_unscheduled = true;
-    gantt.templates.task_row_class = this.memberTaskClassTemplate;
+    gantt.config.scroll_on_click = true;
+    gantt.templates.task_class = this.memberTaskClassTemplate;
+    gantt.templates.task_text = this.memberTaskTextTemplate;
     this.setScaleMode(ScaleMode.Day);
   }
 
   memberTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
+    if (task.is_complex) {
+      return 'complex_gantt_bar';
+    }
+  }
+
+  memberTaskTextTemplate(start: Date, end: Date, task: TeamGanttItem): string {
     if (task.is_complex) {
       const str = TeamGanttComponent.renderComplexTask(task);
       return str;
