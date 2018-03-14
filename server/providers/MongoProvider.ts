@@ -115,7 +115,7 @@ export class MongoProvider implements IDataProvider {
                 }
                 this.activeCollection.insertMany(resObjects).then(insItems => {
                     let i = 0;
-                    for (const insItm of insItems) {
+                    for (const insItm of insItems.ops) {
                         items[i].SetValue('_id', insItm.ops[0]._id);
                         i++;
                     }
@@ -133,7 +133,7 @@ export class MongoProvider implements IDataProvider {
     UpdateItem<T extends DataItem> (item: T, success: (item: T) => void, error: (err: any) => void) {
         this.checkConnection(() => {
             this.activeCollection.updateOne({'_id' : new ObjectId(item.GetValue('_id'))},
-            {$set : item.GetObject()}).then(success(item))
+            {$set : item.GetObject()}).then(() => success(item))
             .catch(err => {
                 error(err);
             });
@@ -142,7 +142,7 @@ export class MongoProvider implements IDataProvider {
 
     DeleteItem<T extends DataItem> (item: T, success: (item: T) => void, error: (err: any) => void) {
         this.checkConnection(() => {
-            this.activeCollection.deleteOne({'_id': new ObjectId(item.GetValue('_id'))}).then(
+            this.activeCollection.deleteOne({'_id': new ObjectId(item.GetValue('_id'))}).then(() =>
                 success(item)
             )
             .catch(err => {
