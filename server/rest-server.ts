@@ -43,7 +43,9 @@ app.post('/api/test/teams', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
     try {
         if (req.body instanceof Array) {
-            plannerDS.AddTeams(req.body as Array<Object>);
+            plannerDS.InsertTeamsDataSet(req.body as Array<Object>, teams => {
+                res.status(200).json(teams.map(team => team.toJSON()));
+            });
         }
     } catch (err) {
         res.status(404).send('bad request: ' + err);
