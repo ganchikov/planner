@@ -1,45 +1,48 @@
 import * as mongoose from 'mongoose';
 import {Schema, Model, Document, Connection} from 'mongoose';
+import ObjectId = Schema.Types.ObjectId;
+
+
+import {Team} from '../../common/models';
+
 
 export {Schema, Model, Document} from 'mongoose';
 
+const deepPopulate = require('mongoose-deep-populate')(mongoose);
+
 const schemaOptions: mongoose.SchemaOptions = {
     id: false,
-    _id: true,
     autoIndex: true
 };
 
 export class PlannerDataService {
 
-    _teamSchema: Schema = new Schema({
-        _id: Schema.Types.ObjectId,
-        id: Number,
+    _teamSchema: Schema = (new Schema({
+        // id: Number,
         name: String,
         members: [{type: Schema.Types.ObjectId, ref: 'person'}]
-    }, schemaOptions);
+    }, schemaOptions)).plugin(deepPopulate, {});
 
     _teamModel: Model<Document>;
 
-    _personSchema: Schema = new Schema({
-        _id: Schema.Types.ObjectId,
-        id: Number,
+    _personSchema: Schema = (new Schema({
+        // id: Number,
         name: String,
         start_date: Date,
         end_date: Date,
         absences: [{type: Schema.Types.ObjectId, ref: 'absence'}]
-    }, schemaOptions);
+    }, schemaOptions)).plugin(deepPopulate, {});
 
     _personModel: Model<Document>;
 
-    _absenceSchema: Schema = new Schema({
-        _id: Schema.Types.ObjectId,
-        id: Number,
-        person_id: Number,
+    _absenceSchema: Schema = (new Schema({
+        // id: Number,
+        // person_id: Number,
         name: String,
         start_date: Date,
         end_date: Date,
         confirmed: Boolean
-    }, schemaOptions);
+    }, schemaOptions)).plugin(deepPopulate, {});
 
     _absenceModel: Model<Document>;
 
@@ -91,32 +94,30 @@ export class PlannerDataService {
     }
 
     public async InsertTeamsDataSet(teams: Object[], callback: (teamDocs: Document[]) => void) {
-        const teamDocs: Document[] = await this.AddTeamsAsync(teams);
-        let teamDoc_index: 0;
-        for (const teamDoc of teamDocs) {
-            const team = teams[teamDoc_index];
-            team['_id'] = teamDoc._id;
-            team['id'] = teamDoc.id;
-            if (team.hasOwnProperty('members') && team['members'] instanceof Array) {
-                const members = team['members'] as Array<Object>;
-                const memberDocs = await this.AddPersonsAsync(members);
-                let memberDoc_index: 0;
-                for (const memberDoc of memberDocs) {
-                    const member = members[memberDoc_index];
-                    member['_id'] = memberDoc._id;
-                    member['id'] = memberDoc.id;
-                    if (member.hasOwnProperty('absences') && member['absences'] instanceof Array) {
-                        const absences = member['absences'] as Array<Object>;
-                        absences.map(item => item['person_id'] = member['id']);
-                        const absenceDocs = await this.AddAbsences(absences);
-                        memberDoc['absences'].push(absenceDocs);
-                    }
-                    memberDoc_index++;
+        if (!this._connection) {this.Connect(); }
+        const teamItems: Team[] = [];
+        teams.forEach(item => teamItems.push(new Team(item)));
+        const teamDocs = [];
+        for (const teamItem of teamItems) {
+            const teamDoc: Document = await this.TeamModel.create(teamItem.GetObject(true));
+            const personIds: Array<ObjectId> = new Array();
+            const personDocs = [];
+            for (const personItem of teamItem.members) {
+                const personDoc: Document = await this.PersonModel.create(personItem.GetObject(true));
+                const absenceIds: Array<ObjectId> = new Array();
+                for (const absenceItem of personItem.absences) {
+                    const absenceDoc: Document = await this.AbsenceModel.create(absenceItem.GetObject());
+                    absenceIds.push(absenceDoc._id);
                 }
-                teamDoc['members'].push(memberDocs);
+                personDoc['absences'].push(absenceIds);
+                await personDoc.save();
+                 personIds.push(personDoc._id);
             }
-            teamDoc_index++;
+            teamDoc['members'].push(personIds);
+            teamDocs.push(teamDoc);
         }
+        this.TeamModel.updateMany({}, teamDocs);
+        await this.TeamModel.populate(teamDocs, {path: 'members', populate: {path: 'absences'}});
         callback(teamDocs);
     }
 

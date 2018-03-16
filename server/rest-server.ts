@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
     console.log('requested landing page');
 });
 
-//REST API TEST
+// REST API TEST
 
 app.get('/api/test/teams', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
@@ -46,6 +46,8 @@ app.post('/api/test/teams', (req, res) => {
             plannerDS.InsertTeamsDataSet(req.body as Array<Object>, teams => {
                 res.status(200).json(teams.map(team => team.toJSON()));
             });
+        } else {
+            res.status(200).send({});
         }
     } catch (err) {
         res.status(404).send('bad request: ' + err);

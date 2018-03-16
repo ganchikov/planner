@@ -53,26 +53,6 @@ export class BaseScheduledItem extends BaseItem {
     }
 }
 
-export class ScheduledConfirmableItem extends BaseScheduledItem {
-    constructor(
-        initializatorObj: Object
-    ) {
-        super(initializatorObj);
-    }
-
-    get confirmed(): boolean {
-        if (this.GetValue('confirmed') === 'true') {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    set confirmed(val: boolean) {
-        this.SetValue<boolean>('confirmed', val);
-    }
-
-}
-
 const MAX_TEAM_MEMBERS = 100;
 const MAX_PERSON_ABSENCES = 1000;
 
@@ -131,5 +111,26 @@ export class Person extends BaseScheduledItem {
         this.SetValue<ScheduledConfirmableItem[]>('dateEnd', val);
     }
 }
+
+export class ScheduledConfirmableItem extends BaseScheduledItem {
+    constructor(
+        initializatorObj: Object
+    ) {
+        super(initializatorObj);
+    }
+
+    get confirmed(): boolean {
+        if (this.GetValue('confirmed') === 'true') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    set confirmed(val: boolean) {
+        this.SetValue<boolean>('confirmed', val);
+    }
+
+}
+
 
 export const AbsenceTypes = ['vacation', 'sick leave', 'day off'];
