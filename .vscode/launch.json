@@ -18,6 +18,9 @@
             "program": "${workspaceFolder}/server/rest-server.ts",            
             "outFiles": [
                 "${workspaceFolder}/dist/out-tsc/server/**/*.js"
+            ],
+            "skipFiles": [
+                "${workspaceFolder}/node_modules/**/*.*"
             ]
         }
     ]

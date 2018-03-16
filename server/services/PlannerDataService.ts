@@ -2,51 +2,81 @@ import * as mongoose from 'mongoose';
 import {Schema, Model, Document, Connection} from 'mongoose';
 import ObjectId = Schema.Types.ObjectId;
 
-
 import {Team} from '../../common/models';
 
-
 export {Schema, Model, Document} from 'mongoose';
-
-const deepPopulate = require('mongoose-deep-populate')(mongoose);
 
 const schemaOptions: mongoose.SchemaOptions = {
     id: false,
     autoIndex: true
 };
 
+const connection: Connection = mongoose.createConnection('mongodb://localhost:27017/plannerdb');
+
+export function Disconnect() {
+    if (connection) {
+        connection.close();
+    }
+}
+
+const counterSchema: Schema = new Schema({
+    _id: String,
+    sequence_val: {type: Number, default: 1}
+});
+
+const counterModel: Model<Document> = connection.model('counter', counterSchema);
+
+export function GetCounterIncrement(counter_id: string, callback: (value: number) => void) {
+    counterModel.findByIdAndUpdate({_id: counter_id}, {$inc: {sequence_val: 1}}, (err, res) => {
+        if (!res) {
+            counterModel.create({_id: counter_id, sequence_val: 1}, (e, r) => {
+                callback(r['sequence_val']);
+            } );
+        } else {
+            callback(res['sequence_val']);
+        }
+    });
+}
+
 export class PlannerDataService {
 
-    _teamSchema: Schema = (new Schema({
-        // id: Number,
+    private _teamSchema: Schema = (new Schema({
+        id: Number,
         name: String,
         members: [{type: Schema.Types.ObjectId, ref: 'person'}]
-    }, schemaOptions)).plugin(deepPopulate, {});
+    }, schemaOptions)).pre('save', (next) => {
+        const doc = this._doc;
+        counterModel.findByIdAndUpdate({_id: 'teams'}, {$inc: {sequence_val: 1}}, (err, counter) => {
+            if (err) {
+                return next(err);
+            }
+            doc['id'] = counter['sequence_val'];
+            next();
+        });
+    });
 
-    _teamModel: Model<Document>;
+    _teamModel: Model<Document> = connection.model('team', this._teamSchema);
 
-    _personSchema: Schema = (new Schema({
+    _personSchema: Schema = new Schema({
         // id: Number,
         name: String,
         start_date: Date,
         end_date: Date,
         absences: [{type: Schema.Types.ObjectId, ref: 'absence'}]
-    }, schemaOptions)).plugin(deepPopulate, {});
+    }, schemaOptions);
 
-    _personModel: Model<Document>;
+    _personModel: Model<Document> = connection.model('person', this._personSchema);
 
-    _absenceSchema: Schema = (new Schema({
+    _absenceSchema: Schema = new Schema({
         // id: Number,
         // person_id: Number,
         name: String,
         start_date: Date,
         end_date: Date,
         confirmed: Boolean
-    }, schemaOptions)).plugin(deepPopulate, {});
+    }, schemaOptions);
 
-    _absenceModel: Model<Document>;
-
-    _connection: Connection;
+    _absenceModel: Model<Document> = connection.model('absence', this._absenceSchema);
 
     public get TeamModel(): Model<Document> {
         return this._teamModel;
@@ -63,24 +93,6 @@ export class PlannerDataService {
     constructor() {
     }
 
-    private initModels(connection: Connection) {
-        this._teamModel = connection.model('team', this._teamSchema);
-        this._personModel = connection.model('person', this._personSchema);
-        this._absenceModel = connection.model('absence', this._absenceSchema);
-    }
-
-    public Connect() {
-        this._connection = mongoose.createConnection('mongodb://localhost:27017/plannerdb');
-        this.initModels(this._connection);
-    }
-
-    public Disconnect() {
-        if (this._connection) {
-            this._connection.close();
-        }
-    }
-
-
     public async AddTeamsAsync(teams: Object[]): Promise<Document[]> {
         return await this._teamModel.insertMany(teams);
     }
@@ -94,14 +106,12 @@ export class PlannerDataService {
     }
 
     public async InsertTeamsDataSet(teams: Object[], callback: (teamDocs: Document[]) => void) {
-        if (!this._connection) {this.Connect(); }
         const teamItems: Team[] = [];
         teams.forEach(item => teamItems.push(new Team(item)));
         const teamDocs = [];
         for (const teamItem of teamItems) {
             const teamDoc: Document = await this.TeamModel.create(teamItem.GetObject(true));
             const personIds: Array<ObjectId> = new Array();
-            const personDocs = [];
             for (const personItem of teamItem.members) {
                 const personDoc: Document = await this.PersonModel.create(personItem.GetObject(true));
                 const absenceIds: Array<ObjectId> = new Array();
