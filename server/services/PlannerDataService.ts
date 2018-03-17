@@ -1,49 +1,105 @@
 import * as mongoose from 'mongoose';
 import {Schema, Model, Document, Connection} from 'mongoose';
+import ObjectId = Schema.Types.ObjectId;
+
+<<<<<<< HEAD
+=======
+import {Team} from '../../common/models';
+>>>>>>> f05bf3a84ee0310fcbf0de7607d761fae6ef156e
 
 export {Schema, Model, Document} from 'mongoose';
 
 const schemaOptions: mongoose.SchemaOptions = {
     id: false,
-    _id: true,
     autoIndex: true
 };
 
+const connection: Connection = mongoose.createConnection('mongodb://localhost:27017/plannerdb');
+
+export function Disconnect() {
+    if (connection) {
+        connection.close();
+    }
+}
+
+const counterSchema: Schema = new Schema({
+    _id: String,
+    sequence_val: {type: Number, default: 1}
+});
+
+const counterModel: Model<Document> = connection.model('counter', counterSchema);
+
+export function GetCounterIncrement(counter_id: string, callback: (value: number) => void) {
+    counterModel.findByIdAndUpdate({_id: counter_id}, {$inc: {sequence_val: 1}}, (err, res) => {
+        if (!res) {
+            counterModel.create({_id: counter_id, sequence_val: 1}, (e, r) => {
+                callback(r['sequence_val']);
+            } );
+        } else {
+            callback(res['sequence_val']);
+        }
+    });
+}
+
 export class PlannerDataService {
 
+<<<<<<< HEAD
     _teamSchema: Schema = new Schema({
-        _id: Schema.Types.ObjectId,
+        _id: ObjectId,
+        id: Number,
+        name: String,
+        members: [{type: ObjectId, ref: 'person'}]
+    }, schemaOptions);
+=======
+    private _teamSchema: Schema = (new Schema({
         id: Number,
         name: String,
         members: [{type: Schema.Types.ObjectId, ref: 'person'}]
-    }, schemaOptions);
+    }, schemaOptions)).pre('save', (next) => {
+        const doc = this._doc;
+        counterModel.findByIdAndUpdate({_id: 'teams'}, {$inc: {sequence_val: 1}}, (err, counter) => {
+            if (err) {
+                return next(err);
+            }
+            doc['id'] = counter['sequence_val'];
+            next();
+        });
+    });
+>>>>>>> f05bf3a84ee0310fcbf0de7607d761fae6ef156e
 
-    _teamModel: Model<Document>;
+    _teamModel: Model<Document> = connection.model('team', this._teamSchema);
 
     _personSchema: Schema = new Schema({
-        _id: Schema.Types.ObjectId,
+<<<<<<< HEAD
+        _id: ObjectId,
         id: Number,
+=======
+        // id: Number,
+>>>>>>> f05bf3a84ee0310fcbf0de7607d761fae6ef156e
         name: String,
         start_date: Date,
         end_date: Date,
-        absences: [{type: Schema.Types.ObjectId, ref: 'absence'}]
+        absences: [{type: ObjectId, ref: 'absence'}]
     }, schemaOptions);
 
-    _personModel: Model<Document>;
+    _personModel: Model<Document> = connection.model('person', this._personSchema);
 
     _absenceSchema: Schema = new Schema({
-        _id: Schema.Types.ObjectId,
+<<<<<<< HEAD
+        _id: ObjectId,
         id: Number,
         person_id: Number,
+=======
+        // id: Number,
+        // person_id: Number,
+>>>>>>> f05bf3a84ee0310fcbf0de7607d761fae6ef156e
         name: String,
         start_date: Date,
         end_date: Date,
         confirmed: Boolean
     }, schemaOptions);
 
-    _absenceModel: Model<Document>;
-
-    _connection: Connection;
+    _absenceModel: Model<Document> = connection.model('absence', this._absenceSchema);
 
     public get TeamModel(): Model<Document> {
         return this._teamModel;
@@ -60,24 +116,6 @@ export class PlannerDataService {
     constructor() {
     }
 
-    private initModels(connection: Connection) {
-        this._teamModel = connection.model('team', this._teamSchema);
-        this._personModel = connection.model('person', this._personSchema);
-        this._absenceModel = connection.model('absence', this._absenceSchema);
-    }
-
-    public Connect() {
-        this._connection = mongoose.createConnection('mongodb://localhost:27017/plannerdb');
-        this.initModels(this._connection);
-    }
-
-    public Disconnect() {
-        if (this._connection) {
-            this._connection.close();
-        }
-    }
-
-
     public async AddTeamsAsync(teams: Object[]): Promise<Document[]> {
         return await this._teamModel.insertMany(teams);
     }
@@ -91,7 +129,32 @@ export class PlannerDataService {
     }
 
     public async InsertTeamsDataSet(teams: Object[], callback: (teamDocs: Document[]) => void) {
+<<<<<<< HEAD
+        if (!this._connection) {this.Connect(); }
+        for (const team of teams) {
+            if (team.hasOwnProperty('members') && team['members'] instanceof Array) {
+                const members: Array<Object> = team['members'];
+                const memberIds: Array<ObjectId> = new Array();
+                while (members.length) {
+                    const member = members.shift();
+                    const memberDoc = await this.PersonModel.create(member);
+
+                    if (member.hasOwnProperty('absences') && member['absences'] instanceof Array) {
+                        const absences: Array<Object> = member['absences'];
+                        
+                        while (absences.length) {
+                            const absence = absences.shift();
+                            const absenceDoc = await this.AbsenceModel.create(absence);
+                        }
+                    }
+                }
+            }
+        }
+
         const teamDocs: Document[] = await this.AddTeamsAsync(teams);
+        
+
+
         let teamDoc_index: 0;
         for (const teamDoc of teamDocs) {
             const team = teams[teamDoc_index];
@@ -112,11 +175,30 @@ export class PlannerDataService {
                         memberDoc['absences'].push(absenceDocs);
                     }
                     memberDoc_index++;
+=======
+        const teamItems: Team[] = [];
+        teams.forEach(item => teamItems.push(new Team(item)));
+        const teamDocs = [];
+        for (const teamItem of teamItems) {
+            const teamDoc: Document = await this.TeamModel.create(teamItem.GetObject(true));
+            const personIds: Array<ObjectId> = new Array();
+            for (const personItem of teamItem.members) {
+                const personDoc: Document = await this.PersonModel.create(personItem.GetObject(true));
+                const absenceIds: Array<ObjectId> = new Array();
+                for (const absenceItem of personItem.absences) {
+                    const absenceDoc: Document = await this.AbsenceModel.create(absenceItem.GetObject());
+                    absenceIds.push(absenceDoc._id);
+>>>>>>> f05bf3a84ee0310fcbf0de7607d761fae6ef156e
                 }
-                teamDoc['members'].push(memberDocs);
+                personDoc['absences'].push(absenceIds);
+                await personDoc.save();
+                 personIds.push(personDoc._id);
             }
-            teamDoc_index++;
+            teamDoc['members'].push(personIds);
+            teamDocs.push(teamDoc);
         }
+        this.TeamModel.updateMany({}, teamDocs);
+        await this.TeamModel.populate(teamDocs, {path: 'members', populate: {path: 'absences'}});
         callback(teamDocs);
     }
 

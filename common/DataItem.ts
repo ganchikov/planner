@@ -38,16 +38,13 @@ export class DataItem {
 
     public GetTypedItem<T>(type: IConstructor<T>): T {
         const itm: T = new type(this.GetObject());
-        // this._fields.forEach(element => {
-        //     itm[element.key] = element.value;
-        // });
         return itm;
     }
 
-    public GetObject(): Object {
+    public GetObject(nochildren = false): Object {
         const resObj = new Object;
         this._fields.forEach(val => {
-            if (val.value instanceof Array) {
+            if (val.value instanceof Array && !nochildren) {
                 const objColl: Object[] = [];
                 (val.value as Array<any>).forEach(itm => {
                     if (itm instanceof DataItem) {
@@ -58,7 +55,7 @@ export class DataItem {
                     }
                 });
                 resObj[val.key] = objColl;
-            } else {
+            } else if (!(val.value instanceof Array) && !(val.value instanceof DataItem)) {
                 resObj[val.key] = val.value;
             }
         });
