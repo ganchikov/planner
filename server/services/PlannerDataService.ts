@@ -2,10 +2,7 @@ import * as mongoose from 'mongoose';
 import {Schema, Model, Document, Connection} from 'mongoose';
 import ObjectId = Schema.Types.ObjectId;
 
-<<<<<<< HEAD
-=======
 import {Team} from '../../common/models';
->>>>>>> f05bf3a84ee0310fcbf0de7607d761fae6ef156e
 
 export {Schema, Model, Document} from 'mongoose';
 
@@ -43,14 +40,6 @@ export function GetCounterIncrement(counter_id: string, callback: (value: number
 
 export class PlannerDataService {
 
-<<<<<<< HEAD
-    _teamSchema: Schema = new Schema({
-        _id: ObjectId,
-        id: Number,
-        name: String,
-        members: [{type: ObjectId, ref: 'person'}]
-    }, schemaOptions);
-=======
     private _teamSchema: Schema = (new Schema({
         id: Number,
         name: String,
@@ -65,34 +54,22 @@ export class PlannerDataService {
             next();
         });
     });
->>>>>>> f05bf3a84ee0310fcbf0de7607d761fae6ef156e
 
     _teamModel: Model<Document> = connection.model('team', this._teamSchema);
 
     _personSchema: Schema = new Schema({
-<<<<<<< HEAD
-        _id: ObjectId,
-        id: Number,
-=======
         // id: Number,
->>>>>>> f05bf3a84ee0310fcbf0de7607d761fae6ef156e
         name: String,
         start_date: Date,
         end_date: Date,
-        absences: [{type: ObjectId, ref: 'absence'}]
+        absences: [{type: Schema.Types.ObjectId, ref: 'absence'}]
     }, schemaOptions);
 
     _personModel: Model<Document> = connection.model('person', this._personSchema);
 
     _absenceSchema: Schema = new Schema({
-<<<<<<< HEAD
-        _id: ObjectId,
-        id: Number,
-        person_id: Number,
-=======
         // id: Number,
         // person_id: Number,
->>>>>>> f05bf3a84ee0310fcbf0de7607d761fae6ef156e
         name: String,
         start_date: Date,
         end_date: Date,
@@ -129,53 +106,6 @@ export class PlannerDataService {
     }
 
     public async InsertTeamsDataSet(teams: Object[], callback: (teamDocs: Document[]) => void) {
-<<<<<<< HEAD
-        if (!this._connection) {this.Connect(); }
-        for (const team of teams) {
-            if (team.hasOwnProperty('members') && team['members'] instanceof Array) {
-                const members: Array<Object> = team['members'];
-                const memberIds: Array<ObjectId> = new Array();
-                while (members.length) {
-                    const member = members.shift();
-                    const memberDoc = await this.PersonModel.create(member);
-
-                    if (member.hasOwnProperty('absences') && member['absences'] instanceof Array) {
-                        const absences: Array<Object> = member['absences'];
-                        
-                        while (absences.length) {
-                            const absence = absences.shift();
-                            const absenceDoc = await this.AbsenceModel.create(absence);
-                        }
-                    }
-                }
-            }
-        }
-
-        const teamDocs: Document[] = await this.AddTeamsAsync(teams);
-        
-
-
-        let teamDoc_index: 0;
-        for (const teamDoc of teamDocs) {
-            const team = teams[teamDoc_index];
-            team['_id'] = teamDoc._id;
-            team['id'] = teamDoc.id;
-            if (team.hasOwnProperty('members') && team['members'] instanceof Array) {
-                const members = team['members'] as Array<Object>;
-                const memberDocs = await this.AddPersonsAsync(members);
-                let memberDoc_index: 0;
-                for (const memberDoc of memberDocs) {
-                    const member = members[memberDoc_index];
-                    member['_id'] = memberDoc._id;
-                    member['id'] = memberDoc.id;
-                    if (member.hasOwnProperty('absences') && member['absences'] instanceof Array) {
-                        const absences = member['absences'] as Array<Object>;
-                        absences.map(item => item['person_id'] = member['id']);
-                        const absenceDocs = await this.AddAbsences(absences);
-                        memberDoc['absences'].push(absenceDocs);
-                    }
-                    memberDoc_index++;
-=======
         const teamItems: Team[] = [];
         teams.forEach(item => teamItems.push(new Team(item)));
         const teamDocs = [];
@@ -188,7 +118,6 @@ export class PlannerDataService {
                 for (const absenceItem of personItem.absences) {
                     const absenceDoc: Document = await this.AbsenceModel.create(absenceItem.GetObject());
                     absenceIds.push(absenceDoc._id);
->>>>>>> f05bf3a84ee0310fcbf0de7607d761fae6ef156e
                 }
                 personDoc['absences'].push(absenceIds);
                 await personDoc.save();
