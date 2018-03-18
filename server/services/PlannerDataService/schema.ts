@@ -13,13 +13,13 @@ export const counterSchema: Schema = new Schema({
 });
 
 export const teamSchema: Schema = new Schema({
-    id: Number,
+    id: {type: Number, index: true, unique: true},
     name: String,
     members: [{type: Schema.Types.ObjectId, ref: 'person'}]
 }, schemaOptions);
 
 export const personSchema: Schema = new Schema({
-    id: Number,
+    id: {type: Number, index: true, unique: true},
     name: String,
     start_date: Date,
     end_date: Date,
@@ -27,7 +27,7 @@ export const personSchema: Schema = new Schema({
 }, schemaOptions);
 
 export const absenceSchema: Schema = new Schema({
-    id: Number,
+    id: {type: Number, index: true, unique: true},
     person_id: Number,
     name: String,
     start_date: Date,

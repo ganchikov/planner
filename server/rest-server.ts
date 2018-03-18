@@ -96,6 +96,7 @@ const server = app.listen(8001, 'localhost', () => {
 const finalize = () => {
     console.log('Finalizing');
     teamDS.Disconnect();
+    // DS.Disconnect();
     process.exit(0);
 };
 
