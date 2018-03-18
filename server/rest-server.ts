@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as bodyParser from 'body-parser';
 
 import {TeamDataService} from './services/TeamDataService';
-import {PlannerDataService} from './services/PlannerDataService';
+import * as DS from './services/PlannerDataService/main';
 
 import {MongoProvider} from './providers/MongoProvider';
 
@@ -12,7 +12,6 @@ import {Team} from '../common/models';
 const app = express();
 
 const teamDS: TeamDataService = new TeamDataService(new MongoProvider(undefined, 'plannerdb'));
-const plannerDS: PlannerDataService = new PlannerDataService();
 
 app.use(bodyParser.json());
 
@@ -43,7 +42,7 @@ app.post('/api/test/teams', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
     try {
         if (req.body instanceof Array) {
-            plannerDS.InsertTeamsDataSet(req.body as Array<Object>, teams => {
+            DS.InsertTeamsDataSet(req.body as Array<Object>, teams => {
                 res.status(200).json(teams.map(team => team.toJSON()));
             });
         } else {

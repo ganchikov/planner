@@ -31,9 +31,10 @@ export class DataItem {
         return this._fields.find(item => item.key === key);
     }
 
-    public SetValue<T>(key: string, value: T) {
+    public SetValue<T>(key: string, value: T): DataItem {
         const kvp = this.getKVPair(key);
         if (kvp) {kvp.value = value; } else {this._fields.push(new KeyValuePair(key, value)); }
+        return this;
     }
 
     public GetTypedItem<T>(type: IConstructor<T>): T {
