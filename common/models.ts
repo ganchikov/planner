@@ -64,13 +64,13 @@ export class Team extends BaseItem {
 
         if (initializatorObj && initializatorObj.hasOwnProperty('members')) {
             const members: Person[] = [];
-            let memberId: number = MAX_TEAM_MEMBERS * this.id;
+            // let memberId: number = MAX_TEAM_MEMBERS * this.id;
             for (const memberObj of initializatorObj['members']) {
                 const member = new Person(memberObj);
-                member.id = memberId;
+                // member.id = memberId;
                 member.parent_id = this.id;
                 members.push(member);
-                memberId++;
+                // memberId++;
             }
             this.SetValue<Person[]>('members', members);
         }
@@ -92,13 +92,13 @@ export class Person extends BaseScheduledItem {
         super(initializatorObj);
         if (initializatorObj && initializatorObj.hasOwnProperty('absences')) {
             const absences: ScheduledConfirmableItem[] = [];
-            let absenceId: number = MAX_PERSON_ABSENCES * this.id;
+            // let absenceId: number = MAX_PERSON_ABSENCES * this.id;
             for (const absObj of initializatorObj['absences']) {
                 const absence = new ScheduledConfirmableItem(absObj);
-                absence.parent_id = this.id;
-                absence.id = absenceId;
+                absence.parent_id = absence.GetValue('person_id');
+                // absence.id = absenceId;
                 absences.push(absence);
-                absenceId++;
+                // absenceId++;
             }
             this.SetValue<ScheduledConfirmableItem[]>('absences', absences);
         }

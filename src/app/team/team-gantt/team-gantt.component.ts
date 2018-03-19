@@ -98,32 +98,32 @@ export class TeamGanttComponent implements OnInit, OnChanges {
   }
 
   configureChart() {
-    gantt.config.layout = {
-      css: 'gantt_container',
-      rows: [
-        {
-          cols: [
-            {
-              view: 'grid',
-              scrollY: 'scrollVer',
-              scrollable: true
-            },
-            { resizer: true, width: 1 },
-            {
-              view: 'timeline',
-              scrollY: 'scrollVer',
-              scrollX: 'scrollHor',
-              scrollable: true
-            },
-            {
-              view: 'scrollbar',
-              id: 'scrollVer'
-            }
-          ]
-        },
-        {view: 'scrollbar', id: 'scrollHor', height: 20}
-      ]
-    };
+    // gantt.config.layout = {
+    //   css: 'gantt_container',
+    //   rows: [
+    //     {
+    //       cols: [
+    //         {
+    //           view: 'grid',
+    //           scrollY: 'scrollVer',
+    //           scrollable: true
+    //         },
+    //         { resizer: true, width: 1 },
+    //         {
+    //           view: 'timeline',
+    //           scrollY: 'scrollVer',
+    //           scrollX: 'scrollHor',
+    //           scrollable: true
+    //         },
+    //         {
+    //           view: 'scrollbar',
+    //           id: 'scrollVer'
+    //         }
+    //       ]
+    //     },
+    //     {view: 'scrollbar', id: 'scrollHor', height: 20}
+    //   ]
+    // };
     gantt.config.columns = [
       {name: 'text', label: 'Item', tree: true, width: 180},
       {name: 'start_date', label: 'From', width: 110},

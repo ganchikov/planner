@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 
 // REST API TEST
 
-app.get('/api/test/teams', (req, res) => {
+app.get('/api/teams', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
     try {
         const filterCriteria = req.body as Object;
@@ -61,17 +61,17 @@ app.post('/api/test/teams', (req, res) => {
     }
 });
 
-// REST API
-app.get('/api/teams/', (req, res) => {
-    res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
-    teamDS.GetTeams(teams => {
-        const jsonObjects: Object[] = [];
-        teams.forEach(team => jsonObjects.push(team.GetObject()));
-        res.status(200).json(jsonObjects);
-    }, err => {
-        res.status(404).send(err);
-    });
-});
+// // REST API
+// app.get('/api/teams/', (req, res) => {
+//     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
+//     teamDS.GetTeams(teams => {
+//         const jsonObjects: Object[] = [];
+//         teams.forEach(team => jsonObjects.push(team.GetObject()));
+//         res.status(200).json(jsonObjects);
+//     }, err => {
+//         res.status(404).send(err);
+//     });
+// });
 
 app.post('/api/teams/', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
