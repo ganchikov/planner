@@ -1,6 +1,4 @@
-import * as mongoose from 'mongoose';
-import {Schema} from 'mongoose';
-import SchemaOptions = mongoose.SchemaOptions;
+import {Schema, SchemaOptions} from './imports';
 
 const schemaOptions: SchemaOptions = {
     id: false,

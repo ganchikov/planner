@@ -1,17 +1,14 @@
 import * as mongoose from 'mongoose';
-import {Schema, Model, Document, Connection} from 'mongoose';
-import ObjectId = Schema.Types.ObjectId;
-import * as Schemas from './schema';
+import {Model, Document, Connection, ObjectId} from './imports';
+import * as $s from './schemas';
 import {Team} from '../../../common/models';
-
-export {Schema, Model, Document} from 'mongoose';
 
 const connection: Connection = mongoose.createConnection('mongodb://localhost:27017/plannerdb');
 
-const counterModel: Model<Document> = connection.model('counter', Schemas.counterSchema);
-const teamModel: Model<Document> = connection.model('team', Schemas.teamSchema);
-const personModel: Model<Document> = connection.model('person', Schemas.personSchema);
-const absenceModel: Model<Document> = connection.model('absence', Schemas.absenceSchema);
+const counterModel: Model<Document> = connection.model('counter', $s.counterSchema);
+const teamModel: Model<Document> = connection.model('team', $s.teamSchema);
+const personModel: Model<Document> = connection.model('person', $s.personSchema);
+const absenceModel: Model<Document> = connection.model('absence', $s.absenceSchema);
 
 export function Disconnect() {
     if (connection) {
@@ -20,7 +17,7 @@ export function Disconnect() {
 }
 
 async function getCounterIncrement(counter_id: string): Promise<number> {
-    let counterDoc = await counterModel.findByIdAndUpdate({_id: counter_id}, {$inc: {sequence_val: 1}});
+    let counterDoc = await counterModel.findByIdAndUpdate({_id: counter_id}, {$inc: {sequence_val: 1}}, {new: true});
     if (!counterDoc) {
         counterDoc = await counterModel.create({_id: counter_id, sequence_val: 1});
     }
@@ -50,9 +47,24 @@ export async function InsertTeamsDataSet(teams: Object[], callback: (teamDocs: D
              personIds.push(personDoc._id);
         }
         teamDoc['members'].push(personIds);
+        await teamDoc.save();
         teamDocs.push(teamDoc);
     }
-    teamModel.updateMany({}, teamDocs);
+    // await teamModel.updateMany({}, teamDocs);
     await teamModel.populate(teamDocs, {path: 'members', populate: {path: 'absences'}});
     callback(teamDocs);
 }
+
+export function GetTeamsDataSet(filter: Object, callback: (err: any, teamDocs: Document[]) => void) {
+    teamModel.find(filter, (err, teamDocs) => {
+        if (!err) {
+            teamModel.populate(teamDocs, {path: 'members', populate: {path: 'absences'}}, (inn_err, popDocs) => {
+                callback(inn_err, popDocs);
+            });
+        } else {
+            callback(err, []);
+        }
+    });
+}
+
+
