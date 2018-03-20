@@ -49,8 +49,9 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     if (!task.is_complex) {return ''; }
     const absences: TeamGanttItem[] = task.GetValue('absences') as TeamGanttItem[];
     const durations: Duration[] = [];
-    let min_date: Date;
-    let max_date: Date;
+    let min_date: Date = absences[0].start_date;
+    let max_date: Date = absences[0].end_date;
+
 
     for (const absence of absences) {
       if (moment(absence.start_date).isBefore(min_date)) {min_date = absence.start_date; }
@@ -97,69 +98,6 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     }
   }
 
-  configureChart() {
-    // gantt.config.layout = {
-    //   css: 'gantt_container',
-    //   rows: [
-    //     {
-    //       cols: [
-    //         {
-    //           view: 'grid',
-    //           scrollY: 'scrollVer',
-    //           scrollable: true
-    //         },
-    //         { resizer: true, width: 1 },
-    //         {
-    //           view: 'timeline',
-    //           scrollY: 'scrollVer',
-    //           scrollX: 'scrollHor',
-    //           scrollable: true
-    //         },
-    //         {
-    //           view: 'scrollbar',
-    //           id: 'scrollVer'
-    //         }
-    //       ]
-    //     },
-    //     {view: 'scrollbar', id: 'scrollHor', height: 20}
-    //   ]
-    // };
-    gantt.config.columns = [
-      {name: 'text', label: 'Item', tree: true, width: 180},
-      {name: 'start_date', label: 'From', width: 110},
-      {name: 'end_date', label: 'To', width: 110},
-      {name: 'confirmed', label: 'Confirmed',
-        template: function(obj) {return obj.confirmed === undefined ? '' : obj.confirmed; }
-      }
-    ];
-    gantt.config.min_column_width = 50;
-    gantt.config.show_unscheduled = true;
-    gantt.config.scroll_on_click = true;
-    gantt.templates.task_class = this.memberTaskClassTemplate;
-    gantt.templates.task_text = this.memberTaskTextTemplate;
-    this.setScaleMode(ScaleMode.Day);
-  }
-
-  memberTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
-    if (task.is_complex) {
-      return 'complex_gantt_bar';
-    }
-  }
-
-  memberTaskTextTemplate(start: Date, end: Date, task: TeamGanttItem): string {
-    if (task.is_complex) {
-      const str = TeamGanttComponent.renderComplexTask(task);
-      return str;
-    } else {
-      return '';
-    }
-  }
-
-  weekScaleTemplate(date: Date) {
-    const weekNum = moment(date).isoWeek();
-    return 'WW' + weekNum;
-  }
-
   setScaleMode(scaleMode: ScaleMode) {
     switch (scaleMode) {
       case ScaleMode.Day:
@@ -190,5 +128,80 @@ export class TeamGanttComponent implements OnInit, OnChanges {
         gantt.config.subscales = [];
     }
   }
+
+  configureChart() {
+    gantt.config['layout'] = {
+      css: 'gantt_container',
+      rows: [
+        {
+          cols: [
+            {
+              view: 'grid',
+              scrollY: 'scrollVer',
+              scrollable: true
+            },
+            { resizer: true, width: 1 },
+            {
+              view: 'timeline',
+              scrollY: 'scrollVer',
+              scrollX: 'scrollHor',
+              scrollable: true
+            },
+            {
+              view: 'scrollbar',
+              id: 'scrollVer'
+            }
+          ]
+        },
+        {view: 'scrollbar', id: 'scrollHor', height: 20}
+      ]
+    };
+    gantt.config.columns = [
+      {name: 'text', label: 'Item', tree: true, width: 200},
+      {name: 'start_date', label: 'From', width: 115},
+      {name: 'end_date', label: 'To', width: 115},
+      {name: 'confirmed', label: 'Confirmed',
+        template: function(obj) {return obj.confirmed === undefined ? '' : obj.confirmed; }
+      },
+      {name: 'add', label: '', width: 44}
+    ];
+    gantt.config.grid_resize = true;
+    gantt.config.grid_width = 400;
+    // gantt.config.min_grid_column_width = 100;
+    gantt.config.keep_grid_width = false;
+    gantt.config.min_column_width = 50;
+    gantt.config.show_unscheduled = true;
+    gantt.config.scroll_on_click = true;
+    gantt.templates.task_class = this.memberTaskClassTemplate;
+    gantt.templates.task_text = this.memberTaskTextTemplate;
+    gantt.attachEvent('onTaskCreated', this.onTaskCreated);
+    this.setScaleMode(ScaleMode.Day);
+  }
+
+  onTaskCreated(item: Object) {
+    console.log(item);
+  }
+
+  memberTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
+    if (task.is_complex) {
+      return 'complex_gantt_bar';
+    }
+  }
+
+  memberTaskTextTemplate(start: Date, end: Date, task: TeamGanttItem): string {
+    if (task.is_complex) {
+      const str = TeamGanttComponent.renderComplexTask(task);
+      return str;
+    } else {
+      return '';
+    }
+  }
+
+  weekScaleTemplate(date: Date) {
+    const weekNum = moment(date).isoWeek();
+    return 'WW' + weekNum;
+  }
+
+  
 
 }

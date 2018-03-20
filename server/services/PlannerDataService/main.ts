@@ -30,23 +30,19 @@ export async function InsertTeamsDataSet(teams: Object[], callback: (teamDocs: D
     const teamDocs = [];
     for (const teamItem of teamItems) {
         const teamDoc: Document = await teamModel.create(
-            teamItem.SetValue('id', await getCounterIncrement(teamModel.collection.name)).GetObject(true));
-        const personIds: Array<ObjectId> = new Array();
+            teamItem.SetValue('id', await getCounterIncrement('universal')).GetObject(true));
         for (const personItem of teamItem.members) {
             const personDoc: Document = await personModel.create(
-                personItem.SetValue('id', await getCounterIncrement(personModel.collection.name)).GetObject(true));
-            const absenceIds: Array<ObjectId> = new Array();
+                personItem.SetValue('id', await getCounterIncrement('universal')).GetObject(true));
             for (const absenceItem of personItem.absences) {
                 const absenceDoc: Document = await absenceModel.create(
-                    absenceItem.SetValue('id', await getCounterIncrement(absenceModel.collection.name))
+                    absenceItem.SetValue('id', await getCounterIncrement('universal'))
                     .SetValue('person_id', personItem.id).GetObject());
-                absenceIds.push(absenceDoc._id);
+                    personDoc['absences'].push(absenceDoc._id);
             }
-            personDoc['absences'].push(absenceIds);
             await personDoc.save();
-             personIds.push(personDoc._id);
+            teamDoc['members'].push(personDoc._id);
         }
-        teamDoc['members'].push(personIds);
         await teamDoc.save();
         teamDocs.push(teamDoc);
     }
