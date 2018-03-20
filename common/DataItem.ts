@@ -44,22 +44,22 @@ export class DataItem {
 
     public GetObject(nochildren = false): Object {
         const resObj = new Object;
-        this._fields.forEach(val => {
-            if (val.value instanceof Array && !nochildren) {
+        for (const field of this._fields) {
+            if (field.value instanceof Array && !nochildren) {
                 const objColl: Object[] = [];
-                (val.value as Array<any>).forEach(itm => {
-                    if (itm instanceof DataItem) {
-                        const resItm: Object = (itm as DataItem).GetObject();
+                for (const item of (field.value as Array<any>)) {
+                    if (item instanceof DataItem) {
+                        const resItm: Object = (item as DataItem).GetObject();
                         objColl.push(resItm);
                     } else {
-                        objColl.push(itm);
+                        objColl.push(item);
                     }
-                });
-                resObj[val.key] = objColl;
-            } else if (!(val.value instanceof Array) && !(val.value instanceof DataItem)) {
-                resObj[val.key] = val.value;
+                }
+                resObj[field.key] = objColl;
+            } else if (!(field.value instanceof Array) && !(field.value instanceof DataItem)) {
+                resObj[field.key] = field.value;
             }
-        });
+        }
         return resObj;
     }
 
@@ -69,7 +69,8 @@ export class DataItem {
 
     public GetTypedItemAndFlatChildren<T>(type: IConstructor<T>): T[] {
         const results: T[] = [];
-        results.push(this.GetTypedItem<T>(type));
+        const itm =  this.GetTypedItem<T>(type);
+        results.push(itm);
         for (const kvp of this._fields) {
             if (kvp.value instanceof Array) {
                 kvp.value.forEach(val => {

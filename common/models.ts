@@ -34,6 +34,14 @@ export class BaseItem extends DataItem {
         this.SetValue<number>('parent_id', val);
     }
 
+    get object_type(): string {
+        return this.GetValue('type');
+    }
+
+    set object_type(val: string) {
+        this.SetValue<string>('type', val);
+    }
+
 }
 
 export class BaseScheduledItem extends BaseItem {
@@ -53,14 +61,13 @@ export class BaseScheduledItem extends BaseItem {
     }
 }
 
-const MAX_TEAM_MEMBERS = 100;
-const MAX_PERSON_ABSENCES = 1000;
-
 export class Team extends BaseItem {
     constructor(
         initializatorObj: Object
     ) {
         super(initializatorObj);
+
+        this.object_type = 'Team';
 
         if (initializatorObj && initializatorObj.hasOwnProperty('members')) {
             const members: Person[] = [];
@@ -90,6 +97,7 @@ export class Person extends BaseScheduledItem {
         initializatorObj: Object
     ) {
         super(initializatorObj);
+        this.object_type = 'Person';
         if (initializatorObj && initializatorObj.hasOwnProperty('absences')) {
             const absences: ScheduledConfirmableItem[] = [];
             // let absenceId: number = MAX_PERSON_ABSENCES * this.id;
@@ -114,9 +122,13 @@ export class Person extends BaseScheduledItem {
 
 export class ScheduledConfirmableItem extends BaseScheduledItem {
     constructor(
-        initializatorObj: Object
+        initializatorObj: Object,
+        ignore_object_type?: boolean
     ) {
         super(initializatorObj);
+        if (!ignore_object_type) {
+            this.object_type = 'Absence';
+        }
     }
 
     get confirmed(): boolean {

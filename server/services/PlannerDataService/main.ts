@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import {Model, Document, Connection, ObjectId} from './imports';
+import {Model, Document, Connection} from './imports';
 import * as $s from './schemas';
 import {Team} from '../../../common/models';
 

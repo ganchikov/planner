@@ -3,6 +3,10 @@ import * as moment from 'moment';
 
 export class GanttItem extends ScheduledConfirmableItem  {
 
+      constructor(initializatorObj: Object) {
+        super(initializatorObj, true);
+      }
+
       get text(): string {
         return this.name;
       }

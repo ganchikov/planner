@@ -172,14 +172,44 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     gantt.config.min_column_width = 50;
     gantt.config.show_unscheduled = true;
     gantt.config.scroll_on_click = true;
+    // gantt.config.readonly = true;
     gantt.templates.task_class = this.memberTaskClassTemplate;
     gantt.templates.task_text = this.memberTaskTextTemplate;
+    gantt.templates.grid_row_class = this.interactiveTaskClassTemplate;
+    gantt.attachEvent('onTaskLoading', this.onTaskLoading);
     gantt.attachEvent('onTaskCreated', this.onTaskCreated);
     this.setScaleMode(ScaleMode.Day);
   }
 
-  onTaskCreated(item: Object) {
-    console.log(item);
+  // configureLightBox() {
+  //   gantt.config.lightbox.sections=[
+  //     {name:"description", height:70, map_to:"text", type:"textarea", focus:true},
+  //     {name:"time",        height:72, map_to:"auto", type:"duration"}
+  // ];
+  // }
+
+  onTaskLoading(task: TeamGanttItem) {
+
+    if (task.object_type === 'Absence') {
+      task['editable'] = true;
+    } else {
+      task['editable'] = false;
+    }
+    
+    return true;
+  }
+
+  onTaskCreated(task: TeamGanttItem) {
+    if (task.hasOwnProperty('parent')) {
+    const parent_item: TeamGanttItem = gantt.getTask(task['parent']);
+      if (parent_item.is_complex) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
   }
 
   memberTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
@@ -197,11 +227,17 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     }
   }
 
+  interactiveTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
+    if (!task.is_complex) {
+      return 'not_interactive_task';
+    } else {
+      return '';
+    }
+  }
+
   weekScaleTemplate(date: Date) {
     const weekNum = moment(date).isoWeek();
     return 'WW' + weekNum;
   }
-
-  
 
 }

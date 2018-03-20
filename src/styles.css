@@ -19,3 +19,7 @@ html, body {
 .complex_gantt_bar .gantt_task_progress {
     display: none;
 }
+
+.not_interactive_task .gantt_add {
+    display: none !important;
+}
