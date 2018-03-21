@@ -7,8 +7,6 @@ import * as DS from './services/PlannerDataService/main';
 
 import {MongoProvider} from './providers/MongoProvider';
 
-import {Team} from '../common/models';
-
 const app = express();
 
 const teamDS: TeamDataService = new TeamDataService(new MongoProvider(undefined, 'plannerdb'));
@@ -46,7 +44,7 @@ app.get('/api/teams', (req, res) => {
     }
 });
 
-app.post('/api/test/teams', (req, res) => {
+app.post('/api/teams', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
     try {
         if (req.body instanceof Array) {
@@ -56,6 +54,34 @@ app.post('/api/test/teams', (req, res) => {
         } else {
             res.status(200).send({});
         }
+    } catch (err) {
+        res.status(404).send('bad request: ' + err);
+    }
+});
+
+app.put('api/absence', (req, res) => {
+    res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
+    try {
+        DS.InsertAbsence(req.body, (err, absenceDoc) => {
+            if (err) {
+                res.status(404).send('insert failed: ' + err);
+            }
+            res.status(200).json(absenceDoc.toJSON());
+        });
+    } catch (err) {
+        res.status(404).send('bad request: ' + err);
+    }
+});
+
+app.post('api/person', (req, res) => {
+    res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
+    try {
+        DS.UpdatePerson(req.body, (err, personDoc) => {
+            if (err) {
+                res.status(404).send('update failed: ' + err);
+            }
+            res.status(200).json(personDoc.toJSON());
+        });
     } catch (err) {
         res.status(404).send('bad request: ' + err);
     }
@@ -73,28 +99,28 @@ app.post('/api/test/teams', (req, res) => {
 //     });
 // });
 
-app.post('/api/teams/', (req, res) => {
-    res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
-    try {
-        if (req.body instanceof Array) {
-            const teams: Team[] = [];
-            (req.body as Array<any>).forEach(item => teams.push(new Team(item)));
-            teamDS.InsertTeams(teams, resultItems => {
-                res.status(200).json(resultItems);
-            }, error => {
-                res.status(404).send(error);
-            });
-        } else {
-            teamDS.InsertTeam(new Team(req.body), resultItem => {
-                res.status(200).json(resultItem);
-            }, error => {
-                res.status(404).send(error);
-            });
-        }
-    } catch (err) {
-        res.status(404).send('bad request: ' + err);
-    }
-});
+// app.post('/api/teams/', (req, res) => {
+//     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
+//     try {
+//         if (req.body instanceof Array) {
+//             const teams: Team[] = [];
+//             (req.body as Array<any>).forEach(item => teams.push(new Team(item)));
+//             teamDS.InsertTeams(teams, resultItems => {
+//                 res.status(200).json(resultItems);
+//             }, error => {
+//                 res.status(404).send(error);
+//             });
+//         } else {
+//             teamDS.InsertTeam(new Team(req.body), resultItem => {
+//                 res.status(200).json(resultItem);
+//             }, error => {
+//                 res.status(404).send(error);
+//             });
+//         }
+//     } catch (err) {
+//         res.status(404).send('bad request: ' + err);
+//     }
+// });
 
 const server = app.listen(8001, 'localhost', () => {
     const {address, port} = server.address();

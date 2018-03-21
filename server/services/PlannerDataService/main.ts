@@ -63,4 +63,15 @@ export function GetTeamsDataSet(filter: Object, callback: (err: any, teamDocs: D
     });
 }
 
+export function InsertAbsence(absenceObj: Object, callback: (err: any, absenceDoc: Document) => void) {
+    absenceModel.create(absenceObj, (err, absenceDoc) => {
+        callback(err, absenceDoc);
+    });
+}
+
+export function UpdatePerson(personObj: Object, callback: (err: any, absenceDoc: Document) => void) {
+    personModel.updateOne({}, personObj, (err, personDoc) => {
+        callback(err, personDoc);
+    });
+}
 
