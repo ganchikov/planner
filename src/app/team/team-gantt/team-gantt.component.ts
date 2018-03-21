@@ -17,6 +17,8 @@ class Duration {
     public duration: number) {}
 }
 
+let thisComponentRef: TeamGanttComponent;
+
 @Component({
   selector: 'app-team-gantt',
   templateUrl: './team-gantt.component.html',
@@ -43,7 +45,9 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   private _isInitialized = false;
 
-  constructor(private ganttData: TeamGanttDataService) { }
+  constructor(private ganttData: TeamGanttDataService) {
+    thisComponentRef = this;
+  }
 
   static renderComplexTask(task: TeamGanttItem): string {
     if (!task.is_complex) {return ''; }
@@ -66,7 +70,8 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     for (const duration of durations) {
       duration.offset =  duration.offset * 100 / total_duration;
       duration.duration = duration.duration * 100 / total_duration;
-      taskHTML += `<div class='gantt_task_line' style='left:${duration.offset}%; width:${duration.duration}%; height: 15px; margin-top: 7.5px;'></div>`;
+      taskHTML += `<div class='gantt_task_line' style='left:${duration.offset}%; ` +
+                        `width:${duration.duration}%; height: 15px; margin-top: 7.5px;'></div>`;
     }
     return taskHTML;
   }
@@ -165,6 +170,17 @@ export class TeamGanttComponent implements OnInit, OnChanges {
       },
       {name: 'add', label: '', width: 44}
     ];
+    gantt.config.lightbox.sections = [
+      {name: 'absence_type', height: 22, map_to: 'absence_type', type: 'select', options: [
+        {key: 'vacation', label: 'vacation'},
+        {key: 'day off', label: 'day off'},
+        {key: 'sick leave', label: 'sick leave'},
+      ]},
+      {name: 'description', height: 38, map_to: 'text', type: 'textarea', focus: true},
+      {name: 'time',        height: 38, map_to: 'auto', type: 'time'}
+    ];
+    gantt.locale.labels['section_absence_type'] = 'Absence Type';
+
     gantt.config.grid_resize = true;
     gantt.config.grid_width = 400;
     // gantt.config.min_grid_column_width = 100;
@@ -178,15 +194,10 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     gantt.templates.grid_row_class = this.interactiveTaskClassTemplate;
     gantt.attachEvent('onTaskLoading', this.onTaskLoading);
     gantt.attachEvent('onTaskCreated', this.onTaskCreated);
+    gantt.attachEvent('onTaskClick', this.onTaskClick);
+    gantt.attachEvent('onLightboxSave', this.onLightboxSave)
     this.setScaleMode(ScaleMode.Day);
   }
-
-  // configureLightBox() {
-  //   gantt.config.lightbox.sections=[
-  //     {name:"description", height:70, map_to:"text", type:"textarea", focus:true},
-  //     {name:"time",        height:72, map_to:"auto", type:"duration"}
-  // ];
-  // }
 
   onTaskLoading(task: TeamGanttItem) {
 
@@ -195,7 +206,6 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     } else {
       task['editable'] = false;
     }
-    
     return true;
   }
 
@@ -209,6 +219,30 @@ export class TeamGanttComponent implements OnInit, OnChanges {
       }
     } else {
       return true;
+    }
+  }
+
+  onTaskClick(id: string, e: Event) {
+    if (e.srcElement.className === 'gantt_add') {
+      const parent_item: TeamGanttItem = gantt.getTask(id);
+      if (parent_item && parent_item.object_type === 'Person') {
+        gantt.createTask({absence_type: 'vacation',
+                                        text: 'vacation for ' + parent_item.text}, parent_item.id.toString());
+      }
+    }
+  }
+
+  onLightboxSave(id: string, item: TeamGanttItem, is_new: boolean) {
+    if (is_new) {
+      const newItem = gantt.getTask(id);
+      const parentItem = gantt.getTask(newItem.parent);
+      thisComponentRef.ganttData.insertAbsence(newItem, parentItem, (insertedItem, error) => {
+        if (error) {
+          gantt.message({type: 'error', text: error});
+        } else {
+          gantt.message('Absence added with id ' + insertedItem.id);
+        }
+      });
     }
   }
 

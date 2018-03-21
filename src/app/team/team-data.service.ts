@@ -5,14 +5,21 @@ import {catchError, tap} from 'rxjs/operators';
 import {of} from 'rxjs/observable/of';
 
 import {LoggerService} from '../services/logger.service';
-import {Team} from '../../../common/models';
+import {Team, Person, Absence} from '../../../common/models';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type':  'application/json',
+    // 'Authorization': 'my-auth-token'
+  })
+};
 
 @Injectable()
 export class TeamDataService {
 
   constructor(private http: HttpClient, private logger: LoggerService) { }
 
-  private url = 'http://localhost:8001/api/teams';
+  private url = 'http://localhost:8001/api';
 
   private log (message: string) {
     this.logger.log('TeamDataService: ' + message);
@@ -27,7 +34,7 @@ export class TeamDataService {
   }
 
   getTeamData(callback: (teams: Team[]) => void) {
-    this.http.get<Team[]>(this.url).pipe(
+    this.http.get<Team[]>(this.url + '/teams').pipe(
       tap ( teams => {
         this.log('fetched teams' + teams);
       }),
@@ -41,5 +48,24 @@ export class TeamDataService {
         callback(results);
     });
   }
+
+  insertAbsence(newItem: Absence, callback: (insertedItem?: Absence, err?: any) => void) {
+    this.http.put<Absence>(this.url + '/absence', newItem.GetObject(), httpOptions).pipe(
+      tap ( insertedItem => {
+        this.log('inserted absence' + insertedItem);
+      }),
+      catchError(this.handleError('getTeamData', []))
+    ).subscribe(insertedItem => {
+        const insertedAbsenceItem: Absence = new Absence(insertedItem);
+        callback(insertedAbsenceItem);
+    }, error => {
+      callback(... error);
+    });
+  }
+
+  updatePerson(personItem: Person, callback: (personItem: Person, err: any) => void) {
+
+  }
+
 
 }
