@@ -1,7 +1,7 @@
-import {ScheduledConfirmableItem} from '../../../common/models';
+import {Absence} from '../../../common/models';
 import * as moment from 'moment';
 
-export class GanttItem extends ScheduledConfirmableItem  {
+export class GanttItem extends Absence  {
 
       constructor(initializatorObj: Object) {
         super(initializatorObj, true);
@@ -44,7 +44,7 @@ export class GanttItem extends ScheduledConfirmableItem  {
 export class TeamGanttItem extends GanttItem {
 
     get is_complex(): boolean {
-        if (this.GetValue('absences') !== undefined && (this.GetValue('absences') as Array<ScheduledConfirmableItem>).length > 0 ) {
+        if (this.GetValue('absences') !== undefined && (this.GetValue('absences') as Array<Absence>).length > 0 ) {
           return true;
         } else {
           return false;
@@ -54,7 +54,7 @@ export class TeamGanttItem extends GanttItem {
     get start_date(): Date {
       let date: Date;
       if (this.is_complex) {
-        const absences: ScheduledConfirmableItem[] = this.GetValue('absences');
+        const absences: Absence[] = this.GetValue('absences');
         date = moment(absences[0].start_date).toDate();
         for (const absence of absences) {
             if (moment(absence.start_date).isBefore(moment(date))) {
@@ -75,7 +75,7 @@ export class TeamGanttItem extends GanttItem {
     get end_date(): Date {
       let date: Date;
       if (this.is_complex) {
-          const absences: ScheduledConfirmableItem[] = this.GetValue('absences');
+          const absences: Absence[] = this.GetValue('absences');
           date = moment(absences[0].end_date).toDate();
           for (const absence of absences) {
               if (moment(absence.end_date).isAfter(moment(date))) {

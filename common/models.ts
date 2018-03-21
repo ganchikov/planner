@@ -99,28 +99,28 @@ export class Person extends BaseScheduledItem {
         super(initializatorObj);
         this.object_type = 'Person';
         if (initializatorObj && initializatorObj.hasOwnProperty('absences')) {
-            const absences: ScheduledConfirmableItem[] = [];
+            const absences: Absence[] = [];
             // let absenceId: number = MAX_PERSON_ABSENCES * this.id;
             for (const absObj of initializatorObj['absences']) {
-                const absence = new ScheduledConfirmableItem(absObj);
+                const absence = new Absence(absObj);
                 absence.parent_id = absence.GetValue('person_id');
                 // absence.id = absenceId;
                 absences.push(absence);
                 // absenceId++;
             }
-            this.SetValue<ScheduledConfirmableItem[]>('absences', absences);
+            this.SetValue<Absence[]>('absences', absences);
         }
     }
 
-    get absences(): ScheduledConfirmableItem[] {
+    get absences(): Absence[] {
         return this.GetValue('absences');
     }
-    set absences(val: ScheduledConfirmableItem[]) {
-        this.SetValue<ScheduledConfirmableItem[]>('dateEnd', val);
+    set absences(val: Absence[]) {
+        this.SetValue<Absence[]>('dateEnd', val);
     }
 }
 
-export class ScheduledConfirmableItem extends BaseScheduledItem {
+export class Absence extends BaseScheduledItem {
     constructor(
         initializatorObj: Object,
         ignore_object_type?: boolean
@@ -142,7 +142,14 @@ export class ScheduledConfirmableItem extends BaseScheduledItem {
         this.SetValue<boolean>('confirmed', val);
     }
 
-}
+    get absence_type(): string {
+        return this.GetValue('absence_type');
+    }
 
+    set absence_type(val: string) {
+        this.SetValue<string>('absence_type', val);
+    }
+
+}
 
 export const AbsenceTypes = ['vacation', 'sick leave', 'day off'];
