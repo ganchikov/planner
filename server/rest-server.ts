@@ -36,8 +36,11 @@ app.get('/api/teams', (req, res) => {
     try {
         const filterCriteria = req.body as Object;
         DS.GetTeamsDataSet(filterCriteria, (err, teamDocs) => {
-            if (err) {throw err; }
-            res.status(200).json(teamDocs.map(team => team.toJSON()));
+            if (err) {
+                res.status(404).send('select failed: ' + err);
+            } else {
+                res.status(200).json(teamDocs.map(team => team.toJSON()));
+            }
         });
     } catch (err) {
         res.status(404).send('bad request: ' + err);
@@ -59,7 +62,7 @@ app.post('/api/teams', (req, res) => {
     }
 });
 
-app.put('api/absence', (req, res) => {
+app.put('/api/absence', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
     try {
         DS.InsertAbsence(req.body, (err, absenceDoc) => {
@@ -73,7 +76,7 @@ app.put('api/absence', (req, res) => {
     }
 });
 
-app.post('api/person', (req, res) => {
+app.post('/api/person', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
     try {
         DS.UpdatePerson(req.body, (err, personDoc) => {

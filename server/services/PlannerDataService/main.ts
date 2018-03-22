@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import {Model, Document, Connection} from './imports';
 import * as $s from './schemas';
-import {Team} from '../../../common/models';
+import {Team, Absence} from '../../../common/models';
 
 const connection: Connection = mongoose.createConnection('mongodb://localhost:27017/plannerdb');
 
@@ -63,8 +63,9 @@ export function GetTeamsDataSet(filter: Object, callback: (err: any, teamDocs: D
     });
 }
 
-export function InsertAbsence(absenceObj: Object, callback: (err: any, absenceDoc: Document) => void) {
-    absenceModel.create(absenceObj, (err, absenceDoc) => {
+export async function InsertAbsence(absenceObj: Object, callback: (err: any, absenceDoc: Document) => void) {
+    const absenceItem: Absence = new Absence(absenceObj);
+    absenceModel.create(absenceItem.SetValue('id', await getCounterIncrement('universal')).GetObject(true), (err, absenceDoc) => {
         callback(err, absenceDoc);
     });
 }

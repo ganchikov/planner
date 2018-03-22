@@ -4,6 +4,7 @@ import {} from '@types/dhtmlxgantt';
 import * as moment from 'moment';
 import { TeamGanttDataService} from '../team-gantt-data.service';
 import {TeamGanttItem} from '../../common/ganttitem';
+import { Team, ModelType } from '../../../../common/models';
 
 export enum ScaleMode {
   Day = 0,
@@ -193,15 +194,15 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     gantt.templates.task_text = this.memberTaskTextTemplate;
     gantt.templates.grid_row_class = this.interactiveTaskClassTemplate;
     gantt.attachEvent('onTaskLoading', this.onTaskLoading);
-    gantt.attachEvent('onTaskCreated', this.onTaskCreated);
+    // gantt.attachEvent('onTaskCreated', this.onTaskCreated);
     gantt.attachEvent('onTaskClick', this.onTaskClick);
-    gantt.attachEvent('onLightboxSave', this.onLightboxSave)
+    gantt.attachEvent('onLightboxSave', this.onLightboxSave);
     this.setScaleMode(ScaleMode.Day);
   }
 
   onTaskLoading(task: TeamGanttItem) {
 
-    if (task.object_type === 'Absence') {
+    if (task.model_type === ModelType.absence) {
       task['editable'] = true;
     } else {
       task['editable'] = false;
@@ -209,23 +210,23 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     return true;
   }
 
-  onTaskCreated(task: TeamGanttItem) {
-    if (task.hasOwnProperty('parent')) {
-    const parent_item: TeamGanttItem = gantt.getTask(task['parent']);
-      if (parent_item.is_complex) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return true;
-    }
-  }
+  // onTaskCreated(task: TeamGanttItem) {
+  //   if (task.hasOwnProperty('parent')) {
+  //   const parent_item: TeamGanttItem = gantt.getTask(task['parent']);
+  //     if (parent_item.is_complex) {
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   } else {
+  //     return true;
+  //   }
+  // }
 
   onTaskClick(id: string, e: Event) {
     if (e.srcElement.className === 'gantt_add') {
       const parent_item: TeamGanttItem = gantt.getTask(id);
-      if (parent_item && parent_item.object_type === 'Person') {
+      if (parent_item && parent_item.model_type === ModelType.person) {
         gantt.createTask({absence_type: 'vacation',
                                         text: 'vacation for ' + parent_item.text}, parent_item.id.toString());
       }
@@ -234,12 +235,19 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   onLightboxSave(id: string, item: TeamGanttItem, is_new: boolean) {
     if (is_new) {
-      const newItem = gantt.getTask(id);
-      const parentItem = gantt.getTask(newItem.parent);
+      const newTaskObj = gantt.getTask(id);
+      const newItem: TeamGanttItem = new TeamGanttItem(newTaskObj);
+      newItem.text = newTaskObj['text'];
+      newItem.parent = Number.parseInt(newTaskObj['parent']);
+      const parentItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
       thisComponentRef.ganttData.insertAbsence(newItem, parentItem, (insertedItem, error) => {
         if (error) {
           gantt.message({type: 'error', text: error});
         } else {
+          gantt.deleteTask(id);
+          gantt.createTask(insertedItem, parentItem.id.toString());
+          gantt.updateTask(parentItem.id.toString());
+          gantt.hideLightbox();
           gantt.message('Absence added with id ' + insertedItem.id);
         }
       });
@@ -247,13 +255,13 @@ export class TeamGanttComponent implements OnInit, OnChanges {
   }
 
   memberTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
-    if (task.is_complex) {
+    if (task.model_type === ModelType.person) {
       return 'complex_gantt_bar';
     }
   }
 
   memberTaskTextTemplate(start: Date, end: Date, task: TeamGanttItem): string {
-    if (task.is_complex) {
+    if (task.model_type === ModelType.person) {
       const str = TeamGanttComponent.renderComplexTask(task);
       return str;
     } else {
@@ -262,10 +270,10 @@ export class TeamGanttComponent implements OnInit, OnChanges {
   }
 
   interactiveTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
-    if (!task.is_complex) {
-      return 'not_interactive_task';
-    } else {
+    if (task.model_type === ModelType.person) {
       return '';
+    } else {
+      return 'not_interactive_task';
     }
   }
 

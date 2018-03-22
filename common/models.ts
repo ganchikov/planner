@@ -34,12 +34,12 @@ export class BaseItem extends DataItem {
         this.SetValue<number>('parent_id', val);
     }
 
-    get object_type(): string {
-        return this.GetValue('type');
+    get model_type(): ModelType {
+        return this.GetValue('model_type');
     }
 
-    set object_type(val: string) {
-        this.SetValue<string>('type', val);
+    set model_type(val: ModelType) {
+        this.SetValue<ModelType>('model_type', val);
     }
 
 }
@@ -67,7 +67,7 @@ export class Team extends BaseItem {
     ) {
         super(initializatorObj);
 
-        this.object_type = 'Team';
+        this.model_type = ModelType.team;
 
         if (initializatorObj && initializatorObj.hasOwnProperty('members')) {
             const members: Person[] = [];
@@ -97,7 +97,7 @@ export class Person extends BaseScheduledItem {
         initializatorObj: Object
     ) {
         super(initializatorObj);
-        this.object_type = 'Person';
+        this.model_type = ModelType.person;
         if (initializatorObj && initializatorObj.hasOwnProperty('absences')) {
             const absences: Absence[] = [];
             // let absenceId: number = MAX_PERSON_ABSENCES * this.id;
@@ -127,7 +127,7 @@ export class Absence extends BaseScheduledItem {
     ) {
         super(initializatorObj);
         if (!ignore_object_type) {
-            this.object_type = 'Absence';
+            this.model_type = ModelType.absence;
         }
     }
 
@@ -142,14 +142,24 @@ export class Absence extends BaseScheduledItem {
         this.SetValue<boolean>('confirmed', val);
     }
 
-    get absence_type(): string {
+    get absence_type(): AbsenceType {
         return this.GetValue('absence_type');
     }
 
-    set absence_type(val: string) {
-        this.SetValue<string>('absence_type', val);
+    set absence_type(val: AbsenceType) {
+        this.SetValue<AbsenceType>('absence_type', val);
     }
 
 }
 
-export const AbsenceTypes = ['vacation', 'sick leave', 'day off'];
+export enum ModelType {
+    team = 'team',
+    person = 'person',
+    absence = 'absence'
+}
+
+export enum AbsenceType {
+    vacation = 'vacation',
+    sickleave = 'sick leave',
+    dayoff = 'day off'
+}

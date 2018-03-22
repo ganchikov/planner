@@ -54,7 +54,7 @@ export class TeamDataService {
       tap ( insertedItem => {
         this.log('inserted absence' + insertedItem);
       }),
-      catchError(this.handleError('getTeamData', []))
+      catchError(this.handleError('insertAbsence', []))
     ).subscribe(insertedItem => {
         const insertedAbsenceItem: Absence = new Absence(insertedItem);
         callback(insertedAbsenceItem);
@@ -63,8 +63,18 @@ export class TeamDataService {
     });
   }
 
-  updatePerson(personItem: Person, callback: (personItem: Person, err: any) => void) {
-
+  updatePerson(personItem: Person, callback: (personItem?: Person, err?: any) => void) {
+    this.http.post<Person>(this.url + '/person', personItem, httpOptions).pipe(
+      tap ( person => {
+        this.log('updated' + person);
+      }),
+      catchError(this.handleError('updatePerson', []))
+    ).subscribe(
+        item => {
+          callback(item as Person);
+    }, error => {
+      callback(... error);
+    });
   }
 
 

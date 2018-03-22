@@ -20,12 +20,12 @@ export class TeamGanttDataService {
     });
   }
 
-  insertAbsence(newItem: Object, parentItem: Object,
-                callback: (insertedGanttItem: TeamGanttItem, err: any) => void) { 
-    const newAbsenceItem: Absence = new Absence(newItem);
+  insertAbsence(newGanttItem: TeamGanttItem, parentGanttItem: TeamGanttItem,
+                callback: (insertedGanttItem: TeamGanttItem, err: any) => void) {
+    const newAbsenceItem: Absence = newGanttItem.GetTypedItem<Absence>(Absence);
     this.teamDS.insertAbsence(newAbsenceItem, insertedAbsenceItem => {
-      newAbsenceItem._id = insertedAbsenceItem._id;
-      newAbsenceItem.id = insertedAbsenceItem.id;
+      newGanttItem._id = insertedAbsenceItem._id;
+      newGanttItem.id = insertedAbsenceItem.id;
       const personItem: Person = parentGanttItem.GetTypedItem<Person>(Person);
       personItem.absences.push(insertedAbsenceItem);
       this.teamDS.updatePerson(personItem, err => {
