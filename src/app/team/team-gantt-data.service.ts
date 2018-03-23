@@ -28,7 +28,7 @@ export class TeamGanttDataService {
       newGanttItem.id = insertedAbsenceItem.id;
       const personItem: Person = parentGanttItem.GetTypedItem<Person>(Person);
       personItem.absences.push(insertedAbsenceItem);
-      this.teamDS.updatePerson(personItem, err => {
+      this.teamDS.updatePerson(personItem, (err) => {
         callback(newGanttItem, err);
       });
     });

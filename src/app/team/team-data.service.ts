@@ -50,7 +50,7 @@ export class TeamDataService {
   }
 
   insertAbsence(newItem: Absence, callback: (insertedItem?: Absence, err?: any) => void) {
-    this.http.put<Absence>(this.url + '/absence', newItem.GetObject(), httpOptions).pipe(
+    this.http.post<Absence>(this.url + '/absence', newItem.GetObject(), httpOptions).pipe(
       tap ( insertedItem => {
         this.log('inserted absence' + insertedItem);
       }),
@@ -63,17 +63,17 @@ export class TeamDataService {
     });
   }
 
-  updatePerson(personItem: Person, callback: (personItem?: Person, err?: any) => void) {
-    this.http.post<Person>(this.url + '/person', personItem, httpOptions).pipe(
+  updatePerson(personItem: Person, callback: (err?: any, result?: Object) => void) {
+    this.http.put<Person>(this.url + '/person', personItem.GetObject(), httpOptions).pipe(
       tap ( person => {
         this.log('updated' + person);
       }),
       catchError(this.handleError('updatePerson', []))
     ).subscribe(
         item => {
-          callback(item as Person);
+          callback(null, item);
     }, error => {
-      callback(... error);
+      callback(error, null);
     });
   }
 

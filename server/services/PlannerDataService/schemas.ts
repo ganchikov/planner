@@ -26,7 +26,7 @@ export const personSchema: Schema = new Schema({
 
 export const absenceSchema: Schema = new Schema({
     id: {type: Number, index: true, unique: true},
-    person_id: Number,
+    parent_id: Number,
     name: String,
     start_date: Date,
     end_date: Date,

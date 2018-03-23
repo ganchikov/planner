@@ -108,7 +108,7 @@ export async function InsertAbsence(absenceObj: Object, callback: (err: any, abs
 
 export function UpdatePerson(personObj: Object, callback: (err: any, absenceDoc: Document) => void) {
     try {
-        personModel.updateOne({}, personObj, (err, result) => {
+        personModel.updateOne({_id: personObj['_id']}, personObj, (err, result) => {
             callback(err, result);
         });
     } catch (err) {
