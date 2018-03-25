@@ -196,6 +196,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     gantt.attachEvent('onTaskLoading', this.onTaskLoading);
     // gantt.attachEvent('onTaskCreated', this.onTaskCreated);
     gantt.attachEvent('onTaskClick', this.onTaskClick);
+    gantt.attachEvent('onTaskDblClick', this.onTaskDblClick)
     gantt.attachEvent('onLightboxSave', this.onLightboxSave);
     this.setScaleMode(ScaleMode.Day);
   }
@@ -225,30 +226,52 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   onTaskClick(id: string, e: Event) {
     if (e.srcElement.className === 'gantt_add') {
-      const parent_item: TeamGanttItem = gantt.getTask(id);
-      if (parent_item && parent_item.model_type === ModelType.person) {
+      const item: TeamGanttItem = gantt.getTask(id);
+      if (item && item.model_type === ModelType.person) {
         gantt.createTask({absence_type: 'vacation',
-                                        text: 'vacation for ' + parent_item.text}, parent_item.id.toString());
+                                        text: 'vacation for ' + item.text}, item.id.toString());
       }
+    } else {
+      return true;
+    }
+  }
+
+  onTaskDblClick(id: string, e: Event) {
+    const item: TeamGanttItem = gantt.getTask(id);
+    if (item.model_type === ModelType.absence) {
+      return true;
+    } else {
+      return false;
     }
   }
 
   onLightboxSave(id: string, item: TeamGanttItem, is_new: boolean) {
+    // const taskObj = gantt.getTask(id);
+    const ganttItem: TeamGanttItem = item;
+    const parentGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
+    const parentTeamGanttItem: TeamGanttItem = gantt.getTask(parentGanttItem.parent_id.toString()) as TeamGanttItem;
     if (is_new) {
-      const newTaskObj = gantt.getTask(id);
-      const newItem: TeamGanttItem = new TeamGanttItem(newTaskObj);
-      newItem.text = newTaskObj['text'];
-      newItem.parent = Number.parseInt(newTaskObj['parent']);
-      const parentItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
-      thisComponentRef.ganttData.insertAbsence(newItem, parentItem, (insertedItem, error) => {
+      thisComponentRef.ganttData.insertAbsence(ganttItem, parentGanttItem, (insertedItem, error) => {
         if (error) {
           gantt.message({type: 'error', text: error});
         } else {
           gantt.deleteTask(id);
-          gantt.createTask(insertedItem, parentItem.id.toString());
-          gantt.updateTask(parentItem.id.toString());
+          gantt.createTask(insertedItem, parentGanttItem.id.toString());
+          gantt.updateTask(parentTeamGanttItem.id.toString());
           gantt.hideLightbox();
-          gantt.message('Absence added with id ' + insertedItem.id);
+          gantt.refreshData();
+        }
+      });
+    } else {
+      thisComponentRef.ganttData.updateAbsence(ganttItem, (error) => {
+        if (error) {
+          gantt.message({type: 'error', text: error});
+        } else {
+          gantt.updateTask(ganttItem.id.toString());
+          gantt.updateTask(parentTeamGanttItem.id.toString());
+          gantt.hideLightbox();
+          // gantt.refreshTask(ganttItem.id);
+          gantt.render();
         }
       });
     }

@@ -49,31 +49,43 @@ export class TeamDataService {
     });
   }
 
-  insertAbsence(newItem: Absence, callback: (insertedItem?: Absence, err?: any) => void) {
+  insertAbsence(newItem: Absence, callback: (err?: any, insertedItem?: Absence) => void) {
     this.http.post<Absence>(this.url + '/absence', newItem.GetObject(), httpOptions).pipe(
       tap ( insertedItem => {
         this.log('inserted absence' + insertedItem);
       }),
-      catchError(this.handleError('insertAbsence', []))
+      catchError(this.handleError('insertAbsence'))
     ).subscribe(insertedItem => {
         const insertedAbsenceItem: Absence = new Absence(insertedItem);
-        callback(insertedAbsenceItem);
+        callback(null, insertedAbsenceItem);
     }, error => {
-      callback(... error);
+      callback(error);
     });
   }
 
-  updatePerson(personItem: Person, callback: (err?: any, result?: Object) => void) {
+  updateAbsence(absenceItem: Absence, callback: (error?) => void) {
+    this.http.put<Absence>(this.url + '/absence', absenceItem.GetObject(), httpOptions).pipe(
+      tap(absence => {
+        this.log('absence updated ' + absence);
+      }),
+      catchError(this.handleError('updateAbsence', []))
+    ).subscribe(() => {
+      callback();
+    }, error => {
+      callback(error);
+    });
+  }
+
+  updatePerson(personItem: Person, callback: (error?) => void) {
     this.http.put<Person>(this.url + '/person', personItem.GetObject(), httpOptions).pipe(
       tap ( person => {
-        this.log('updated' + person);
+        this.log('person updated' + person);
       }),
       catchError(this.handleError('updatePerson', []))
-    ).subscribe(
-        item => {
-          callback(null, item);
+    ).subscribe(() => {
+          callback();
     }, error => {
-      callback(error, null);
+      callback(error);
     });
   }
 

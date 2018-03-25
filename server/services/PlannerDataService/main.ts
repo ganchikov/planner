@@ -61,8 +61,9 @@ export async function InsertTeamsDataSet(teams: Object[], callback: (err: any, t
                     personItem.SetValue('id', await getCounterIncrement('universal')).GetObject(true));
                 for (const absenceItem of personItem.absences) {
                     const absenceDoc: Document = await absenceModel.create(
-                        absenceItem.SetValue('id', await getCounterIncrement('universal'))
-                        .SetValue('person_id', personItem.id).GetObject());
+                        // absenceItem.SetValue('id', await getCounterIncrement('universal'))
+                        // .SetValue('person_id', personItem.id).GetObject());
+                        absenceItem.SetValue('id', await getCounterIncrement('universal')).GetObject());
                         personDoc['absences'].push(absenceDoc._id);
                 }
                 await personDoc.save();
@@ -106,13 +107,23 @@ export async function InsertAbsence(absenceObj: Object, callback: (err: any, abs
 
 }
 
-export function UpdatePerson(personObj: Object, callback: (err: any, absenceDoc: Document) => void) {
+export function UpdateAbsence(absenceObj: Object, callback: (err?: any, res?: any) => void) {
     try {
-        personModel.updateOne({_id: personObj['_id']}, personObj, (err, result) => {
-            callback(err, result);
+        absenceModel.updateOne({_id: absenceObj['_id']}, absenceObj, (err, res) => {
+            callback(err, res);
         });
     } catch (err) {
-        callback(err, null);
+        callback(err);
+    }
+}
+
+export function UpdatePerson(personObj: Object, callback: (err?: any, res?: any) => void) {
+    try {
+        personModel.updateOne({_id: personObj['_id']}, personObj, (err, res) => {
+            callback(err, res);
+        });
+    } catch (err) {
+        callback(err);
     }
 }
 

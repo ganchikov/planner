@@ -84,6 +84,20 @@ app.put('/api/person', (req, res) => {
     });
 });
 
+app.put('/api/absence', (req, res) => {
+    res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
+    DS.UpdateAbsence(req.body, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(404).send(err);
+        } else {
+            res.status(200).json(result);
+        }
+    });
+});
+
+
+
 const server = app.listen(8001, 'localhost', () => {
     const {address, port} = server.address();
     console.log(`Process ${process.pid} is listening on http://localhost:` + port);

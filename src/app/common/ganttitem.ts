@@ -1,10 +1,22 @@
-import {Absence} from '../../../common/models';
+import {Person, Absence, ITeam, IPerson, IAbsence} from '../../../common/models';
 import * as moment from 'moment';
 
-export class GanttItem extends Absence  {
+export class GanttItem extends Absence implements ITeam, IPerson {
 
-      constructor(initializatorObj: Object) {
+      constructor(initializatorObj: Object, initExtraProps: boolean = false) {
         super(initializatorObj, true);
+        if (initExtraProps) {
+          this.text = initializatorObj['text'];
+          this.parent = initializatorObj['parent'];
+        }
+      }
+
+      get members(): Person[] {
+        return this.GetValue('members');
+      }
+
+      get absences(): Absence[] {
+        return this.GetValue('absences');
       }
 
       get text(): string {
@@ -61,6 +73,7 @@ export class TeamGanttItem extends GanttItem {
                 date = moment(absence.start_date).toDate();
             }
         }
+        this.unscheduled = false;
       } else {
         if (this.GetValue('start_date') === undefined) {
             this.unscheduled = true;
@@ -82,6 +95,7 @@ export class TeamGanttItem extends GanttItem {
                   date = moment(absence.end_date).toDate();
               }
           }
+          this.unscheduled = false;
       } else {
         if (this.GetValue('end_date') === undefined) {
             this.unscheduled = true;

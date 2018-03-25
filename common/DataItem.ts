@@ -16,10 +16,47 @@ export class DataItem {
 
     constructor(initializator: Object) {
         if (initializator) {
-            for (const prop of Object.keys(initializator)) {
-               this.SetValue(prop, initializator[prop]);
+            for (const src_prop of Object.keys(initializator)) {
+                const dst_props: string[] = this.getProperties(this);
+                // const dst_props: string[] = [];
+                for (const dst_prop of dst_props) {
+                    if (src_prop === dst_prop) {
+                            this.SetValue(dst_prop, initializator[src_prop]);
+                    }
+               }
             }
         }
+    }
+
+    private isProperty(obj: Object, name: string): boolean {
+        const desc = Object.getOwnPropertyDescriptor(obj, name);
+        return desc.get || desc.set ? true : false;
+    }
+
+    private getProperties(instance: DataItem): string[] {
+        const props: string[] = [];
+        let proto: DataItem = instance;
+        while (proto.__proto__.constructor.name !== 'Object') {
+            for (const prop of Object.getOwnPropertyNames(proto)) {
+                if (prop !== 'constructor' && this.isProperty(proto, prop)) {
+                    props.push(prop);
+                }
+            }
+            proto = Object.getPrototypeOf(proto);
+        }
+
+
+        // if (proto['constructor'].name !== 'DataItem' && proto['constructor'].name !== 'Object') {
+        //     const keys: string[] = Object.keys(proto);
+        //     for (const key of keys) {
+        //         if (key !== 'constructor') {
+        //             keys.push(key);
+        //         }
+        //     }
+        //     keys.push(...this.getKeys(proto));
+        //     return keys;
+        // }
+        return props;
     }
 
     public GetValue(key: string): any | undefined {
