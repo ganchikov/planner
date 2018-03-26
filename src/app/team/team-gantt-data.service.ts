@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TeamDataService } from './team-data.service';
-import { TeamGanttItem } from '../common/ganttitem';
+import {GanttItem, TeamGanttItem } from '../common/ganttitem';
 import {Absence, Person} from '../../../common/models';
 
 
@@ -14,32 +14,33 @@ export class TeamGanttDataService {
     this.teamDS.getTeamData(items => {
       const resultItems: TeamGanttItem[] = [];
       items.forEach(item => {
-        resultItems.push(...item.GetTypedItemAndFlatChildren<TeamGanttItem>(TeamGanttItem));
+        resultItems.push(...item.GetTypedItemAndFlatChildren<TeamGanttItem>(TeamGanttItem,
+          {map: [{from_field: 'name', to_field: 'text'}]} ));
       });
       callback(resultItems);
     });
   }
 
-  insertAbsence(newAbsenceGanttItem: TeamGanttItem, parentGanttItem: TeamGanttItem,
+  insertAbsence(newGanttItem: TeamGanttItem, parentGanttItem: TeamGanttItem,
                 callback: (insertedGanttItem: TeamGanttItem, err: any) => void) {
-    const newAbsenceItem: Absence = newAbsenceGanttItem.GetTypedItem<Absence>(Absence);
+    const newAbsenceItem: Absence = newGanttItem.GetTypedItem<Absence>(Absence, {map: [{from_field: 'text', to_field: 'name'}]});
     this.teamDS.insertAbsence(newAbsenceItem, (error, insertedAbsenceItem) => {
       if (error) {
         callback(null, error);
       } else {
-        newAbsenceGanttItem._id = insertedAbsenceItem._id;
-        newAbsenceGanttItem.id = insertedAbsenceItem.id;
         const personItem: Person = parentGanttItem.GetTypedItem<Person>(Person);
         personItem.absences.push(insertedAbsenceItem);
+        const insertedGanttItem: TeamGanttItem = insertedAbsenceItem.GetTypedItem<TeamGanttItem>(TeamGanttItem,
+                    {map: [{from_field: 'name', to_field: 'text'}]});
         this.teamDS.updatePerson(personItem, (err) => {
-          callback(newAbsenceGanttItem, err);
+          callback(insertedGanttItem, err);
         });
       }
     });
   }
 
   updateAbsence(absenceGanttItem: TeamGanttItem, callback: (error) => void) {
-    const absenceItem: Absence = absenceGanttItem.GetTypedItem<Absence>(Absence);
+    const absenceItem: Absence = absenceGanttItem.GetTypedItem<Absence>(Absence, {map: [{from_field: 'text', to_field: 'name'}]});
     this.teamDS.updateAbsence(absenceItem, error => {
       callback(error);
     });

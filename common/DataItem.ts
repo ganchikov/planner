@@ -11,6 +11,15 @@ interface IConstructor<T> {
     new(...args: any[]): T;
 }
 
+interface IPropertiesMap {
+    map: IPropertyMapPair[];
+}
+
+interface IPropertyMapPair {
+    from_field: string;
+    to_field: string;
+}
+
 export class DataItem {
     private _fields: KeyValuePair[] = [];
 
@@ -36,7 +45,7 @@ export class DataItem {
     private getProperties(instance: DataItem): string[] {
         const props: string[] = [];
         let proto: DataItem = instance;
-        while (proto.__proto__.constructor.name !== 'Object') {
+        while (proto['__proto__'].constructor.name !== 'Object') {
             for (const prop of Object.getOwnPropertyNames(proto)) {
                 if (prop !== 'constructor' && this.isProperty(proto, prop)) {
                     props.push(prop);
@@ -74,27 +83,33 @@ export class DataItem {
         return this;
     }
 
-    public GetTypedItem<T>(type: IConstructor<T>): T {
-        const itm: T = new type(this.GetObject());
+    public GetTypedItem<T>(type: IConstructor<T>, propsMap?: IPropertiesMap): T {
+        const itm: T = new type(this.GetObject(false, propsMap));
         return itm;
     }
 
-    public GetObject(nochildren = false): Object {
+    public GetObject(nochildren = false, propsMap?: IPropertiesMap): Object {
         const resObj = new Object;
         for (const field of this._fields) {
+            let propMap;
+            if (propsMap) {
+                propMap = propsMap.map.find(prop => prop.from_field === field.key);
+            }
+            const to_field = propMap ? propMap.to_field : field.key;
+
             if (field.value instanceof Array && !nochildren) {
                 const objColl: Object[] = [];
                 for (const item of (field.value as Array<any>)) {
                     if (item instanceof DataItem) {
-                        const resItm: Object = (item as DataItem).GetObject();
+                        const resItm: Object = (item as DataItem).GetObject(false, propsMap);
                         objColl.push(resItm);
                     } else {
                         objColl.push(item);
                     }
                 }
-                resObj[field.key] = objColl;
+                resObj[to_field] = objColl;
             } else if (!(field.value instanceof Array) && !(field.value instanceof DataItem)) {
-                resObj[field.key] = field.value;
+                resObj[to_field] = field.value;
             }
         }
         return resObj;
@@ -104,19 +119,19 @@ export class DataItem {
         return this.GetTypedItemAndFlatChildren<DataItem>(DataItem);
     }
 
-    public GetTypedItemAndFlatChildren<T>(type: IConstructor<T>): T[] {
+    public GetTypedItemAndFlatChildren<T>(type: IConstructor<T>, propsMap?: IPropertiesMap): T[] {
         const results: T[] = [];
-        const itm =  this.GetTypedItem<T>(type);
+        const itm =  this.GetTypedItem<T>(type, propsMap);
         results.push(itm);
         for (const kvp of this._fields) {
             if (kvp.value instanceof Array) {
                 kvp.value.forEach(val => {
                     if (val instanceof DataItem) {
-                        results.push(...val.GetTypedItemAndFlatChildren<T>(type));
+                        results.push(...val.GetTypedItemAndFlatChildren<T>(type, propsMap));
                     }
                 });
             } else if (kvp.value instanceof DataItem) {
-                results.push(kvp.value.GetTypedItem<T>(type));
+                results.push(kvp.value.GetTypedItem<T>(type, propsMap));
             }
         }
         return results;

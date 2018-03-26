@@ -196,8 +196,11 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     gantt.attachEvent('onTaskLoading', this.onTaskLoading);
     // gantt.attachEvent('onTaskCreated', this.onTaskCreated);
     gantt.attachEvent('onTaskClick', this.onTaskClick);
-    gantt.attachEvent('onTaskDblClick', this.onTaskDblClick)
+    gantt.attachEvent('onTaskDblClick', this.onTaskDblClick);
     gantt.attachEvent('onLightboxSave', this.onLightboxSave);
+    gantt.attachEvent('onAfterTaskAdd', this.onAfterTaskAdd);
+    gantt.attachEvent('onAfterTaskUpdate', this.onAfterTaskUpdate);
+
     this.setScaleMode(ScaleMode.Day);
   }
 
@@ -247,35 +250,68 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   onLightboxSave(id: string, item: TeamGanttItem, is_new: boolean) {
     // const taskObj = gantt.getTask(id);
-    const ganttItem: TeamGanttItem = item;
-    const parentGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
-    const parentTeamGanttItem: TeamGanttItem = gantt.getTask(parentGanttItem.parent_id.toString()) as TeamGanttItem;
-    if (is_new) {
-      thisComponentRef.ganttData.insertAbsence(ganttItem, parentGanttItem, (insertedItem, error) => {
-        if (error) {
-          gantt.message({type: 'error', text: error});
-        } else {
-          gantt.deleteTask(id);
-          gantt.createTask(insertedItem, parentGanttItem.id.toString());
-          gantt.updateTask(parentTeamGanttItem.id.toString());
-          gantt.hideLightbox();
-          gantt.refreshData();
-        }
-      });
-    } else {
-      thisComponentRef.ganttData.updateAbsence(ganttItem, (error) => {
-        if (error) {
-          gantt.message({type: 'error', text: error});
-        } else {
-          gantt.updateTask(ganttItem.id.toString());
-          gantt.updateTask(parentTeamGanttItem.id.toString());
-          gantt.hideLightbox();
-          // gantt.refreshTask(ganttItem.id);
-          gantt.render();
-        }
-      });
-    }
+    // const ganttItem: TeamGanttItem = item;
+    // const parentGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
+    // const parentTeamGanttItem: TeamGanttItem = gantt.getTask(parentGanttItem.parent_id.toString()) as TeamGanttItem;
+    // if (is_new) {
+    //   thisComponentRef.ganttData.insertAbsence(ganttItem, parentGanttItem, (insertedItem, error) => {
+    //     if (error) {
+    //       gantt.message({type: 'error', text: error});
+    //     } else {
+    //       gantt.deleteTask(id);
+    //       gantt.createTask(insertedItem, parentGanttItem.id.toString());
+    //       gantt.updateTask(parentTeamGanttItem.id.toString());
+    //       gantt.hideLightbox();
+    //       gantt.refreshData();
+    //     }
+    //   });
+    // } else {
+    //   thisComponentRef.ganttData.updateAbsence(ganttItem, (error) => {
+    //     if (error) {
+    //       gantt.message({type: 'error', text: error});
+    //     } else {
+    //       gantt.updateTask(ganttItem.id.toString());
+    //       gantt.updateTask(parentTeamGanttItem.id.toString());
+    //       gantt.hideLightbox();
+    //       // gantt.refreshTask(ganttItem.id);
+    //       gantt.render();
+    //     }
+    //   });
+    // }
+    return true;
   }
+
+  onAfterTaskAdd(id: string, newTask: Object) {
+    const newGanttItem: TeamGanttItem = new TeamGanttItem(newTask);
+    newGanttItem.model_type = ModelType.absence;
+    const parentGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
+    thisComponentRef.ganttData.insertAbsence(newGanttItem, parentGanttItem, (insertedItem, error) => {
+      if (error) {
+        gantt.message({type: 'error', text: error});
+      } else {
+        gantt.deleteTask(id);
+        gantt.addTask(insertedItem, parentGanttItem.id.toString());
+        gantt.refreshData();
+        return false;
+      }
+    });
+  }
+
+  onAfterTaskUpdate(id: string, updatedTask: TeamGanttItem) {
+    const personGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
+    thisComponentRef.ganttData.updateAbsence(updatedTask, error => {
+      if (error) {
+        gantt.message({type: 'error', text: error});
+      } else {
+        // gantt.updateTask(ganttItem.id.toString());
+        gantt.updateTask(personGanttItem.id.toString());
+        // gantt.hideLightbox();
+        // gantt.refreshTask(ganttItem.id);
+        gantt.render();
+      }
+    });
+  }
+
 
   memberTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
     if (task.model_type === ModelType.person) {

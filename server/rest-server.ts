@@ -37,7 +37,7 @@ app.get('/api/teams', (req, res) => {
     DS.GetTeamsDataSet(filterCriteria, (err, teamDocs) => {
         if (err) {
             console.log(err);
-            res.status(404).send(err);
+            res.status(500).send(err);
         } else {
             res.status(200).json(teamDocs.map(team => team.toJSON()));
         }
@@ -50,7 +50,7 @@ app.post('/api/teams', (req, res) => {
         DS.InsertTeamsDataSet(req.body as Array<Object>, (err, teamDocs) => {
             if (err) {
                 console.log(err);
-                res.status(404).send(err);
+                res.status(500).send(err);
             } else {
                 res.status(200).json(teamDocs.map(team => team.toJSON()));
             }
@@ -65,7 +65,7 @@ app.post('/api/absence', (req, res) => {
     DS.InsertAbsence(req.body, (err, absenceDoc) => {
         if (err) {
             console.log(err);
-            res.status(404).send(err);
+            res.status(500).send(err);
         } else {
             res.status(200).json(absenceDoc.toJSON());
         }
@@ -77,7 +77,7 @@ app.put('/api/person', (req, res) => {
     DS.UpdatePerson(req.body, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(404).send(err);
+            res.status(500).send(err);
         } else {
             res.status(200).json(result);
         }
@@ -89,7 +89,7 @@ app.put('/api/absence', (req, res) => {
     DS.UpdateAbsence(req.body, (err, result) => {
         if (err) {
             console.log(err);
-            res.status(404).send(err);
+            res.status(500).send(err);
         } else {
             res.status(200).json(result);
         }
