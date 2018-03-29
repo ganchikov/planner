@@ -18,7 +18,14 @@ class Duration {
     public duration: number) {}
 }
 
+class IDMapper {
+  constructor(public temp_id: string, public perm_id: string) {}
+}
+
 let thisComponentRef: TeamGanttComponent;
+
+const idMap: Array<IDMapper> = new Array();
+
 
 @Component({
   selector: 'app-team-gantt',
@@ -200,6 +207,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     gantt.attachEvent('onLightboxSave', this.onLightboxSave);
     gantt.attachEvent('onAfterTaskAdd', this.onAfterTaskAdd);
     gantt.attachEvent('onAfterTaskUpdate', this.onAfterTaskUpdate);
+    gantt.attachEvent('onTaskIdChange', this.onTaskIdChange);
 
     this.setScaleMode(ScaleMode.Day);
   }
@@ -231,15 +239,18 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     if (e.srcElement.className === 'gantt_add') {
       const item: TeamGanttItem = gantt.getTask(id);
       if (item && item.model_type === ModelType.person) {
-        gantt.createTask({absence_type: 'vacation',
-                                        text: 'vacation for ' + item.text}, item.id.toString());
+        return true;
       }
-    } else {
+    } else if (e.srcElement.className === 'gantt_tree_icon gantt_close' || e.srcElement.className === 'gantt_tree_icon gantt_open') {
       return true;
+    } else {
+      return false;
     }
   }
 
   onTaskDblClick(id: string, e: Event) {
+    const itm = idMap.find(map => map.temp_id === id);
+    if (itm) {id = itm.perm_id; }
     const item: TeamGanttItem = gantt.getTask(id);
     if (item.model_type === ModelType.absence) {
       return true;
@@ -283,31 +294,49 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   onAfterTaskAdd(id: string, newTask: Object) {
     const newGanttItem: TeamGanttItem = new TeamGanttItem(newTask);
-    newGanttItem.model_type = ModelType.absence;
+    newTask['model_type'] = newGanttItem.model_type = ModelType.absence;
     const parentGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
     thisComponentRef.ganttData.insertAbsence(newGanttItem, parentGanttItem, (insertedItem, error) => {
       if (error) {
         gantt.message({type: 'error', text: error});
       } else {
-        gantt.deleteTask(id);
-        gantt.addTask(insertedItem, parentGanttItem.id.toString());
-        gantt.refreshData();
-        return false;
+        gantt.changeTaskId(id, insertedItem.id);
+        idMap.push(new IDMapper(id.toString(), insertedItem.id.toString()));
+        parentGanttItem.absences.push(insertedItem);
+        gantt.updateTask(parentGanttItem.id.toString());
+        gantt.refreshTask(insertedItem.id);
       }
     });
+    return true;
   }
 
-  onAfterTaskUpdate(id: string, updatedTask: TeamGanttItem) {
-    const personGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
-    thisComponentRef.ganttData.updateAbsence(updatedTask, error => {
+  onTaskIdChange(old_id: string, new_id: string) {
+    console.log(`id changed from ${old_id} to ${new_id}`);
+    // const item: TeamGanttItem = gantt.getTask(old_id);
+    // item.id = Number.parseInt(new_id);
+  }
+
+  onAfterTaskUpdate(id: string, updatedTask: Object) {
+    if (updatedTask['model_type'] !== ModelType.absence) {return true;}
+    const itm = idMap.find(map => map.temp_id === id);
+    if (itm) {id = itm.perm_id; }
+    let updatedGanttTask: TeamGanttItem;
+    if (updatedTask instanceof TeamGanttItem) {
+      updatedGanttTask = updatedTask as TeamGanttItem;
+    } else {
+      updatedGanttTask = new TeamGanttItem(updatedTask);
+    }
+    const parentGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
+    thisComponentRef.ganttData.updateAbsence(updatedGanttTask, error => {
       if (error) {
         gantt.message({type: 'error', text: error});
       } else {
-        // gantt.updateTask(ganttItem.id.toString());
-        gantt.updateTask(personGanttItem.id.toString());
-        // gantt.hideLightbox();
-        // gantt.refreshTask(ganttItem.id);
-        gantt.render();
+        if (parentGanttItem.absences) {
+            parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === updatedGanttTask.id),
+              1);
+            parentGanttItem.absences.push(updatedGanttTask);
+          gantt.updateTask(parentGanttItem.id.toString());
+        }
       }
     });
   }

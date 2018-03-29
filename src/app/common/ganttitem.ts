@@ -45,6 +45,10 @@ export class TeamGanttItem extends Absence implements ITeam, IPerson {
     return this.GetValue('absences');
   }
 
+  set absences(val: TeamGanttItem[]) {
+    this.SetValue<TeamGanttItem[]>('absences', val);
+  }
+
   get text(): string {
     return this.GetValue('text');
   }
@@ -107,6 +111,10 @@ export class TeamGanttItem extends Absence implements ITeam, IPerson {
       return date;
     }
 
+    set start_date(val: Date) {
+      this.SetValue<Date>('start_date', val);
+    }
+
     get end_date(): Date {
       let date: Date;
       if (this.is_complex) {
@@ -127,5 +135,9 @@ export class TeamGanttItem extends Absence implements ITeam, IPerson {
         }
       }
       return date;
+    }
+
+    set end_date(val: Date) {
+      this.SetValue<Date>('end_date', val);
     }
 }
