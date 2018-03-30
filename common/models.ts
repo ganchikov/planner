@@ -152,11 +152,7 @@ export class Absence extends BaseScheduledItem implements IAbsence {
     }
 
     get confirmed(): boolean {
-        if (this.GetValue('confirmed') === 'true') {
-            return true;
-        } else {
-            return false;
-        }
+        return this.GetValue('confirmed');
     }
     set confirmed(val: boolean) {
         this.SetValue<boolean>('confirmed', val);

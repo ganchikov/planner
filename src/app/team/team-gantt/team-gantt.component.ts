@@ -174,7 +174,9 @@ export class TeamGanttComponent implements OnInit, OnChanges {
       {name: 'start_date', label: 'From', width: 115},
       {name: 'end_date', label: 'To', width: 115},
       {name: 'confirmed', label: 'Confirmed',
-        template: function(obj) {return obj.confirmed === undefined ? '' : obj.confirmed; }
+        template: function(obj) {
+          return obj.confirmed === undefined ? '' : obj.confirmed; 
+        }
       },
       {name: 'add', label: '', width: 44}
     ];
@@ -185,9 +187,15 @@ export class TeamGanttComponent implements OnInit, OnChanges {
         {key: 'sick leave', label: 'sick leave'},
       ]},
       {name: 'description', height: 38, map_to: 'text', type: 'textarea', focus: true},
-      {name: 'time',        height: 38, map_to: 'auto', type: 'time'}
+      {name: 'confirmed',   height: 22, map_to: 'confirmed', type: 'select', options: [
+        {key: true, label: 'yes'},
+        {key: false, label: 'no'}
+      ]},
+      {name: 'time',        height: 22, map_to: 'auto', type: 'time'}
     ];
     gantt.locale.labels['section_absence_type'] = 'Absence Type';
+    gantt.locale.labels['section_confirmed'] = 'Confirmed';
+
 
     gantt.config.grid_resize = true;
     gantt.config.grid_width = 400;
@@ -201,7 +209,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     gantt.templates.task_text = this.memberTaskTextTemplate;
     gantt.templates.grid_row_class = this.interactiveTaskClassTemplate;
     gantt.attachEvent('onTaskLoading', this.onTaskLoading);
-    // gantt.attachEvent('onTaskCreated', this.onTaskCreated);
+    gantt.attachEvent('onGridHeaderClick', this.onGridHeaderClick);
     gantt.attachEvent('onTaskClick', this.onTaskClick);
     gantt.attachEvent('onTaskDblClick', this.onTaskDblClick);
     gantt.attachEvent('onLightboxSave', this.onLightboxSave);
@@ -222,18 +230,12 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     return true;
   }
 
-  // onTaskCreated(task: TeamGanttItem) {
-  //   if (task.hasOwnProperty('parent')) {
-  //   const parent_item: TeamGanttItem = gantt.getTask(task['parent']);
-  //     if (parent_item.is_complex) {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } else {
-  //     return true;
-  //   }
-  // }
+  onGridHeaderClick(name: string, e: Event) {
+    if (name === 'add') {
+      gantt.message('not implemented');
+      return false;
+    }
+  }
 
   onTaskClick(id: string, e: Event) {
     if (e.srcElement.className === 'gantt_add') {
@@ -243,12 +245,15 @@ export class TeamGanttComponent implements OnInit, OnChanges {
       }
     } else if (e.srcElement.className === 'gantt_tree_icon gantt_close' || e.srcElement.className === 'gantt_tree_icon gantt_open') {
       return true;
+    } else if (gantt.getTask(id)['model_type'] === ModelType.absence) {
+      return true;
     } else {
       return false;
     }
   }
 
   onTaskDblClick(id: string, e: Event) {
+    if (!id) {return false; }
     const itm = idMap.find(map => map.temp_id === id);
     if (itm) {id = itm.perm_id; }
     const item: TeamGanttItem = gantt.getTask(id);
