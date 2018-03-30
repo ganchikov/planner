@@ -1,10 +1,12 @@
 import { Component, OnInit, OnChanges, SimpleChanges, ElementRef, ViewChild, Input } from '@angular/core';
+import { Directive, Renderer2} from '@angular/core';
+
 import 'dhtmlx-gantt';
 import {} from '@types/dhtmlxgantt';
 import * as moment from 'moment';
 import { TeamGanttDataService} from '../team-gantt-data.service';
 import {TeamGanttItem} from '../../common/ganttitem';
-import { Team, ModelType } from '../../../../common/models';
+import { Team, ModelType, AbsenceType } from '../../../../common/models';
 
 export enum ScaleMode {
   Day = 0,
@@ -25,6 +27,10 @@ class IDMapper {
 let thisComponentRef: TeamGanttComponent;
 
 const idMap: Array<IDMapper> = new Array();
+
+const colHeader = '<div class="gantt_grid_head_cell gantt_grid_head_add" onclick="gantt.createTask()"></div>';
+
+const buttonClickHandler = ``;
 
 
 @Component({
@@ -53,8 +59,9 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   private _isInitialized = false;
 
-  constructor(private ganttData: TeamGanttDataService) {
+  constructor(private ganttData: TeamGanttDataService, private render: Renderer2, private elementRef: ElementRef) {
     thisComponentRef = this;
+
   }
 
   static renderComplexTask(task: TeamGanttItem): string {
@@ -175,10 +182,10 @@ export class TeamGanttComponent implements OnInit, OnChanges {
       {name: 'end_date', label: 'To', width: 115},
       {name: 'confirmed', label: 'Confirmed',
         template: function(obj) {
-          return obj.confirmed === undefined ? '' : obj.confirmed; 
+          return obj.confirmed === undefined ? '' : obj.confirmed;
         }
       },
-      {name: 'add', label: '', width: 44}
+      {name: 'buttons', label: colHeader, width: 35, template: this.colContentTemplate}
     ];
     gantt.config.lightbox.sections = [
       {name: 'absence_type', height: 22, map_to: 'absence_type', type: 'select', options: [
@@ -188,8 +195,8 @@ export class TeamGanttComponent implements OnInit, OnChanges {
       ]},
       {name: 'description', height: 38, map_to: 'text', type: 'textarea', focus: true},
       {name: 'confirmed',   height: 22, map_to: 'confirmed', type: 'select', options: [
-        {key: true, label: 'yes'},
-        {key: false, label: 'no'}
+        {key: 'true', label: 'yes'},
+        {key: 'false', label: 'no'}
       ]},
       {name: 'time',        height: 22, map_to: 'auto', type: 'time'}
     ];
@@ -216,8 +223,11 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     gantt.attachEvent('onAfterTaskAdd', this.onAfterTaskAdd);
     gantt.attachEvent('onAfterTaskUpdate', this.onAfterTaskUpdate);
     gantt.attachEvent('onTaskIdChange', this.onTaskIdChange);
+    gantt.event('btn', 'click', this.onGridButtonClick);
 
     this.setScaleMode(ScaleMode.Day);
+
+    
   }
 
   onTaskLoading(task: TeamGanttItem) {
@@ -350,6 +360,19 @@ export class TeamGanttComponent implements OnInit, OnChanges {
   memberTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
     if (task.model_type === ModelType.person) {
       return 'complex_gantt_bar';
+    } else if (task.model_type === ModelType.absence) {
+      switch (task.absence_type) {
+        case AbsenceType.dayoff:
+          return 'dayff_gantt_bar';
+        case AbsenceType.sickleave:
+          return 'sickleave_gantt_bar';
+        case AbsenceType.vacation:
+          if (String(task.confirmed) === 'true' || task.confirmed === true) {
+            return 'confirmed_vacation_gantt_bar';
+          } else {
+            return 'unconfirmed_vacation_gantt_bar';
+          }
+      }
     }
   }
 
@@ -374,5 +397,27 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     const weekNum = moment(date).isoWeek();
     return 'WW' + weekNum;
   }
+
+  buttonClickHandler(id: string): string {
+    const script = `gantt.confirm({text: 'Delete absence?', ok: 'Yes', cancel: 'No', callback: function(result) { if (result) { gantt.deleteTask(${id});}}});`;
+    return script;
+  }
+
+  colContentTemplate (task: TeamGanttItem) {
+    let css: string;
+    switch (task.model_type) {
+      case ModelType.team:
+        css = '';
+        break;
+      case ModelType.person:
+        css = `<i class="fa gantt_button_grid gantt_grid_add fa-plus fa-lg"></i>`;
+        break;
+      case ModelType.absence:
+        css = `<i id="btn" class="fa gantt_button_grid gantt_grid_delete fa-times fa-lg" onClick="${thisComponentRef.buttonClickHandler(task.id.toString())}"></i>`;
+    }
+    return css;
+  }
+
+  
 
 }

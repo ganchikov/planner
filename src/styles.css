@@ -16,10 +16,50 @@ html, body {
     border: none;
 }
 
+.dayff_gantt_bar {
+    background-color: #3db9d3
+}
+
+.sickleave_gantt_bar {
+    background-color: lightcoral
+}
+
+.confirmed_vacation_gantt_bar {
+    background-color: mediumspringgreen
+}
+
+.unconfirmed_vacation_gantt_bar {
+    background-color: khaki
+}
+
 .complex_gantt_bar .gantt_task_progress {
     display: none;
 }
 
 .not_interactive_task .gantt_add {
     display: none !important;
+}
+
+.fa {
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    opacity: 0.2;
+    padding: 5px;
+}
+
+.fa:hover {
+    opacity: 1;
+}
+
+.fa-pencil {
+    color: #ffa011;
+}
+
+.fa-plus {
+    color: #328EA0;
+}
+
+.fa-times {
+    color: red;
 }

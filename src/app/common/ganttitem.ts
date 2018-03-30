@@ -81,63 +81,75 @@ export class TeamGanttItem extends Absence implements ITeam, IPerson {
     this.SetValue('unscheduled', val);
   }
 
-    get is_complex(): boolean {
-        if (this.GetValue('absences') !== undefined && (this.GetValue('absences') as Array<Absence>).length > 0 ) {
-          return true;
-        } else {
-          return false;
-        }
-    }
+  // get is_confirmed(): string {
+  //   return String(this.confirmed);
+  // }
 
-    get start_date(): Date {
-      let date: Date;
-      if (this.is_complex) {
+  // set is_confirmed(val: string) {
+  //   if (val === 'true') {
+  //     this.SetValue<boolean>('confirmed', true);
+  //   } else {
+  //     this.SetValue<boolean>('confirmed', false);
+  //   }
+  // }
+
+  get is_complex(): boolean {
+      if (this.GetValue('absences') !== undefined && (this.GetValue('absences') as Array<Absence>).length > 0 ) {
+        return true;
+      } else {
+        return false;
+      }
+  }
+
+  get start_date(): Date {
+    let date: Date;
+    if (this.is_complex) {
+      const absences: Absence[] = this.GetValue('absences');
+      date = moment(absences[0].start_date).toDate();
+      for (const absence of absences) {
+          if (moment(absence.start_date).isBefore(moment(date))) {
+              date = moment(absence.start_date).toDate();
+          }
+      }
+      this.unscheduled = false;
+    } else {
+      if (this.GetValue('start_date') === undefined) {
+          this.unscheduled = true;
+          date = new Date(Date.now());
+      } else {
+        date = moment(this.GetValue('start_date')).toDate();
+      }
+    }
+    return date;
+  }
+
+  set start_date(val: Date) {
+    this.SetValue<Date>('start_date', val);
+  }
+
+  get end_date(): Date {
+    let date: Date;
+    if (this.is_complex) {
         const absences: Absence[] = this.GetValue('absences');
-        date = moment(absences[0].start_date).toDate();
+        date = moment(absences[0].end_date).toDate();
         for (const absence of absences) {
-            if (moment(absence.start_date).isBefore(moment(date))) {
-                date = moment(absence.start_date).toDate();
+            if (moment(absence.end_date).isAfter(moment(date))) {
+                date = moment(absence.end_date).toDate();
             }
         }
         this.unscheduled = false;
+    } else {
+      if (this.GetValue('end_date') === undefined) {
+          this.unscheduled = true;
+          date = new Date(Date.now());
       } else {
-        if (this.GetValue('start_date') === undefined) {
-            this.unscheduled = true;
-            date = new Date(Date.now());
-        } else {
-          date = moment(this.GetValue('start_date')).toDate();
-        }
+        date = moment(this.GetValue('end_date')).toDate();
       }
-      return date;
     }
+    return date;
+  }
 
-    set start_date(val: Date) {
-      this.SetValue<Date>('start_date', val);
-    }
-
-    get end_date(): Date {
-      let date: Date;
-      if (this.is_complex) {
-          const absences: Absence[] = this.GetValue('absences');
-          date = moment(absences[0].end_date).toDate();
-          for (const absence of absences) {
-              if (moment(absence.end_date).isAfter(moment(date))) {
-                  date = moment(absence.end_date).toDate();
-              }
-          }
-          this.unscheduled = false;
-      } else {
-        if (this.GetValue('end_date') === undefined) {
-            this.unscheduled = true;
-            date = new Date(Date.now());
-        } else {
-          date = moment(this.GetValue('end_date')).toDate();
-        }
-      }
-      return date;
-    }
-
-    set end_date(val: Date) {
-      this.SetValue<Date>('end_date', val);
-    }
+  set end_date(val: Date) {
+    this.SetValue<Date>('end_date', val);
+  }
 }

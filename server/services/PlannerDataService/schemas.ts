@@ -30,6 +30,7 @@ export const absenceSchema: Schema = new Schema({
     name: String,
     start_date: Date,
     end_date: Date,
-    confirmed: Boolean
+    confirmed: Boolean,
+    absence_type: String
 }, schemaOptions);
 
