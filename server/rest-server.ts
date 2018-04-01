@@ -2,10 +2,7 @@ import * as express from 'express';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
 
-import {TeamDataService} from './services/TeamDataService';
 import * as DS from './services/PlannerDataService/main';
-
-import {MongoProvider} from './providers/MongoProvider';
 
 const app = express();
 
@@ -96,6 +93,19 @@ app.put('/api/absence', (req, res) => {
     });
 });
 
+
+app.delete('/api/absence/:absenceId', (req, res) => {
+    const absenceId = req.params.absenceId;
+    res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
+    DS.DeleteAbsence(absenceId, err => {
+        if (err) {
+            console.log(err);
+            res.status(500).send(err);
+        } else {
+            res.status(200).end();
+        }
+    });
+});
 
 
 const server = app.listen(8001, 'localhost', () => {

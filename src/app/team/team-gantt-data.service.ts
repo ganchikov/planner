@@ -46,4 +46,10 @@ export class TeamGanttDataService {
     });
   }
 
+  deleteAbsence(absenceId: Object, callback: (error) => void) {
+    this.teamDS.deleteAbsence(absenceId, error => {
+      callback(error);
+    });
+  }
+
 }

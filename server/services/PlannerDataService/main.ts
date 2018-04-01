@@ -117,6 +117,16 @@ export function UpdateAbsence(absenceObj: Object, callback: (err?: any, res?: an
     }
 }
 
+export function DeleteAbsence(absenceId: Object, callback: (err?: any) => void) {
+    try {
+        absenceModel.deleteOne({_id: absenceId}, (err) => {
+            callback(err);
+        });
+    } catch (err) {
+        callback(err);
+    }
+}
+
 export function UpdatePerson(personObj: Object, callback: (err?: any, res?: any) => void) {
     try {
         personModel.updateOne({_id: personObj['_id']}, personObj, (err, res) => {

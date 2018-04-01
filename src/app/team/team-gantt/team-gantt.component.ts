@@ -1,5 +1,5 @@
-import { Component, OnInit, OnChanges, SimpleChanges, ElementRef, ViewChild, Input } from '@angular/core';
-import { Directive, Renderer2} from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, ElementRef, ViewChild, Input, Renderer2, Inject} from '@angular/core';
+import {DOCUMENT} from '@angular/platform-browser';
 
 import 'dhtmlx-gantt';
 import {} from '@types/dhtmlxgantt';
@@ -14,12 +14,6 @@ export enum ScaleMode {
   Month = 2
 }
 
-class Duration {
-  constructor(
-    public offset: number,
-    public duration: number) {}
-}
-
 class IDMapper {
   constructor(public temp_id: string, public perm_id: string) {}
 }
@@ -27,11 +21,6 @@ class IDMapper {
 let thisComponentRef: TeamGanttComponent;
 
 const idMap: Array<IDMapper> = new Array();
-
-const colHeader = '<div class="gantt_grid_head_cell gantt_grid_head_add" onclick="gantt.createTask()"></div>';
-
-const buttonClickHandler = ``;
-
 
 @Component({
   selector: 'app-team-gantt',
@@ -59,19 +48,64 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   private _isInitialized = false;
 
-  constructor(private ganttData: TeamGanttDataService, private render: Renderer2, private elementRef: ElementRef) {
+  constructor(private ganttData: TeamGanttDataService,
+              private renderer: Renderer2,
+              private elementRef: ElementRef,
+              @Inject(DOCUMENT) private document) {
+
     thisComponentRef = this;
 
   }
 
-  static renderComplexTask(task: TeamGanttItem): string {
+  ngOnInit() {
+    this.configureChart();
+    gantt.init(this.ganttContainer.nativeElement, this.rangeDates[0], this.rangeDates[1]);
+    this._isInitialized = true;
+    this.ganttData.getGanttTeamData(items => {
+      gantt.parse({data: items, links: []});
+    });
+
+    const script = this.renderer.createElement('script');
+    script['type'] = 'application/javascript';
+    script['text'] = this.renderJavaScriptCode();
+    this.renderer.appendChild(this.document['body'], script);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    for (const propName in changes) {
+      if (this._isInitialized) {
+        switch (propName) {
+          case 'rangeDates':
+            gantt.config.start_date = this.rangeDates[0];
+            gantt.config.end_date = this.rangeDates[1];
+            gantt.render();
+            break;
+          case 'scaleMode':
+            this.setScaleMode(this.scaleMode);
+            gantt.render();
+        }
+      }
+    }
+  }
+
+  // Gantt service functions
+
+  renderComplexTask(task: TeamGanttItem): string {
     if (!task.is_complex) {return ''; }
+    class Duration {
+      constructor(
+        public offset: number,
+        public duration: number) {}
+    }
     const absences: TeamGanttItem[] = task.GetValue('absences') as TeamGanttItem[];
     const durations: Duration[] = [];
     let min_date: Date = absences[0].start_date;
     let max_date: Date = absences[0].end_date;
 
-
+    absences.sort((a, b) => {
+      if (a.start_date > b.start_date) {return 1; } else if (a.start_date < b.start_date) {return -1; }
+      return 0;
+    });
     for (const absence of absences) {
       if (moment(absence.start_date).isBefore(min_date)) {min_date = absence.start_date; }
       if (moment(absence.end_date).isAfter(max_date)) {max_date = absence.end_date; }
@@ -91,31 +125,21 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     return taskHTML;
   }
 
-
-  ngOnInit() {
-    this.configureChart();
-    gantt.init(this.ganttContainer.nativeElement, this.rangeDates[0], this.rangeDates[1]);
-    this._isInitialized = true;
-    this.ganttData.getGanttTeamData(items => {
-      gantt.parse({data: items, links: []});
-    });
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    for (const propName in changes) {
-      if (this._isInitialized) {
-        switch (propName) {
-          case 'rangeDates':
-            gantt.config.start_date = this.rangeDates[0];
-            gantt.config.end_date = this.rangeDates[1];
-            gantt.render();
-            break;
-          case 'scaleMode':
-            this.setScaleMode(this.scaleMode);
-            gantt.render();
-        }
+  renderJavaScriptCode() {
+    return `
+      function deleteItem(id) {
+        gantt.confirm({text: 'Delete absence?', ok: 'Yes', cancel: 'No', callback: function(result) {
+          if (result) { gantt.deleteTask(id);}
+        }});
       }
-    }
+      function insertItem(parentId) {
+        const parentItem = gantt.getTask(parentId);
+        const newItemText = parentItem.text + ' vacation';
+        const startDate = new Date(Date.now());
+        const startDateStr = (startDate.getDay()+1) + '-' + (startDate.getMonth()+1) + '-' + startDate.getFullYear();
+        gantt.createTask({text: newItemText, start_date: startDateStr, duration: 7},parentId);
+      }
+    `;
   }
 
   setScaleMode(scaleMode: ScaleMode) {
@@ -150,6 +174,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
   }
 
   configureChart() {
+    const colHeader = '<div class="gantt_grid_head_cell gantt_grid_head_add" onclick="gantt.createTask()"></div>';
     gantt.config['layout'] = {
       css: 'gantt_container',
       rows: [
@@ -206,12 +231,10 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
     gantt.config.grid_resize = true;
     gantt.config.grid_width = 400;
-    // gantt.config.min_grid_column_width = 100;
     gantt.config.keep_grid_width = false;
     gantt.config.min_column_width = 50;
     gantt.config.show_unscheduled = true;
     gantt.config.scroll_on_click = true;
-    // gantt.config.readonly = true;
     gantt.templates.task_class = this.memberTaskClassTemplate;
     gantt.templates.task_text = this.memberTaskTextTemplate;
     gantt.templates.grid_row_class = this.interactiveTaskClassTemplate;
@@ -219,16 +242,16 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     gantt.attachEvent('onGridHeaderClick', this.onGridHeaderClick);
     gantt.attachEvent('onTaskClick', this.onTaskClick);
     gantt.attachEvent('onTaskDblClick', this.onTaskDblClick);
-    gantt.attachEvent('onLightboxSave', this.onLightboxSave);
     gantt.attachEvent('onAfterTaskAdd', this.onAfterTaskAdd);
     gantt.attachEvent('onAfterTaskUpdate', this.onAfterTaskUpdate);
-    gantt.attachEvent('onTaskIdChange', this.onTaskIdChange);
-    gantt.event('btn', 'click', this.onGridButtonClick);
+    gantt.attachEvent('onBeforeTaskDelete', this.onBeforeTaskDelete);
+    gantt.attachEvent('onAfterTaskDelete', this.onAfterTaskDelete);
 
     this.setScaleMode(ScaleMode.Day);
 
-    
   }
+
+  // Gantt event handlers
 
   onTaskLoading(task: TeamGanttItem) {
 
@@ -274,39 +297,6 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     }
   }
 
-  onLightboxSave(id: string, item: TeamGanttItem, is_new: boolean) {
-    // const taskObj = gantt.getTask(id);
-    // const ganttItem: TeamGanttItem = item;
-    // const parentGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
-    // const parentTeamGanttItem: TeamGanttItem = gantt.getTask(parentGanttItem.parent_id.toString()) as TeamGanttItem;
-    // if (is_new) {
-    //   thisComponentRef.ganttData.insertAbsence(ganttItem, parentGanttItem, (insertedItem, error) => {
-    //     if (error) {
-    //       gantt.message({type: 'error', text: error});
-    //     } else {
-    //       gantt.deleteTask(id);
-    //       gantt.createTask(insertedItem, parentGanttItem.id.toString());
-    //       gantt.updateTask(parentTeamGanttItem.id.toString());
-    //       gantt.hideLightbox();
-    //       gantt.refreshData();
-    //     }
-    //   });
-    // } else {
-    //   thisComponentRef.ganttData.updateAbsence(ganttItem, (error) => {
-    //     if (error) {
-    //       gantt.message({type: 'error', text: error});
-    //     } else {
-    //       gantt.updateTask(ganttItem.id.toString());
-    //       gantt.updateTask(parentTeamGanttItem.id.toString());
-    //       gantt.hideLightbox();
-    //       // gantt.refreshTask(ganttItem.id);
-    //       gantt.render();
-    //     }
-    //   });
-    // }
-    return true;
-  }
-
   onAfterTaskAdd(id: string, newTask: Object) {
     const newGanttItem: TeamGanttItem = new TeamGanttItem(newTask);
     newTask['model_type'] = newGanttItem.model_type = ModelType.absence;
@@ -325,14 +315,8 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     return true;
   }
 
-  onTaskIdChange(old_id: string, new_id: string) {
-    console.log(`id changed from ${old_id} to ${new_id}`);
-    // const item: TeamGanttItem = gantt.getTask(old_id);
-    // item.id = Number.parseInt(new_id);
-  }
-
   onAfterTaskUpdate(id: string, updatedTask: Object) {
-    if (updatedTask['model_type'] !== ModelType.absence) {return true;}
+    if (updatedTask['model_type'] !== ModelType.absence) {return true; }
     const itm = idMap.find(map => map.temp_id === id);
     if (itm) {id = itm.perm_id; }
     let updatedGanttTask: TeamGanttItem;
@@ -356,6 +340,23 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     });
   }
 
+  onBeforeTaskDelete(id: string, deletedItem: TeamGanttItem) {
+    const parentGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
+    parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === deletedItem.id),
+    1);
+  }
+
+  onAfterTaskDelete(id: string, deletedItem: TeamGanttItem) {
+    if (deletedItem._id) {
+      thisComponentRef.ganttData.deleteAbsence(deletedItem._id, error => {
+        if (error) {
+          gantt.message({type: 'error', text: error});
+        }
+      });
+    }
+  }
+
+  // Gantt templates
 
   memberTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
     if (task.model_type === ModelType.person) {
@@ -378,7 +379,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   memberTaskTextTemplate(start: Date, end: Date, task: TeamGanttItem): string {
     if (task.model_type === ModelType.person) {
-      const str = TeamGanttComponent.renderComplexTask(task);
+      const str = thisComponentRef.renderComplexTask(task);
       return str;
     } else {
       return '';
@@ -398,11 +399,6 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     return 'WW' + weekNum;
   }
 
-  buttonClickHandler(id: string): string {
-    const script = `gantt.confirm({text: 'Delete absence?', ok: 'Yes', cancel: 'No', callback: function(result) { if (result) { gantt.deleteTask(${id});}}});`;
-    return script;
-  }
-
   colContentTemplate (task: TeamGanttItem) {
     let css: string;
     switch (task.model_type) {
@@ -410,14 +406,12 @@ export class TeamGanttComponent implements OnInit, OnChanges {
         css = '';
         break;
       case ModelType.person:
-        css = `<i class="fa gantt_button_grid gantt_grid_add fa-plus fa-lg"></i>`;
+        css = `<i class="fa gantt_button_grid gantt_grid_add fa-plus fa-lg" onClick="insertItem(${task.id})"></i>`;
         break;
       case ModelType.absence:
-        css = `<i id="btn" class="fa gantt_button_grid gantt_grid_delete fa-times fa-lg" onClick="${thisComponentRef.buttonClickHandler(task.id.toString())}"></i>`;
+        css = `<i id="btn" class="fa gantt_button_grid gantt_grid_delete fa-times fa-lg" onClick="deleteItem(${task.id.toString()})"></i>`;
     }
     return css;
   }
-
-  
 
 }

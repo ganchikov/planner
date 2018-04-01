@@ -76,6 +76,19 @@ export class TeamDataService {
     });
   }
 
+  deleteAbsence(absenceId: Object, callback: (error?) => void) {
+    this.http.delete(this.url + `/absence/${absenceId.toString()}`, httpOptions).pipe(
+      tap(absence => {
+        this.log('absence deleted _id:' + absenceId);
+      }),
+      catchError(this.handleError('deleteAbsence', []))
+    ).subscribe(() => {
+      callback();
+    }, error => {
+      callback(error);
+    });
+  }
+
   updatePerson(personItem: Person, callback: (error?) => void) {
     this.http.put<Person>(this.url + '/person', personItem.GetObject(), httpOptions).pipe(
       tap ( person => {
