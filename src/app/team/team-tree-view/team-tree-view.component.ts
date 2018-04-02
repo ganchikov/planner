@@ -3,7 +3,7 @@ import {} from '@angular/core';
 
 import {TreeNode} from 'primeng/api';
 import {TeamDataService} from '../team-data.service';
-import {Team, Person, Absence, AbsenceTypes} from '../../../../common/models';
+import {Team, Person, AbsenceType} from '../../../../common/models';
 
 interface AbsenceTypeItem {
   name: string;
@@ -80,10 +80,7 @@ export class TeamTreeViewComponent implements OnInit {
   }
 
   get AbsenceTypeList(): Object[] {
-    return AbsenceTypes.map<AbsenceTypeItem>((item, index, array) => {
-      const itm: AbsenceTypeItem = {name: item };
-      return itm;
-    });
+    return [{name: 'vacation'}, {name: 'day off'}, {name: 'sick leave'}];
   }
 
   constructor(private teamDS: TeamDataService) { }

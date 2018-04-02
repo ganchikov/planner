@@ -2,14 +2,11 @@ import * as express from 'express';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
 
-import {TeamDataService} from './services/TeamDataService';
-import {MongoProvider} from './providers/MongoProvider';
-
-import {Team} from '../common/models';
+import * as DS from './services/PlannerDataService/main';
 
 const app = express();
 
-const teamDS: TeamDataService = new TeamDataService(new MongoProvider(undefined, 'plannerdb'));
+// const teamDS: TeamDataService = new TeamDataService(new MongoProvider(undefined, 'plannerdb'));
 
 app.use(bodyParser.json());
 
@@ -29,49 +26,111 @@ app.get('/', (req, res) => {
     console.log('requested landing page');
 });
 
-// REST API
-app.get('/api/teams/', (req, res) => {
+// REST API TEST
+
+app.get('/api/teams', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
-    teamDS.GetTeams(teams => {
-        const jsonObjects: Object[] = [];
-        teams.forEach(team => jsonObjects.push(team.GetObject()));
-        res.status(200).json(jsonObjects);
-    }, err => {
-        res.status(404).send(err);
+    const filterCriteria = req.body as Object;
+    DS.GetTeamsDataSet(filterCriteria, (err, teamDocs) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send(err);
+        } else {
+            res.status(200).json(teamDocs.map(team => team.toJSON()));
+        }
     });
 });
 
-app.post('/api/teams/', (req, res) => {
+app.post('/api/teams', (req, res) => {
     res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
-    try {
-        if (req.body instanceof Array) {
-            const teams: Team[] = [];
-            (req.body as Array<any>).forEach(item => teams.push(new Team(item)));
-            teamDS.InsertTeams(teams, resultItems => {
-                res.status(200).json(resultItems);
-            }, error => {
-                res.status(404).send(error);
-            });
-        } else {
-            teamDS.InsertTeam(new Team(req.body), resultItem => {
-                res.status(200).json(resultItem);
-            }, error => {
-                res.status(404).send(error);
-            });
-        }
-    } catch (err) {
-        res.status(404).send('bad request: ' + err);
+    if (req.body instanceof Array) {
+        DS.InsertTeamsDataSet(req.body as Array<Object>, (err, teamDocs) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send(err);
+            } else {
+                res.status(200).json(teamDocs.map(team => team.toJSON()));
+            }
+        });
+    } else {
+        res.status(200).send({});
     }
 });
 
+app.post('/api/absence', (req, res) => {
+    res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
+    DS.InsertAbsence(req.body, (err, absenceDoc) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send(err);
+        } else {
+            res.status(200).json(absenceDoc.toJSON());
+        }
+    });
+});
+
+app.put('/api/person', (req, res) => {
+    res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
+    DS.UpdatePerson(req.body, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send(err);
+        } else {
+            res.status(200).json(result);
+        }
+    });
+});
+
+app.put('/api/absence', (req, res) => {
+    res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
+    DS.UpdateAbsence(req.body, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send(err);
+        } else {
+            res.status(200).json(result);
+        }
+    });
+});
+
+
+app.delete('/api/absence/:absenceId', (req, res) => {
+    const absenceId = req.params.absenceId;
+    res.set({'Content-Type' : 'text/json', 'Access-Control-Allow-Origin' : '*'});
+    DS.DeleteAbsence(absenceId, err => {
+        if (err) {
+            console.log(err);
+            res.status(500).send(err);
+        } else {
+            res.status(200).end();
+        }
+    });
+});
+
+
 const server = app.listen(8001, 'localhost', () => {
     const {address, port} = server.address();
-    console.log('Listening on http://localhost:' + port);
+    console.log(`Process ${process.pid} is listening on http://localhost:` + port);
+
+    DS.Connect(error => {
+        if (error) {
+            console.log('failed to connect to database: ' + error);
+            process.exit();
+        } else {
+            console.log('connected to database');
+        }
+
+    });
 });
 
 const finalize = () => {
     console.log('Finalizing');
-    teamDS.Disconnect();
+    // teamDS.Disconnect();
+    DS.Disconnect(error => {
+        if (error) {
+            console.log('failed to disconnect from database, exiting...');
+        }
+    });
     process.exit(0);
 };
 
@@ -79,5 +138,8 @@ process.on('SIGBREAK', finalize);
 process.on('SIGTERM', finalize);
 process.on('SIGHUP', finalize);
 process.on('SIGINT', finalize);
+process.on('unhandledRejection', (reason) => {
+    console.log(reason);
+});
 
 

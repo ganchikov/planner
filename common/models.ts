@@ -26,12 +26,33 @@ export class BaseItem extends DataItem {
         this.SetValue<string>('name', val);
     }
 
+    // get parent_object(): BaseItem {
+    //     return this.GetValue('parent_object');
+    // }
+
+    // set parent_object(val: BaseItem) {
+    //     // this.SetValue<BaseItem>('parent_object', val);
+    //     this.parent_id = val.id;
+    // }
+
     get parent_id(): number {
-        return this.GetValue('parent_id');
+        // if (this.parent_object) {
+        //     return this.parent_object.id;
+        // } else {
+            return this.GetValue('parent_id');
+        // }
     }
 
     set parent_id(val: number) {
         this.SetValue<number>('parent_id', val);
+    }
+
+    get model_type(): ModelType {
+        return this.GetValue('model_type');
+    }
+
+    set model_type(val: ModelType) {
+        this.SetValue<ModelType>('model_type', val);
     }
 
 }
@@ -53,44 +74,24 @@ export class BaseScheduledItem extends BaseItem {
     }
 }
 
-export class ScheduledConfirmableItem extends BaseScheduledItem {
-    constructor(
-        initializatorObj: Object
-    ) {
-        super(initializatorObj);
-    }
-
-    get confirmed(): boolean {
-        if (this.GetValue('confirmed') === 'true') {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    set confirmed(val: boolean) {
-        this.SetValue<boolean>('confirmed', val);
-    }
-
+export interface ITeam {
+    members: Person[];
 }
 
-const MAX_TEAM_MEMBERS = 100;
-const MAX_PERSON_ABSENCES = 1000;
-
-export class Team extends BaseItem {
+export class Team extends BaseItem implements ITeam {
     constructor(
         initializatorObj: Object
     ) {
         super(initializatorObj);
+
+        this.model_type = ModelType.team;
 
         if (initializatorObj && initializatorObj.hasOwnProperty('members')) {
             const members: Person[] = [];
-            let memberId: number = MAX_TEAM_MEMBERS * this.id;
             for (const memberObj of initializatorObj['members']) {
                 const member = new Person(memberObj);
-                member.id = memberId;
                 member.parent_id = this.id;
                 members.push(member);
-                memberId++;
             }
             this.SetValue<Person[]>('members', members);
         }
@@ -105,31 +106,76 @@ export class Team extends BaseItem {
 
 }
 
-export class Person extends BaseScheduledItem {
+export interface IPerson {
+    absences: Absence[];
+}
+
+export class Person extends BaseScheduledItem implements IPerson {
     constructor(
         initializatorObj: Object
     ) {
         super(initializatorObj);
+        this.model_type = ModelType.person;
         if (initializatorObj && initializatorObj.hasOwnProperty('absences')) {
-            const absences: ScheduledConfirmableItem[] = [];
-            let absenceId: number = MAX_PERSON_ABSENCES * this.id;
+            const absences: Absence[] = [];
             for (const absObj of initializatorObj['absences']) {
-                const absence = new ScheduledConfirmableItem(absObj);
+                const absence = new Absence(absObj);
                 absence.parent_id = this.id;
-                absence.id = absenceId;
                 absences.push(absence);
-                absenceId++;
             }
-            this.SetValue<ScheduledConfirmableItem[]>('absences', absences);
+            this.SetValue<Absence[]>('absences', absences);
         }
     }
 
-    get absences(): ScheduledConfirmableItem[] {
+    get absences(): Absence[] {
         return this.GetValue('absences');
     }
-    set absences(val: ScheduledConfirmableItem[]) {
-        this.SetValue<ScheduledConfirmableItem[]>('dateEnd', val);
+    set absences(val: Absence[]) {
+        this.SetValue<Absence[]>('dateEnd', val);
     }
 }
 
-export const AbsenceTypes = ['vacation', 'sick leave', 'day off'];
+export interface IAbsence {
+    confirmed: boolean;
+    absence_type: AbsenceType;
+}
+
+export class Absence extends BaseScheduledItem implements IAbsence {
+    constructor(
+        initializatorObj: Object,
+        ignore_object_type?: boolean
+    ) {
+        super(initializatorObj);
+        if (!ignore_object_type) {
+            this.model_type = ModelType.absence;
+        }
+    }
+
+    get confirmed(): boolean {
+        return this.GetValue('confirmed');
+    }
+    set confirmed(val: boolean) {
+        this.SetValue<boolean>('confirmed', val);
+    }
+
+    get absence_type(): AbsenceType {
+        return this.GetValue('absence_type');
+    }
+
+    set absence_type(val: AbsenceType) {
+        this.SetValue<AbsenceType>('absence_type', val);
+    }
+
+}
+
+export enum ModelType {
+    team = 'team',
+    person = 'person',
+    absence = 'absence'
+}
+
+export enum AbsenceType {
+    vacation = 'vacation',
+    sickleave = 'sick leave',
+    dayoff = 'day off'
+}
