@@ -6,6 +6,7 @@ import {of} from 'rxjs/observable/of';
 
 import {LoggerService} from '../services/logger.service';
 import {Team, Person, Absence} from '../../../common/models';
+import { AppConfig } from '../app.config';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -19,7 +20,7 @@ export class TeamDataService {
 
   constructor(private http: HttpClient, private logger: LoggerService) { }
 
-  private url = 'http://localhost:8001/api';
+  private url = AppConfig.settings.apiServer.url;
 
   private log (message: string) {
     this.logger.log('TeamDataService: ' + message);
@@ -34,14 +35,14 @@ export class TeamDataService {
   }
 
   getTeamData(callback: (teams: Team[]) => void) {
-    this.http.get<Team[]>(this.url + '/teams').pipe(
+    this.http.get<any>(this.url + 'teams').pipe(
       tap ( teams => {
         this.log('fetched teams' + teams);
       }),
       catchError(this.handleError('getTeamData', []))
     ).subscribe(responseObjects => {
         const results: Team[] = [];
-        for (const respObj of responseObjects) {
+        for (const respObj of responseObjects.data) {
           const team = new Team(respObj);
           results.push(team);
         }
@@ -50,7 +51,7 @@ export class TeamDataService {
   }
 
   insertAbsence(newItem: Absence, callback: (err?: any, insertedItem?: Absence) => void) {
-    this.http.post<Absence>(this.url + '/absence', newItem.GetObject(), httpOptions).pipe(
+    this.http.post<Absence>(this.url + 'absences', newItem.GetObject(), httpOptions).pipe(
       tap ( insertedItem => {
         this.log('inserted absence' + insertedItem);
       }),
@@ -64,7 +65,7 @@ export class TeamDataService {
   }
 
   updateAbsence(absenceItem: Absence, callback: (error?) => void) {
-    this.http.put<Absence>(this.url + '/absence', absenceItem.GetObject(), httpOptions).pipe(
+    this.http.put<Absence>(this.url + 'absences', absenceItem.GetObject(), httpOptions).pipe(
       tap(absence => {
         this.log('absence updated ' + absence);
       }),
@@ -77,7 +78,7 @@ export class TeamDataService {
   }
 
   deleteAbsence(absenceId: Object, callback: (error?) => void) {
-    this.http.delete(this.url + `/absence/${absenceId.toString()}`, httpOptions).pipe(
+    this.http.delete(this.url + `absences/${absenceId.toString()}`, httpOptions).pipe(
       tap(absence => {
         this.log('absence deleted _id:' + absenceId);
       }),
@@ -90,7 +91,7 @@ export class TeamDataService {
   }
 
   updatePerson(personItem: Person, callback: (error?) => void) {
-    this.http.put<Person>(this.url + '/person', personItem.GetObject(), httpOptions).pipe(
+    this.http.put<Person>(this.url + 'people', personItem.GetObject(), httpOptions).pipe(
       tap ( person => {
         this.log('person updated' + person);
       }),

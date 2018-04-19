@@ -1,0 +1,22 @@
+{
+    "env": {
+    "name": "DEV"
+     },
+    "appInsights": {
+    "instrumentationKey": "<dev-guid-here>"
+     },
+    "logging": {
+    "console": true,
+    "appInsights": false
+    },
+    "aad": {
+    "requireAuth": true,
+    "tenant": "<dev-guid-here>",
+    "clientId": "<dev-guid-here>"
+    },
+    "apiServer": {
+        "url": "http://localhost:3030/api/v1/",
+        "metadata": "http://localhost:3030/api/v1/",
+        "rules": "https://localhost:3030/api/v1/"
+    }
+}
