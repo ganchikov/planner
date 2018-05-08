@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import {MenuItem} from 'primeng/api';
+import {CookieService} from 'ngx-cookie-service';
 
 
 import {TeamModule} from './team/team.module';
@@ -26,7 +27,7 @@ import { PageNotFoundComponent } from './pagenotfound/pagenotfound.component';
     TeamModule,
     AppRoutingModule
   ],
-  providers: [LoggerService],
+  providers: [LoggerService, CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

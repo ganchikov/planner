@@ -17,4 +17,8 @@ export class AuthService {
           // .shareReplay();
   }
 
+  loginAuth0() {
+    this.http.get(this.url.concat('auth/auth0'));
+  }
+
 }

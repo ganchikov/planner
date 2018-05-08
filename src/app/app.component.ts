@@ -24,6 +24,11 @@ export class AppComponent implements OnInit {
         label: 'Tasks',
         icon: 'fa-tasks',
         routerLink: ['/prime-test']
+      },
+      {
+        label: 'Login',
+        icon: 'fa-sign-in',
+        routerLink: ['/login']
       }
     ];
 
