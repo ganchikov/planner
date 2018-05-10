@@ -20,4 +20,10 @@ export interface IAppConfig {
         metadata: string;
         rules: string;
     };
+    auth0: {
+        clientID: string,
+        domain: string,
+        redirectUri: string,
+        audience: string
+    };
 }

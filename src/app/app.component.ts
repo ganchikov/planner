@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {MenubarModule} from 'primeng/menubar';
 import {MenuItem} from 'primeng/api';
 import { RouterLink } from '@angular/router/src/directives/router_link';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,10 @@ import { RouterLink } from '@angular/router/src/directives/router_link';
 export class AppComponent implements OnInit {
   title = 'Planner';
   menuitems: MenuItem[];
+
+  constructor(private authService: AuthService) {
+    authService.handleAuth0();
+  }
 
   ngOnInit() {
     this.menuitems = [
@@ -28,7 +33,16 @@ export class AppComponent implements OnInit {
       {
         label: 'Login',
         icon: 'fa-sign-in',
-        routerLink: ['/login']
+        command: (event) => {
+          this.authService.loginAuth0();
+        }
+      },
+      {
+        label: 'Logout',
+        icon: 'fa-sign-out',
+        command: (event) => {
+          this.authService.logout();
+        }
       }
     ];
 

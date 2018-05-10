@@ -5,12 +5,14 @@ import { CommonModule } from '@angular/common';
 import {PrimeTestComponent} from './prime-test/prime-test.component';
 import {PageNotFoundComponent} from './pagenotfound/pagenotfound.component';
 import {LoginComponent} from './login/login.component';
+import {CallbackComponent} from './callback/callback.component';
 
 const appRoutes: Routes = [
   {path: 'prime-test', component: PrimeTestComponent},
   {path: '', redirectTo: '/team', pathMatch: 'full'},
-  {path: 'login', component: LoginComponent}
-  {path: '**', component: PageNotFoundComponent}
+  {path: 'login', component: LoginComponent},
+  {path: 'callback', component: CallbackComponent},
+  {path: '**', component: PageNotFoundComponent},
 ];
 
 @NgModule({
