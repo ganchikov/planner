@@ -12,6 +12,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/do';
 import {LoggerService} from './services/logger.service';
 import { Logger } from 'mongodb';
+import { access } from 'fs';
 
 
 @Injectable()
@@ -22,10 +23,11 @@ export class RequestInterceptor implements HttpInterceptor {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const access_token = localStorage.getItem('access_token');
     request = request.clone({
       setHeaders: {
         ContentType:  'application/json',
-        Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+        Authorization: access_token ? `Bearer ${access_token}` : '',
       }
     });
     return next.handle(request).do((event: HttpEvent<any>) => {

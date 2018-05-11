@@ -23,6 +23,6 @@
         "clientID": "vc4oab1tqEmYqsCazSwZoQ0Y7xQsCpFz",
         "domain": "xplanner.auth0.com",
         "redirectUri": "http://localhost:4200/callback",
-        "audience": "https://xplanner.auth0.com/userinfo"
+        "audience": "http://localhost:3030/api/v1"
     }
 }
