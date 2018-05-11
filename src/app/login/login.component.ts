@@ -11,6 +11,7 @@ import {AuthService} from '../services/auth.service';
 export class LoginComponent implements OnInit {
 
   form: FormGroup;
+  display: boolean = true;
 
   constructor(private fb: FormBuilder,
     private authService: AuthService,
@@ -41,6 +42,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+
   }
 
 }

@@ -11,6 +11,7 @@ import {CalendarModule} from 'primeng/calendar';
 import {CheckboxModule} from 'primeng/checkbox';
 import {ToolbarModule} from 'primeng/toolbar';
 import {SelectButtonModule} from 'primeng/selectbutton';
+import {DialogModule} from 'primeng/dialog';
 
 @NgModule({
   imports: [
@@ -28,7 +29,8 @@ import {SelectButtonModule} from 'primeng/selectbutton';
     CalendarModule,
     CheckboxModule,
     ToolbarModule,
-    SelectButtonModule
+    SelectButtonModule,
+    DialogModule,
   ],
   declarations: []
 })
