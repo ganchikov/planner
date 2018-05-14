@@ -18,6 +18,10 @@ export class AppComponent implements OnInit {
     authService.handleAuth0();
   }
 
+  public logout() {
+    this.authService.logout();
+  }
+
   ngOnInit() {
     this.menuitems = [
       {
@@ -26,23 +30,14 @@ export class AppComponent implements OnInit {
         routerLink: ['/team']
       },
       {
+        label: 'Time',
+        icon: 'fa-calendar',
+        routerLink: ['/team-gantt']
+      },
+      {
         label: 'Tasks',
         icon: 'fa-tasks',
         routerLink: ['/prime-test']
-      },
-      {
-        label: 'Login',
-        icon: 'fa-sign-in',
-        command: (event) => {
-          this.authService.loginAuth0();
-        }
-      },
-      {
-        label: 'Logout',
-        icon: 'fa-sign-out',
-        command: (event) => {
-          this.authService.logout();
-        }
       }
     ];
 

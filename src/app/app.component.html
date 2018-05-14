@@ -1,9 +1,7 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to the {{ title }}!
-  </h1>
-</div>
 <p-menubar [model]="menuitems">
+  <div>
+    <button pButton label="Logout" icon="fa-sign-out" (click)="logout($event)"></button>
+  </div>
 </p-menubar>
 <router-outlet></router-outlet>
