@@ -18,7 +18,7 @@ export class AuthService {
     responseType: 'token id_token',
     audience: AppConfig.settings.auth0.audience,
     redirectUri: AppConfig.settings.auth0.redirectUri,
-    scope: 'openid profile read:all write:all'
+    scope: 'openid profile read:teams-api'
   });
 
   constructor(private http: HttpClient, private router: Router) {
