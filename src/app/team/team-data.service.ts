@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
+import {of} from 'rxjs/observable/of'
 import {catchError, tap} from 'rxjs/operators';
-import {of} from 'rxjs/observable/of';
 
 import {LoggerService} from '../services/logger.service';
 import {Team, Person, Absence} from '../../../common/models';

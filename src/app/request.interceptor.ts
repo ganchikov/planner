@@ -1,3 +1,5 @@
+
+import {tap} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import {Router} from '@angular/router';
 import {
@@ -8,8 +10,8 @@ import {
   HttpResponse,
   HttpErrorResponse
 } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/do';
+import { Observable } from 'rxjs';
+
 import {LoggerService} from './services/logger.service';
 import { Logger } from 'mongodb';
 import { access } from 'fs';
@@ -30,7 +32,7 @@ export class RequestInterceptor implements HttpInterceptor {
         Authorization: access_token ? `Bearer ${access_token}` : '',
       }
     });
-    return next.handle(request).do((event: HttpEvent<any>) => {
+    return next.handle(request).pipe(tap((event: HttpEvent<any>) => {
       if (event instanceof HttpResponse) {
         this.logger.log(`${event.url} ${event.status}`);
       }
@@ -43,6 +45,6 @@ export class RequestInterceptor implements HttpInterceptor {
         } else {
           this.logger.log(err);
         }
-     });
+     }));
   }
 }

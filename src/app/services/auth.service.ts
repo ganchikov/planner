@@ -1,9 +1,10 @@
+
+import {shareReplay, filter} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { AppConfig } from '../app.config';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/rx';
-import {filter} from 'rxjs/operators';
 import * as auth0 from 'auth0-js';
 
 
@@ -27,7 +28,7 @@ export class AuthService {
   public login(email: string, password: string ) {
     // this is just the HTTP call,
     // we still need to handle the reception of the token
-    return this.http.post (this.url.concat('authorize'), {email, password}).shareReplay();
+    return this.http.post (this.url.concat('authorize'), {email, password}).pipe(shareReplay());
   }
 
   public loginAuth0() {
