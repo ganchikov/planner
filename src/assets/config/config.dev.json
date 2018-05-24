@@ -22,7 +22,10 @@
     "auth0": {
         "clientID": "vc4oab1tqEmYqsCazSwZoQ0Y7xQsCpFz",
         "domain": "xplanner.auth0.com",
+        "responseType": "token id_token",
+        "audience": "http://localhost:3030/api/v1",
         "redirectUri": "http://localhost:4200/callback",
-        "audience": "http://localhost:3030/api/v1"
+        "scope": "openid profile"
+        
     }
 }

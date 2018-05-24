@@ -2,10 +2,12 @@
 import {shareReplay, filter} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import { AppConfig } from '../app.config';
+
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/rx';
 import * as auth0 from 'auth0-js';
+import { AppConfig } from '../app.config';
+import {Permissions} from '../constants/permissions';
 
 
 @Injectable()
@@ -16,13 +18,14 @@ export class AuthService {
   private auth0 = new auth0.WebAuth({
     clientID: AppConfig.settings.auth0.clientID,
     domain: AppConfig.settings.auth0.domain,
-    responseType: 'token id_token',
+    responseType: AppConfig.settings.auth0.responseType,
     audience: AppConfig.settings.auth0.audience,
     redirectUri: AppConfig.settings.auth0.redirectUri,
-    scope: 'openid profile read:teams-api'
+    scope: AppConfig.settings.auth0.scope.concat(' ', Object.getOwnPropertyNames(Permissions).join(' '))
   });
 
   constructor(private http: HttpClient, private router: Router) {
+    
   }
 
   public login(email: string, password: string ) {

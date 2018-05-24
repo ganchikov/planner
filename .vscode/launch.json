@@ -9,12 +9,12 @@
             "request": "launch",
             "name": "Launch Chrome",
             "url": "http://localhost:4200",
-            "webRoot": "${workspaceFolder}/src"
+            "webRoot": "${workspaceFolder}"
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Launch Server",
             "program": "${workspaceFolder}/server/rest-server.ts",            
             "outFiles": [
                 "${workspaceFolder}/dist/out-tsc/server/**/*.js"

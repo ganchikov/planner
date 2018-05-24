@@ -23,7 +23,9 @@ export interface IAppConfig {
     auth0: {
         clientID: string,
         domain: string,
+        responseType: string,
+        audience: string,
         redirectUri: string,
-        audience: string
+        scope: string        
     };
 }
