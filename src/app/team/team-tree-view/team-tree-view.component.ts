@@ -2,8 +2,11 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import {} from '@angular/core';
 
 import {TreeNode} from 'primeng/api';
+
+import {AbsenceType} from '../../shared/enums/absence-type';
+import {Person} from '../../shared/models/person';
+import {Team} from '../../shared/models/team';
 import {TeamDataService} from '../team-data.service';
-import {Team, Person, AbsenceType} from '../../../../common/models';
 
 interface AbsenceTypeItem {
   name: string;

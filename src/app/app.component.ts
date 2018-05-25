@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {MenubarModule} from 'primeng/menubar';
 import {MenuItem} from 'primeng/api';
 import { RouterLink } from '@angular/router/src/directives/router_link';
-import { AuthService } from './services/auth.service';
+import { AuthService } from './shared/services/auth.service';
 
 @Component({
   selector: 'app-root',

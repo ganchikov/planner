@@ -2,13 +2,11 @@ import { NgModule } from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-import {PrimeTestComponent} from './prime-test/prime-test.component';
-import {PageNotFoundComponent} from './pagenotfound/pagenotfound.component';
-import {LoginComponent} from './login/login.component';
-import {CallbackComponent} from './callback/callback.component';
+import {PageNotFoundComponent} from './shared/components/pagenotfound/pagenotfound.component';
+import {LoginComponent} from './shared/components/login/login.component';
+import {CallbackComponent} from './shared/components/callback/callback.component';
 
 const appRoutes: Routes = [
-  {path: 'prime-test', component: PrimeTestComponent},
   {path: '', redirectTo: '/team', pathMatch: 'full'},
   {path: 'login', component: LoginComponent},
   {path: 'callback', component: CallbackComponent},

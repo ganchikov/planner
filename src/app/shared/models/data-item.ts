@@ -53,18 +53,6 @@ export class DataItem {
             }
             proto = Object.getPrototypeOf(proto);
         }
-
-
-        // if (proto['constructor'].name !== 'DataItem' && proto['constructor'].name !== 'Object') {
-        //     const keys: string[] = Object.keys(proto);
-        //     for (const key of keys) {
-        //         if (key !== 'constructor') {
-        //             keys.push(key);
-        //         }
-        //     }
-        //     keys.push(...this.getKeys(proto));
-        //     return keys;
-        // }
         return props;
     }
 

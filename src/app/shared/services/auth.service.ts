@@ -6,7 +6,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/rx';
 import * as auth0 from 'auth0-js';
-import { AppConfig } from '../app.config';
+import { AppConfig } from '../../app.config';
 import {Permissions} from '../constants/permissions';
 
 

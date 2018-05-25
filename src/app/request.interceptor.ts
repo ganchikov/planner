@@ -12,7 +12,7 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import {LoggerService} from './services/logger.service';
+import {LoggerService} from './shared/services/logger.service';
 import { Logger } from 'mongodb';
 import { access } from 'fs';
 

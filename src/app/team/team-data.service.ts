@@ -4,9 +4,12 @@ import {Observable} from 'rxjs';
 import {of} from 'rxjs/observable/of'
 import {catchError, tap} from 'rxjs/operators';
 
-import {LoggerService} from '../services/logger.service';
-import {Team, Person, Absence} from '../../../common/models';
+import {Absence} from '../shared/models/absence';
+import {Person} from '../shared/models/person';
+import {Team} from '../shared/models/team';
+
 import { AppConfig } from '../app.config';
+import {LoggerService} from '../shared/services/logger.service';
 
 @Injectable()
 export class TeamDataService {

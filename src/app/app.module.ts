@@ -10,19 +10,18 @@ import {TeamModule} from './team/team.module';
 import {AppRoutingModule} from './app-routing.module';
 import {PrimeControlsModule} from './primecontrols.module';
 import { AppComponent } from './app.component';
-import {LoggerService} from './services/logger.service';
-import { PrimeTestComponent } from './prime-test/prime-test.component';
-import { PageNotFoundComponent } from './pagenotfound/pagenotfound.component';
-import {LoginComponent} from './login/login.component';
-import { AuthService } from './services/auth.service';
-import { CallbackComponent } from './callback/callback.component';
+import {LoggerService} from './shared/services/logger.service';
+import { PageNotFoundComponent } from './shared/components/pagenotfound/pagenotfound.component';
+import {LoginComponent} from './shared/components/login/login.component';
+import { AuthService } from './shared/services/auth.service';
+import { CallbackComponent } from './shared/components/callback/callback.component';
 import { RequestInterceptor } from './request.interceptor';
+import { TeamGanttModule } from './team-gantt/team-gantt.module';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    PrimeTestComponent,
     PageNotFoundComponent,
     LoginComponent,
     CallbackComponent
@@ -34,6 +33,7 @@ import { RequestInterceptor } from './request.interceptor';
     BrowserAnimationsModule,
     PrimeControlsModule,
     TeamModule,
+    TeamGanttModule,
     AppRoutingModule
   ],
   providers: [

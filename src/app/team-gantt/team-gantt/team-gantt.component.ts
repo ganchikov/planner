@@ -5,8 +5,10 @@ import 'dhtmlx-gantt';
 import {} from '@types/dhtmlxgantt';
 import * as moment from 'moment';
 import { TeamGanttDataService} from '../team-gantt-data.service';
-import {TeamGanttItem} from '../../common/ganttitem';
-import { Team, ModelType, AbsenceType } from '../../../../common/models';
+import {TeamGanttItem} from '../../shared/models/team-gantt-item';
+import {Team} from '../../shared/models/team';
+import {ModelType} from '../../shared/enums/model-type';
+import {AbsenceType} from '../../shared/enums/absence-type';
 
 export enum ScaleMode {
   Day = 0,

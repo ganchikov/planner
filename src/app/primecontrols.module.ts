@@ -15,7 +15,19 @@ import {DialogModule} from 'primeng/dialog';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    ButtonModule,
+    InputTextModule,
+    MenubarModule,
+    ListboxModule,
+    TableModule,
+    TreeTableModule,
+    DropdownModule,
+    CalendarModule,
+    CheckboxModule,
+    ToolbarModule,
+    SelectButtonModule,
+    DialogModule,
   ],
   exports: [
     CommonModule,
