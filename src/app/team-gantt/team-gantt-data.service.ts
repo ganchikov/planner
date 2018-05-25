@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { TeamDataService } from  '../team/team-data.service';
+import { TeamDataService } from '../team/team-data.service';
 
-import {Absence} from '../shared/models/absence';
-import {Person} from '../shared/models/person';
-import {GanttItem} from '../shared/models/gantt-item';
-import {TeamGanttItem} from '../shared/models/team-gantt-item';
+import {Absence} from '../common/models/absence';
+import {Person} from '../common/models/person';
+import {GanttItem} from '../common/models/gantt-item';
+import {TeamGanttItem} from '../common/models/team-gantt-item';
 
 @Injectable()
 export class TeamGanttDataService {

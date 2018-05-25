@@ -3,9 +3,9 @@ import {} from '@angular/core';
 
 import {TreeNode} from 'primeng/api';
 
-import {AbsenceType} from '../../shared/enums/absence-type';
-import {Person} from '../../shared/models/person';
-import {Team} from '../../shared/models/team';
+import {AbsenceType} from '../../common/enums/absence-type';
+import {Person} from '../../common/models/person';
+import {Team} from '../../common/models/team';
 import {TeamDataService} from '../team-data.service';
 
 interface AbsenceTypeItem {

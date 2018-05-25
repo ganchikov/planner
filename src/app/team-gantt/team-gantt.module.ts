@@ -7,7 +7,7 @@ import {TeamGanttDataService} from './team-gantt-data.service';
 import { TeamGanttRoutingModule } from './team-gantt-routing.module';
 import { TeamGanttComponent } from './team-gantt/team-gantt.component';
 import { TeamGanttViewComponent } from './team-gantt-view/team-gantt-view.component';
-import { PrimeControlsModule } from '../primecontrols.module';
+import { PrimeControlsModule } from '../common/primecontrols.module';
 
 @NgModule({
   imports: [

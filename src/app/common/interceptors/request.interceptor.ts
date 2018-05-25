@@ -12,14 +12,11 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import {LoggerService} from './shared/services/logger.service';
-import { Logger } from 'mongodb';
-import { access } from 'fs';
-
+import {Logger} from '../services/logger.service';
 
 @Injectable()
 export class RequestInterceptor implements HttpInterceptor {
-  constructor(private logger: LoggerService, private router: Router) {
+  constructor(private logger: Logger, private router: Router) {
 
 
   }

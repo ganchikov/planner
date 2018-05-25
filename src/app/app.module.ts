@@ -6,25 +6,19 @@ import {HTTP_INTERCEPTORS} from '@angular/common/http';
 
 import {MenuItem} from 'primeng/api';
 
-import {TeamModule} from './team/team.module';
-import {AppRoutingModule} from './app-routing.module';
-import {PrimeControlsModule} from './primecontrols.module';
 import { AppComponent } from './app.component';
-import {LoggerService} from './shared/services/logger.service';
-import { PageNotFoundComponent } from './shared/components/pagenotfound/pagenotfound.component';
-import {LoginComponent} from './shared/components/login/login.component';
-import { AuthService } from './shared/services/auth.service';
-import { CallbackComponent } from './shared/components/callback/callback.component';
-import { RequestInterceptor } from './request.interceptor';
+import {AppRoutingModule} from './app-routing.module';
+import {TeamModule} from './team/team.module';
 import { TeamGanttModule } from './team-gantt/team-gantt.module';
+import {PrimeControlsModule} from './common/primecontrols.module';
+import {AppCommonModule} from './common/app-common.module';
+import { RequestInterceptor } from './common/interceptors/request.interceptor';
+
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    PageNotFoundComponent,
-    LoginComponent,
-    CallbackComponent
   ],
   imports: [
     BrowserModule,
@@ -34,11 +28,10 @@ import { TeamGanttModule } from './team-gantt/team-gantt.module';
     PrimeControlsModule,
     TeamModule,
     TeamGanttModule,
-    AppRoutingModule
+    AppRoutingModule,
+    AppCommonModule
   ],
   providers: [
-    LoggerService,
-    AuthService,
     {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]

@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {of} from 'rxjs/observable/of'
+import {of} from 'rxjs/observable/of';
 import {catchError, tap} from 'rxjs/operators';
 
-import {Absence} from '../shared/models/absence';
-import {Person} from '../shared/models/person';
-import {Team} from '../shared/models/team';
+import {Absence} from '../common/models/absence';
+import {Person} from '../common/models/person';
+import {Team} from '../common/models/team';
 
 import { AppConfig } from '../app.config';
-import {LoggerService} from '../shared/services/logger.service';
+import {Logger} from '../common/services/logger.service';
 
 @Injectable()
 export class TeamDataService {
 
-  constructor(private http: HttpClient, private logger: LoggerService) { }
+  constructor(private http: HttpClient, private logger: Logger) { }
 
   private url = AppConfig.settings.apiServer.url;
 

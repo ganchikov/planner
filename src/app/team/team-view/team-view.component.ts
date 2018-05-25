@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import {TableModule} from 'primeng/table';
 
 import { TeamDataService } from '../team-data.service';
-import {Team} from '../../shared/models/team';
+import {Team} from '../../common/models/team';
 // import * as $ from 'jquery';
 
 @Component({
