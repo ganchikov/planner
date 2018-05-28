@@ -1,7 +1,11 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <p-menubar [model]="menuitems">
   <div>
-    <button pButton label="Logout" icon="fa-sign-out" (click)="logout($event)"></button>
+    <button *ngIf="isAuthenticated" pButton label="Logout" icon="fa-sign-out" (click)="logout($event)"></button>
+    <ng-template #elseBlock>
+      <button pButton label="Login" icon="fa-sign-in" (click)="login($event)" [model]="loginBtn">
+      </button>
+    </ng-template>
   </div>
 </p-menubar>
 <router-outlet></router-outlet>

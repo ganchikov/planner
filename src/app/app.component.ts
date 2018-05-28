@@ -22,6 +22,14 @@ export class AppComponent implements OnInit {
     this.authService.logout();
   }
 
+  public login() {
+    this.authService.loginAuth0();
+  }
+
+  public isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
+  }
+
   ngOnInit() {
     this.menuitems = [
       {

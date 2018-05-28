@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
+
 import { CommonRoutingModule } from './app-common-routing.module';
 import {CallbackComponent} from './components/callback/callback.component';
 import {LoginComponent} from './components/login/login.component';
@@ -11,6 +13,7 @@ import {PageNotFoundComponent} from './components/pagenotfound/pagenotfound.comp
 import { PrimeControlsModule } from './primecontrols.module';
 import {AuthService} from './services/auth.service';
 import {Logger} from './services/logger.service';
+import { RequestInterceptor } from './interceptors/request.interceptor';
 
 
 @NgModule({
@@ -29,7 +32,8 @@ import {Logger} from './services/logger.service';
   ],
   providers: [
     AuthService,
-    Logger
+    Logger,
+    {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true}
   ]
 })
 export class AppCommonModule { }
