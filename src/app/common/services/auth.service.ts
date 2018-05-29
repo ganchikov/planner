@@ -5,6 +5,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/rx';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import * as auth0 from 'auth0-js';
 import { AppConfig } from '../../app.config';
 import {Permissions} from '../constants/permissions';
@@ -24,6 +25,9 @@ export class AuthService {
     scope: AppConfig.settings.auth0.scope.concat(' ', Object.getOwnPropertyNames(Permissions).join(' '))
   });
 
+  private isAuthenticatedEventSource = new BehaviorSubject<boolean>(false);
+  public onAuthenticatedStateChange = this.isAuthenticatedEventSource.asObservable();
+
   constructor(private http: HttpClient, private router: Router) {
     
   }
@@ -36,6 +40,8 @@ export class AuthService {
 
   public loginAuth0() {
     this.auth0.authorize();
+    // send authenticated event to subscribers
+    this.isAuthenticatedEventSource.next(true);
   }
 
   public handleAuth0() {
@@ -66,6 +72,8 @@ export class AuthService {
     localStorage.removeItem('expires_at');
     // Go back to the home route
     this.router.navigate(['/logout']);
+    // send authenticated event to subscribers
+    this.isAuthenticatedEventSource.next(false);
   }
 
   public isAuthenticated(): boolean {
