@@ -3,7 +3,7 @@
   <div>
     <button *ngIf="isAuthenticated" pButton label="Logout" icon="fa-sign-out" (click)="logout($event)"></button>
     <ng-template #elseBlock>
-      <button pButton label="Login" icon="fa-sign-in" (click)="login($event)" [model]="loginBtn">
+      <button pButton label="Login" icon="fa-sign-in" (click)="login($event)">
       </button>
     </ng-template>
   </div>
