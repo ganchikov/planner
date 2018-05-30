@@ -9,6 +9,8 @@ import {TeamGanttItem} from '../../common/models/team-gantt-item';
 import {Team} from '../../common/models/team';
 import {ModelType} from '../../common/enums/model-type';
 import {AbsenceType} from '../../common/enums/absence-type';
+import { AuthService } from '../../common/services/auth.service';
+import { Scopes } from '../../common/constants/scopes';
 
 export enum ScaleMode {
   Day = 0,
@@ -53,6 +55,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
   constructor(private ganttData: TeamGanttDataService,
               private renderer: Renderer2,
               private elementRef: ElementRef,
+              public auth: AuthService,
               @Inject(DOCUMENT) private document) {
 
     thisComponentRef = this;
@@ -408,10 +411,18 @@ export class TeamGanttComponent implements OnInit, OnChanges {
         css = '';
         break;
       case ModelType.person:
-        css = `<i class="fa gantt_button_grid gantt_grid_add fa-plus fa-lg" onClick="insertItem(${task.id})"></i>`;
+        if (thisComponentRef.auth.hasScopes([Scopes.absence.edit])) {
+          css = `<i class="fa gantt_button_grid gantt_grid_add fa-plus fa-lg" onClick="insertItem(${task.id})"></i>`;
+        } else {
+          css = `<i></i>`;
+        }
         break;
       case ModelType.absence:
+      if (thisComponentRef.auth.hasScopes([Scopes.absence.delete])) {
         css = `<i id="btn" class="fa gantt_button_grid gantt_grid_delete fa-times fa-lg" onClick="deleteItem(${task.id.toString()})"></i>`;
+      } else {
+        css = `<i></i>`;
+      }
     }
     return css;
   }

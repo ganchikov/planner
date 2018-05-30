@@ -8,7 +8,7 @@ import {Observable} from 'rxjs/rx';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import * as auth0 from 'auth0-js';
 import { AppConfig } from '../../app.config';
-import {Permissions} from '../constants/permissions';
+import {Scopes} from '../constants/scopes';
 
 
 @Injectable()
@@ -16,20 +16,21 @@ export class AuthService {
 
   private url: string = AppConfig.settings.apiServer.url;
 
+  private requestedScopes: string = AppConfig.settings.auth0.scope.concat(' ', Object.getOwnPropertyNames(Scopes).join(' '));
+
   private auth0 = new auth0.WebAuth({
     clientID: AppConfig.settings.auth0.clientID,
     domain: AppConfig.settings.auth0.domain,
     responseType: AppConfig.settings.auth0.responseType,
     audience: AppConfig.settings.auth0.audience,
     redirectUri: AppConfig.settings.auth0.redirectUri,
-    scope: AppConfig.settings.auth0.scope.concat(' ', Object.getOwnPropertyNames(Permissions).join(' '))
+    scope: this.requestedScopes
   });
 
   private isAuthenticatedEventSource = new BehaviorSubject<boolean>(false);
   public onAuthenticatedStateChange = this.isAuthenticatedEventSource.asObservable();
 
   constructor(private http: HttpClient, private router: Router) {
-    
   }
 
   public login(email: string, password: string ) {
@@ -50,6 +51,7 @@ export class AuthService {
         window.location.hash = '';
         this.setSession(authResult);
         this.router.navigate(['/']);
+        this.isAuthenticatedEventSource.next(true);
       } else if (err) {
         this.router.navigate(['/error']);
         console.log(err);
@@ -60,9 +62,17 @@ export class AuthService {
   private setSession(authResult) {
     // Set the time that the Access Token will expire at
     const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
+    const scopes = authResult.scope || this.requestedScopes;
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', expiresAt);
+
+    localStorage.setItem('scopes', JSON.stringify(scopes));
+  }
+
+  public hasScopes(scopes: Array<string>): boolean {
+    const grantedScopes = JSON.parse(localStorage.getItem('scopes')).split(' ');
+    return scopes.every(itm => grantedScopes.includes(itm));
   }
 
   public logout() {

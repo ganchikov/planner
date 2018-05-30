@@ -15,6 +15,9 @@ import {MasterPageModule} from './components/master/master-page.module';
 import {AuthService} from './services/auth.service';
 import {Logger} from './services/logger.service';
 import { RequestInterceptor } from './interceptors/request.interceptor';
+import { MediatorService } from './services/mediator.service';
+import { NotAuthorizedComponent } from './components/not-authorized/not-authorized.component';
+import { LandingComponent } from './components/landing/landing.component';
 
 
 @NgModule({
@@ -30,9 +33,12 @@ import { RequestInterceptor } from './interceptors/request.interceptor';
     CallbackComponent,
     LoginComponent,
     LogoutComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    NotAuthorizedComponent,
+    LandingComponent
   ],
   providers: [
+    MediatorService,
     AuthService,
     Logger,
     {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true}

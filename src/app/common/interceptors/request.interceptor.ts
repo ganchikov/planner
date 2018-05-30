@@ -13,10 +13,11 @@ import {
 import { Observable } from 'rxjs';
 
 import {Logger} from '../services/logger.service';
+import { MediatorService } from '../services/mediator.service';
 
 @Injectable()
 export class RequestInterceptor implements HttpInterceptor {
-  constructor(private logger: Logger, private router: Router) {
+  constructor(private logger: Logger, private router: Router, private mediator: MediatorService) {
 
 
   }
@@ -32,16 +33,18 @@ export class RequestInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(tap((event: HttpEvent<any>) => {
       if (event instanceof HttpResponse) {
         this.logger.log(`${event.url} ${event.status}`);
+        this.mediator.SetAuthenticatedState(true);
       }
     },
      (err: any) => {
         if (err instanceof HttpErrorResponse) {
           if (err.status === 401) {
-            this.router.navigate(['/login']);
+            this.router.navigate(['/401']);
           }
         } else {
           this.logger.log(err);
         }
+        this.mediator.SetAuthenticatedState(false);
      }));
   }
 }

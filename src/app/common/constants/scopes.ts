@@ -1,4 +1,4 @@
-export const Permissions = {    
+export const Scopes = {
     team : {
         read: 'read:teams',
         edit: 'edit:teams'
@@ -15,5 +15,4 @@ export const Permissions = {
     dataloader : {
         use: 'use:dataloader'
     }
-    
 };

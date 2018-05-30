@@ -4,12 +4,19 @@ import {RouterModule, Routes} from '@angular/router';
 import {TeamViewComponent} from './team-view/team-view.component';
 import {TeamTreeViewComponent} from './team-tree-view/team-tree-view.component';
 import {TeamDetailsComponent} from './team-details/team-detals.component';
-
+import {ScopeGuardService as ScopeGuard} from '../common/services/scope-guard.service';
+import {Scopes} from '../common/constants/scopes';
 
 const appRoutes: Routes = [
-  {path: 'team', component: TeamViewComponent},
-  {path: 'team-tree', component: TeamTreeViewComponent},
-  {path: 'team/:id', component: TeamDetailsComponent}
+  {path: 'team', component: TeamViewComponent, canActivate: [ScopeGuard], data: {expectedScopes: [
+    Scopes.team.edit
+  ]}},
+  {path: 'team-tree', component: TeamTreeViewComponent, canActivate: [ScopeGuard], data: {expectedScopes: [
+    Scopes.team.edit
+  ]}},
+  {path: 'team/:id', component: TeamDetailsComponent, canActivate: [ScopeGuard], data: {expectedScopes: [
+    Scopes.team.edit
+  ]}}
 ];
 
 @NgModule({

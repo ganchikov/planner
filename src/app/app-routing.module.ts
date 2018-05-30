@@ -3,7 +3,6 @@ import {RouterModule, Routes} from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 const appRoutes: Routes = [
-  {path: '', redirectTo: '/team', pathMatch: 'full'}
 ];
 
 @NgModule({

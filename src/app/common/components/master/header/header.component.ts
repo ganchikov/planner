@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import {MenubarModule} from 'primeng/menubar';
 import {MenuItem} from 'primeng/api';
 import { RouterLink } from '@angular/router/src/directives/router_link';
+import { MediatorService } from '../../../services/mediator.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -10,10 +12,9 @@ import { RouterLink } from '@angular/router/src/directives/router_link';
 })
 export class HeaderComponent implements OnInit {
   menuitems: MenuItem[];
-  isAuthenticated = false;
 
-  constructor() {
-   }
+  constructor(private authService: AuthService) {
+  }
 
   ngOnInit() {
     this.menuitems = [
@@ -33,5 +34,13 @@ export class HeaderComponent implements OnInit {
         routerLink: ['/prime-test']
       }
     ];
+  }
+
+  public logout() {
+    this.authService.logout();
+  }
+
+  public login() {
+    this.authService.loginAuth0();
   }
 }
