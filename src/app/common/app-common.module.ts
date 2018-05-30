@@ -11,6 +11,7 @@ import {LoginComponent} from './components/login/login.component';
 import {LogoutComponent} from './components/logout/logout.component';
 import {PageNotFoundComponent} from './components/pagenotfound/pagenotfound.component';
 import { PrimeControlsModule } from './primecontrols.module';
+import {MasterPageModule} from './components/master/master-page.module';
 import {AuthService} from './services/auth.service';
 import {Logger} from './services/logger.service';
 import { RequestInterceptor } from './interceptors/request.interceptor';
@@ -22,7 +23,8 @@ import { RequestInterceptor } from './interceptors/request.interceptor';
     FormsModule,
     HttpClientModule,
     PrimeControlsModule,
-    CommonRoutingModule
+    CommonRoutingModule,
+    MasterPageModule
   ],
   declarations: [
     CallbackComponent,
@@ -34,6 +36,9 @@ import { RequestInterceptor } from './interceptors/request.interceptor';
     AuthService,
     Logger,
     {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true}
+  ],
+  exports: [
+    MasterPageModule
   ]
 })
 export class AppCommonModule { }

@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {MenubarModule} from 'primeng/menubar';
-import {MenuItem} from 'primeng/api';
 import { RouterLink } from '@angular/router/src/directives/router_link';
 import { AuthService } from './common/services/auth.service';
 
@@ -12,7 +10,6 @@ import { AuthService } from './common/services/auth.service';
 
 export class AppComponent implements OnInit {
   title = 'Planner';
-  menuitems: MenuItem[];
   isAuthenticated = false;
 
   constructor(private authService: AuthService) {
@@ -33,23 +30,5 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.menuitems = [
-      {
-        label: 'Teams',
-        icon: 'fa-users',
-        routerLink: ['/team']
-      },
-      {
-        label: 'Time',
-        icon: 'fa-calendar',
-        routerLink: ['/team-gantt']
-      },
-      {
-        label: 'Tasks',
-        icon: 'fa-tasks',
-        routerLink: ['/prime-test']
-      }
-    ];
-
   }
 }

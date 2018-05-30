@@ -1,0 +1,15 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<p-menubar [model]="menuitems">
+  <div>    
+    <button *ngIf="isAuthenticated else Login" pButton label="Logout" icon="fa-sign-out" (click)="logout($event)"></button>    
+    <ng-template #Login>
+      <button pButton label="Login" icon="fa-sign-in" (click)="login($event)">
+      </button>
+    </ng-template>
+    <!-- <ng-template #Logout>
+      <button pButton label="Logout" icon="fa-sign-out" (click)="logout($event)">
+      </button>
+    </ng-template>
+    <ng-container *ngTemplateOutlet="" -->
+  </div>
+</p-menubar>
