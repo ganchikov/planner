@@ -10,7 +10,7 @@ import { LandingComponent } from './components/landing/landing.component';
 
 
 const appRoutes: Routes = [
-  {path '', component: LandingComponent}
+  {path: '', component: LandingComponent},
   {path: 'callback', component: CallbackComponent},
   {path: 'login', component: LoginComponent},
   {path: 'logout', component: LogoutComponent},

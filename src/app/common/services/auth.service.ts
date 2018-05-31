@@ -16,7 +16,13 @@ export class AuthService {
 
   private url: string = AppConfig.settings.apiServer.url;
 
-  private requestedScopes: string = AppConfig.settings.auth0.scope.concat(' ', Object.getOwnPropertyNames(Scopes).join(' '));
+  private requestedScopes: string = AppConfig.settings.auth0.scope.concat(' ', Object.entries(Scopes).map(
+    entry => Object.entries(entry[1])
+  ).map(
+      items => items.map(
+        item => item[1]
+      ).join(' ')
+    ).join(' '));
 
   private auth0 = new auth0.WebAuth({
     clientID: AppConfig.settings.auth0.clientID,
