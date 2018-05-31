@@ -29,9 +29,11 @@ export class AuthService {
     domain: AppConfig.settings.auth0.domain,
     responseType: AppConfig.settings.auth0.responseType,
     audience: AppConfig.settings.auth0.audience,
-    redirectUri: AppConfig.settings.auth0.redirectUri,
+    redirectUri: AppConfig.settings.enableHttps ? AppConfig.settings.auth0.redirectHttpsUri : AppConfig.settings.auth0.redirectUri,
     scope: this.requestedScopes
   });
+
+  public userProfile: any;
 
   private isAuthenticatedEventSource = new BehaviorSubject<boolean>(false);
   public onAuthenticatedStateChange = this.isAuthenticatedEventSource.asObservable();
@@ -99,4 +101,18 @@ export class AuthService {
     return new Date().getTime() < expiresAt;
   }
 
+  public getProfile(cb): void {
+    const accessToken = localStorage.getItem('access_token');
+  if (!accessToken) {
+    throw new Error('Access Token must exist to fetch profile');
+  }
+
+  const self = this;
+  this.auth0.client.userInfo(accessToken, (err, profile) => {
+    if (profile) {
+      self.userProfile = profile;
+    }
+    cb(err, profile);
+  });
+  }
 }

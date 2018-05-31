@@ -19,7 +19,6 @@ import { MediatorService } from './services/mediator.service';
 import { NotAuthorizedComponent } from './components/not-authorized/not-authorized.component';
 import { LandingComponent } from './components/landing/landing.component';
 
-
 @NgModule({
   imports: [
     CommonModule,
@@ -35,7 +34,7 @@ import { LandingComponent } from './components/landing/landing.component';
     LogoutComponent,
     PageNotFoundComponent,
     NotAuthorizedComponent,
-    LandingComponent
+    LandingComponent,
   ],
   providers: [
     MediatorService,

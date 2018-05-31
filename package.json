@@ -9,7 +9,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "tsc_c": "tsc -w",
-    "tsc_s": "tsc -w -p server"
+    "tsc_s": "tsc -w -p server",
+    "start": "ng serve --ssl true"
   },
   "private": true,
   "dependencies": {

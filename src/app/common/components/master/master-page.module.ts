@@ -4,13 +4,14 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { MainComponent } from './main/main.component';
 import { PrimeControlsModule } from '../../primecontrols.module';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   imports: [
     CommonModule,
     PrimeControlsModule
   ],
-  declarations: [HeaderComponent, FooterComponent, MainComponent],
+  declarations: [HeaderComponent, FooterComponent, MainComponent, ProfileComponent],
   exports: [MainComponent]
 })
 export class MasterPageModule { }

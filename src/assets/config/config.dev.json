@@ -3,21 +3,23 @@
     "name": "DEV"
      },
     "appInsights": {
-    "instrumentationKey": "<dev-guid-here>"
+        "instrumentationKey": "<dev-guid-here>"
      },
     "logging": {
-    "console": true,
-    "appInsights": false
+        "console": true,
+        "appInsights": false
     },
     "aad": {
-    "requireAuth": true,
-    "tenant": "<dev-guid-here>",
-    "clientId": "<dev-guid-here>"
+        "requireAuth": true,
+        "tenant": "<dev-guid-here>",
+        "clientId": "<dev-guid-here>"
     },
+    "enableHttps": false,
     "apiServer": {
         "url": "http://localhost:3030/api/v1/",
-        "metadata": "http://localhost:3030/api/v1/",
-        "rules": "https://localhost:3030/api/v1/"
+        "httpsUrl":  "https://localhost/api/v1/",
+        "metadata": "https://localhost/api/v1/",
+        "rules": "https://localhost/api/v1/"
     }, 
     "auth0": {
         "clientID": "vc4oab1tqEmYqsCazSwZoQ0Y7xQsCpFz",
@@ -25,6 +27,7 @@
         "responseType": "token id_token",
         "audience": "http://localhost:3030/api/v1",
         "redirectUri": "http://localhost:4200/callback",
+        "redirectHttpsUri": "https://localhost:4200/callback",
         "scope": "openid profile"
         
     }

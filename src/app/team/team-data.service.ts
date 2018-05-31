@@ -16,7 +16,7 @@ export class TeamDataService {
 
   constructor(private http: HttpClient, private logger: Logger) { }
 
-  private url = AppConfig.settings.apiServer.url;
+  private url = AppConfig.settings.enableHttps ? AppConfig.settings.apiServer.httpsUrl : AppConfig.settings.apiServer.url;
 
   private log (message: string) {
     this.logger.log('TeamDataService: ' + message);

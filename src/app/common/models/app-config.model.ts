@@ -15,8 +15,10 @@ export interface IAppConfig {
         clientId: string;
 
     };
+    enableHttps: boolean;
     apiServer: {
         url: string;
+        httpsUrl: string;
         metadata: string;
         rules: string;
     };
@@ -26,6 +28,7 @@ export interface IAppConfig {
         responseType: string,
         audience: string,
         redirectUri: string,
-        scope: string        
+        redirectHttpsUri: string,
+        scope: string
     };
 }

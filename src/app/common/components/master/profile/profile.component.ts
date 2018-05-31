@@ -1,23 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
+import {AuthService} from '../../../services/auth.service';
 
 @Component({
-  selector: 'app-landing',
-  templateUrl: './landing.component.html',
-  styleUrls: ['./landing.component.css']
+  selector: 'app-profile',
+  templateUrl: './profile.component.html',
+  styleUrls: ['./profile.component.css']
 })
-export class LandingComponent implements OnInit {
+export class ProfileComponent implements OnInit {
 
   profile: any;
 
   constructor(private auth: AuthService) { }
 
   ngOnInit() {
-    if (!this.auth.isAuthenticated()) {
-      this.auth.loginAuth0();
-      return;
-    }
-
     if (this.auth.userProfile) {
       this.profile = this.auth.userProfile;
     } else {
