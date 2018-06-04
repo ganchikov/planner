@@ -44,3 +44,7 @@ Thumbs.db
 
 #generated certificates
 ssl
+
+#Luxoft certs
+luxoft-root-ca.p7b
+luxoft-root-ca-Base64.cer

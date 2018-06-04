@@ -1,6 +1,6 @@
 {
     "env": {
-        "name": "DEV"
+    "name": "STAGE"
      },
     "appInsights": {
         "instrumentationKey": "<dev-guid-here>"
@@ -14,9 +14,21 @@
         "tenant": "<dev-guid-here>",
         "clientId": "<dev-guid-here>"
     },
+    "enableHttps": true,
     "apiServer": {
-        "url": "http://demo.com/api/v1.0/",
-        "metadata": "https://metadata.demo.com/api/v1.0/",
-        "rules": "https://rules.demo.com/api/v1.0/"
+        "url": "http://planner-api.us.openode.io/api/v1/",
+        "httpsUrl":  "https://planner-api.us.openode.io/api/v1/",
+        "metadata": "https://planner-api.us.openode.io/api/v1/",
+        "rules": "https://planner-api.us.openode.io/api/v1/"
+    }, 
+    "auth0": {
+        "clientID": "cXDq5Z9CzkvaD0VbER0ZQ2Xnkitkhjrq",
+        "domain": "xplanner.auth0.com",
+        "responseType": "token id_token",
+        "audience": "http://localhost:3030/api/v1",
+        "redirectUri": "https://planner-c9897.firebaseapp.com/callback",
+        "redirectHttpsUri": "https://planner-c9897.firebaseapp.com/callback",
+        "scope": "openid profile"
+        
     }
 }

@@ -28,7 +28,7 @@ const idMap: Array<IDMapper> = new Array();
 
 @Component({
   selector: 'app-team-gantt',
-  templateUrl: './team-gantt.component.html',
+  // templateUrl: './team-gantt.component.html',
   styleUrls: ['./team-gantt.component.css'],
   styles: [
     `:host {

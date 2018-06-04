@@ -50,4 +50,15 @@ chrome://flags/#allow-insecure-localhost
 
 1.7) in prod use letsencrypt/certbot following this article: https://medium.com/@yash.kulshrestha/using-lets-encrypt-with-express-e069c7abe625
 
+##config node to use luxoft-root-ca
+
+1.1) goto http://cert.luxoft.com, follow instructions to export luxoft-root-ca as Base64 to project folder
+1.2) export NODE-EXTRA-CA-CERTS "<your cert file name>.CER"
+
+##firebase
+1.1) firebase login --interactive 
+1.2) firebase deploy
+
+
+
 

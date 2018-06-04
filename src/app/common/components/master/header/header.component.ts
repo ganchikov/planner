@@ -11,9 +11,9 @@ import { AuthService } from '../../../services/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  menuitems: MenuItem[];
+  public menuitems: MenuItem[];
 
-  constructor(private authService: AuthService) {
+  constructor(public authService: AuthService) {
   }
 
   ngOnInit() {
