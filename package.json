@@ -24,6 +24,7 @@
     "@angular/platform-browser-dynamic": "^6.0.3",
     "@angular/platform-server": "^6.0.3",
     "@angular/router": "^6.0.3",
+    "appversion": "^1.7.1",
     "auth0-js": "^9.5.1",
     "bootstrap": "^4.1.1",
     "core-js": "^2.4.1",

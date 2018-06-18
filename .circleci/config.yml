@@ -1,0 +1,130 @@
+defaults: &defaults 
+  docker:
+  - image: circleci/node:8.11.2-browsers  
+  working_directory: ~/repo
+version: 2
+jobs:
+  build-job:
+    <<: *defaults  
+    steps:
+      - checkout
+      - run: 
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+      - run: 
+          name: install-npm-wee
+          command: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - persist_to_workspace:
+          root: ./
+          paths: 
+            - ./
+  test-job:
+    <<: *defaults
+    environment:
+      - NODE_ENV: "test"
+    steps:
+      - run:
+          name: 'create build folder'
+          command: 'mkdir build'
+      - attach_workspace:
+          at: ~/repo/build
+    # run tests!
+      - run: 
+          name: test
+          command: |
+            # cd build
+            # npm test
+  increment-build-job:
+    <<: *defaults
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "5b:c6:98:ba:8b:54:f0:60:12:00:57:80:f8:da:65:74"
+      - checkout
+      - run: 
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+      - run: 
+          name: install-npm-wee
+          command: npm install
+      - run:
+          name: 'install jq'
+          command: 'sudo apt-get install jq'
+      - run:
+          name: 'update build #'    
+          command: |
+            # if [ $CIRCLE_BRANCH == "master" ]; then
+            #   node node_modules/appversion/apv update build             
+            #   #extract tag data
+            #   TAG=$(jq '[.version.major , .version.minor, .version.patch, .build.number | tostring] | join (".")' appversion.json)
+            #   #remove first-last double quotes
+            #   TAG=$(sed -e 's/^"//' -e 's/"$//' <<<$TAG)    
+            #   git add .
+            #   git tag -a $TAG -m 'nightly build'
+            #   git commit -m "${TAG} nightly build version update [skip ci]"
+            #   git push
+            #   git push --tags              
+            # fi
+  deploy-firebase-job:
+    <<: *defaults
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "5b:c6:98:ba:8b:54:f0:60:12:00:57:80:f8:da:65:74"
+            - "b1:1c:98:9f:4d:d1:ff:2b:09:5d:81:70:8b:87:b0:f8"
+      - checkout
+      - run:
+          name: Deploy Master to Firebase
+          command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_DEPLOY_TOKEN
+            
+
+workflows:
+  version: 2
+
+  commit:
+    jobs:
+      - build-job
+      - test-job:
+          requires:
+            - build-job
+
+  nightly_build:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build-job
+      - test-job:
+          requires: 
+            - build-job
+      - increment-build-job:
+          requires:
+            - test-job
+      - deploy-firebase-job:
+          requires: 
+            - test-job
+          filters:
+            branches:
+              only:                 
+                - master    
+  
