@@ -1,25 +1,25 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async} from '@angular/core/testing';
 
 import { LandingComponent } from './landing.component';
 
+import { AuthServiceMock } from '../../services/auth.service.mock';
+
 describe('LandingComponent', () => {
   let component: LandingComponent;
-  let fixture: ComponentFixture<LandingComponent>;
+  let service: AuthServiceMock;
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ LandingComponent ]
-    })
-    .compileComponents();
+    service = new AuthServiceMock();
+    component = new LandingComponent(service);
+    component.ngOnInit();
   }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(LandingComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  afterEach(() => {
+    service = null;
+    component = null;
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should get profile from auth service', () => {
+    expect(component.profile).toBeDefined();
   });
 });
