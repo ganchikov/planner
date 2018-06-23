@@ -43,7 +43,7 @@ jobs:
           name: test
           command: |
             cd build
-            npm test_headless
+            npm run test_headless
   increment-build-job:
     <<: *defaults
     steps:
