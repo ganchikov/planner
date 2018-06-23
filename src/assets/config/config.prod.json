@@ -22,7 +22,7 @@
         "rules": "https://planner-api-prd.us.openode.io/api/v1/"
     }, 
     "auth0": {
-        "clientID": "vc4oab1tqEmYqsCazSwZoQ0Y7xQsCpFz",
+        "clientID": "a8UrAWCGbcBI8tNq0T29ykH8DtiKXeqh",
         "domain": "xplanner.auth0.com",
         "responseType": "token id_token",
         "audience": "http://localhost:3030/api/v1",

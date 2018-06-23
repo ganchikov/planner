@@ -6,6 +6,7 @@
     "ng": "ng",
     "build": "ng build --prod",
     "test": "ng test",
+    "test_headless": "ng test --browsers ChromeHeadless --watch=false",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "tsc_c": "tsc -w",

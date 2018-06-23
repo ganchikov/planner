@@ -14,7 +14,6 @@ import { PrimeControlsModule } from '../common/primecontrols.module';
     CommonModule,
     FormsModule,
     HttpClientModule,
-    FormsModule,
     PrimeControlsModule,
     TeamGanttRoutingModule
   ],
