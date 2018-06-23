@@ -42,8 +42,8 @@ jobs:
       - run: 
           name: test
           command: |
-            # cd build
-            # npm test
+            cd build
+            npm test
   increment-build-job:
     <<: *defaults
     steps:
@@ -69,19 +69,19 @@ jobs:
       - run:
           name: 'update build #'    
           command: |
-            # if [ $CIRCLE_BRANCH == "master" ]; then
-            #   node node_modules/appversion/apv update build             
-            #   #extract tag data
-            #   TAG=$(jq '[.version.major , .version.minor, .version.patch, .build.number | tostring] | join (".")' appversion.json)
-            #   #remove first-last double quotes
-            #   TAG=$(sed -e 's/^"//' -e 's/"$//' <<<$TAG)    
-            #   git add .
-            #   git tag -a $TAG -m 'nightly build'
-            #   git commit -m "${TAG} nightly build version update [skip ci]"
-            #   git push
-            #   git push --tags              
-            # fi
-  deploy-firebase-job:
+            if [ $CIRCLE_BRANCH == "master" ]; then
+              node node_modules/appversion/apv update build             
+              #extract tag data
+              TAG=$(jq '[.version.major , .version.minor, .version.patch, .build.number | tostring] | join (".")' appversion.json)
+              #remove first-last double quotes
+              TAG=$(sed -e 's/^"//' -e 's/"$//' <<<$TAG)    
+              git add .
+              git tag -a $TAG -m 'nightly build'
+              git commit -m "${TAG} nightly build version update [skip ci]"
+              git push
+              git push --tags              
+            fi
+  deploy-firebase-stage-job:
     <<: *defaults
     steps:
       - add_ssh_keys:
@@ -92,7 +92,19 @@ jobs:
       - run:
           name: Deploy Master to Firebase
           command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_DEPLOY_TOKEN
-            
+  deploy-firebase-prod-job:
+    <<: *defaults
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "5b:c6:98:ba:8b:54:f0:60:12:00:57:80:f8:da:65:74"
+            - "b1:1c:98:9f:4d:d1:ff:2b:09:5d:81:70:8b:87:b0:f8"
+      - checkout
+      - run:
+          name: Deploy Master to Firebase
+          command: |
+            ./node_modules/.bin/firebase use prod
+            ./node_modules/.bin/firebase deploy --token=$FIREBASE_DEPLOY_TOKEN
 
 workflows:
   version: 2
@@ -103,6 +115,16 @@ workflows:
       - test-job:
           requires:
             - build-job
+      - increment-build-job:
+          requires:
+            - test-job
+      - deploy-firebase-stage-job:
+          requires: 
+            - test-job
+          filters:
+            branches:
+              only:                 
+                - master 
 
   nightly_build:
     triggers:
@@ -120,11 +142,23 @@ workflows:
       - increment-build-job:
           requires:
             - test-job
-      - deploy-firebase-job:
+      - deploy-firebase-stage-job:
           requires: 
             - test-job
           filters:
             branches:
               only:                 
                 - master    
+      - hold:
+          type: approval
+          requires: 
+            - test-job
+      - deploy-firebase-prod-job:
+          requires:
+            - hold
+          filters:
+            branches:
+              only:
+                - master
+      
   

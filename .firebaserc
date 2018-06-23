@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "planner-c9897"
+    "default": "planner-c9897",
+    "prod": "planner-prd"
   }
 }

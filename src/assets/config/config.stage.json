@@ -16,9 +16,9 @@
     },
     "enableHttps": true,
     "apiServer": {
-        "url": "http://planner-api.us.openode.io/api/v1/",
-        "httpsUrl":  "https://planner-api.us.openode.io/api/v1/",
-        "metadata": "https://planner-api.us.openode.io/api/v1/",
+        "url": "http://planner-srv.herokuapp.com/api/v1/",
+        "httpsUrl":  "http://planner-srv.herokuapp.com/api/v1/",
+        "metadata": "http://planner-srv.herokuapp.com/api/v1/",
         "rules": "https://planner-api.us.openode.io/api/v1/"
     }, 
     "auth0": {

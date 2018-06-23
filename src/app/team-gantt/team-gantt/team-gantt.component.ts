@@ -2,7 +2,7 @@ import { Component, OnInit, OnChanges, SimpleChanges, ElementRef, ViewChild, Inp
 import {DOCUMENT} from '@angular/platform-browser';
 
 import 'dhtmlx-gantt';
-import {} from '@types/dhtmlxgantt';
+import {} from 'dhtmlxgantt';
 import * as moment from 'moment';
 import { TeamGanttDataService} from '../team-gantt-data.service';
 import {TeamGanttItem} from '../../common/models/team-gantt-item';

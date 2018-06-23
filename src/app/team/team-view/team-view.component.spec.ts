@@ -1,5 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { PrimeControlsModule } from './../../common/primecontrols.module';
+import { TeamDataService } from './../team-data.service';
+import { TeamDataServiceMock} from './../team-data.service.mock';
 import { TeamViewComponent } from './team-view.component';
 
 describe('TeamViewComponent', () => {
@@ -8,7 +10,9 @@ describe('TeamViewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TeamViewComponent ]
+      declarations: [ TeamViewComponent ],
+      imports: [PrimeControlsModule],
+      providers: [{provide: TeamDataService, useClass: TeamDataServiceMock}]
     })
     .compileComponents();
   }));

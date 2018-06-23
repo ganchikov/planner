@@ -10,6 +10,9 @@ const appRoutes: Routes = [
   imports: [
     RouterModule.forChild(appRoutes)
   ],
+  exports: [
+    RouterModule
+  ],
   declarations: []
 })
 export class MockRoutingModule { }
