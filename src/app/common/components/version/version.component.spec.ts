@@ -1,3 +1,4 @@
+import { AppverService } from './../../services/appver.service';
 import { Logger } from './../../services/logger.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { HttpClient } from '@angular/common/http';
@@ -12,7 +13,7 @@ describe('VersionComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ VersionComponent ],
-      providers: [Logger],
+      providers: [Logger, AppverService],
       imports: [HttpClientTestingModule]
     })
     .compileComponents();

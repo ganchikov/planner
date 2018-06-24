@@ -3,9 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppConfig } from '../../app.config';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AppverService {
 
   constructor(private http: HttpClient) { }

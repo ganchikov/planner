@@ -1,6 +1,6 @@
 {
     "env": {
-        "name": "PROD"
+        "name": "DEPLOY"
      },
     "appInsights": {
         "instrumentationKey": "<dev-guid-here>"
@@ -16,13 +16,13 @@
     },
     "enableHttps": true,
     "apiServer": {
-        "url": "http://planner-srv-prd.herokuapp.com/api/v1/",
-        "httpsUrl":  "https://planner-srv-prd.herokuapp.com/api/v1/",
-        "metadata": "https://planner-srv-prd.herokuapp.com/api/v1/",
-        "rules": "https://planner-api-prd.us.openode.io/api/v1/"
+        "url": "http://planner-srv.herokuapp.com/api/v1/",
+        "httpsUrl":  "https://planner-srv.herokuapp.com/api/v1/",
+        "metadata": "https://planner-srv.herokuapp.com/api/v1/",
+        "rules": "https://planner-srv.herokuapp.com/api/v1/"
     }, 
     "auth0": {
-        "clientID": "a8UrAWCGbcBI8tNq0T29ykH8DtiKXeqh",
+        "clientID": "cXDq5Z9CzkvaD0VbER0ZQ2Xnkitkhjrq",
         "domain": "xplanner.auth0.com",
         "responseType": "token id_token",
         "audience": "http://localhost:3030/api/v1",

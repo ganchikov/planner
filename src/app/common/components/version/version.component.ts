@@ -12,6 +12,7 @@ export class VersionComponent implements OnInit {
   constructor(private service: AppverService, private logger: Logger) { }
 
   public apiVer: string;
+  public clientVer: string;
 
   ngOnInit() {
     this.service.getAppVer().subscribe(data => {
@@ -19,6 +20,7 @@ export class VersionComponent implements OnInit {
     }, err => {
       this.logger.log(err);
     });
+    this.clientVer = 'TBD';
   }
 
 }

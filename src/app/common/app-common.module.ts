@@ -1,3 +1,4 @@
+import { AppverService } from './services/appver.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -41,6 +42,7 @@ import { VersionComponent } from './components/version/version.component';
     MediatorService,
     AuthService,
     Logger,
+    AppverService,
     {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true}
   ],
   exports: [
