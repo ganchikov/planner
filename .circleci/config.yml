@@ -126,12 +126,12 @@ jobs:
           at: ~/repo/build
       
       - run:
-          name: Deploy Master to Firebase
+          name: 'Deploy Master to Firebase'
           command: |
-          cd build
-          npm run build
-          firebase use default --token "$FIREBASE_DEPLOY_TOKEN"
-          firebase deploy --token "$FIREBASE_DEPLOY_TOKEN"
+            cd build
+            npm run build
+            firebase use default --token "$FIREBASE_DEPLOY_TOKEN"
+            firebase deploy --token "$FIREBASE_DEPLOY_TOKEN"
   deploy-firebase-prod-job:
     <<: *defaults
     steps:
@@ -148,7 +148,7 @@ jobs:
       - attach_workspace:
           at: ~/repo/build
       - run:
-          name: Deploy Master to Firebase
+          name: 'Deploy Master to Firebase'
           command: |
             cd build
             npm run build
