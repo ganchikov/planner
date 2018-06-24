@@ -15,6 +15,6 @@ export class AppverService {
 
 
   getAppVer(): Observable<string> {
-    return this.http.get<string>(this.url + 'appver', {responseType: 'text'});
+    return this.http.get(this.url + 'appver', {responseType: 'text'});
   }
 }
