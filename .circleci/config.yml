@@ -80,8 +80,8 @@ jobs:
               git push
             fi
   tag-build-job:
-  <<: *defaults
-  steps:
+    <<: *defaults
+    steps:
       - add_ssh_keys:
           fingerprints:
             - "03:8e:45:bf:ce:91:71:70:00:18:d6:f5:d0:c6:79:b4"
@@ -167,13 +167,6 @@ workflows:
       - increment-build-job:
           requires:
             - test-job
-      - deploy-firebase-stage-job:
-          requires: 
-            - test-job
-          filters:
-            branches:
-              only:                 
-                - master 
 
   nightly_build:
     triggers:
