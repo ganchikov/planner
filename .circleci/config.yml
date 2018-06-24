@@ -84,22 +84,30 @@ jobs:
   deploy-firebase-stage-job:
     <<: *defaults
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "5b:c6:98:ba:8b:54:f0:60:12:00:57:80:f8:da:65:74"
-            - "b1:1c:98:9f:4d:d1:ff:2b:09:5d:81:70:8b:87:b0:f8"
-      - checkout
+      # - add_ssh_keys:
+      #     fingerprints:
+      #       - "5b:c6:98:ba:8b:54:f0:60:12:00:57:80:f8:da:65:74"
+      #       - "b1:1c:98:9f:4d:d1:ff:2b:09:5d:81:70:8b:87:b0:f8"
+      - run:
+          name: 'create build folder'
+          command: 'mkdir build'
+      - attach_workspace:
+          at: ~/repo/build
       - run:
           name: Deploy Master to Firebase
           command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_DEPLOY_TOKEN
   deploy-firebase-prod-job:
     <<: *defaults
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "5b:c6:98:ba:8b:54:f0:60:12:00:57:80:f8:da:65:74"
-            - "b1:1c:98:9f:4d:d1:ff:2b:09:5d:81:70:8b:87:b0:f8"
-      - checkout
+      # - add_ssh_keys:
+      #     fingerprints:
+      #       - "5b:c6:98:ba:8b:54:f0:60:12:00:57:80:f8:da:65:74"
+      #       - "b1:1c:98:9f:4d:d1:ff:2b:09:5d:81:70:8b:87:b0:f8"
+      - run:
+          name: 'create build folder'
+          command: 'mkdir build'
+      - attach_workspace:
+          at: ~/repo/build
       - run:
           name: Deploy Master to Firebase
           command: |
