@@ -7,6 +7,7 @@ import { MainComponent } from './main.component';
 import {HeaderComponent} from '../header/header.component';
 import {FooterComponent} from '../footer/footer.component';
 import {ProfileComponent} from '../profile/profile.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('MainComponent', () => {
   let component: MainComponent;
@@ -14,9 +15,10 @@ describe('MainComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MainComponent, HeaderComponent, FooterComponent, ProfileComponent],
+      declarations: [ MainComponent],
       imports: [PrimeControlsModule, RouterTestingModule],
-      providers: [{provide: AuthService, useClass: AuthServiceMock}]
+      providers: [{provide: AuthService, useClass: AuthServiceMock}],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
   }));

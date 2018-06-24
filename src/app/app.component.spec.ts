@@ -1,3 +1,7 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { AuthServiceMock } from './common/services/auth.service.mock';
+import { AuthService } from './common/services/auth.service';
+import { RouterTestingModule } from '@angular/router/testing';
 import { TestBed, async } from '@angular/core/testing';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -11,6 +15,7 @@ import {AppConfig} from '../app/app.config';
 
 import { AppComponent } from './app.component';
 import { APP_BASE_HREF } from '@angular/common';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 describe('AppComponent', () => {
   beforeEach(async(() => {
     AppConfig.load().then(() => {
@@ -25,14 +30,13 @@ describe('AppComponent', () => {
           FormsModule,
           ReactiveFormsModule,
           BrowserAnimationsModule,
-          PrimeControlsModule,
-          AppCommonModule,
-          TeamModule,
-          TeamGanttModule,
-          AppRoutingModule
+          RouterTestingModule,
+          HttpClientTestingModule
         ],
+        schemas: [NO_ERRORS_SCHEMA],
         providers: [
-          {provide: APP_BASE_HREF, useValue: '/'}
+          {provide: APP_BASE_HREF, useValue: '/'},
+          {provide: AuthService, useClass: AuthServiceMock}
         ]
       }).compileComponents();
     });

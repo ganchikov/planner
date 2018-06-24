@@ -1,3 +1,4 @@
+import { VersionComponent } from './../version/version.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './header/header.component';
@@ -11,7 +12,7 @@ import { ProfileComponent } from './profile/profile.component';
     CommonModule,
     PrimeControlsModule
   ],
-  declarations: [HeaderComponent, FooterComponent, MainComponent, ProfileComponent],
+  declarations: [HeaderComponent, FooterComponent, MainComponent, ProfileComponent, VersionComponent],
   exports: [MainComponent]
 })
 export class MasterPageModule { }

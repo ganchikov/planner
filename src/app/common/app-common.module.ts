@@ -18,6 +18,7 @@ import { RequestInterceptor } from './interceptors/request.interceptor';
 import { MediatorService } from './services/mediator.service';
 import { NotAuthorizedComponent } from './components/not-authorized/not-authorized.component';
 import { LandingComponent } from './components/landing/landing.component';
+import { VersionComponent } from './components/version/version.component';
 
 @NgModule({
   imports: [
@@ -34,7 +35,7 @@ import { LandingComponent } from './components/landing/landing.component';
     LogoutComponent,
     PageNotFoundComponent,
     NotAuthorizedComponent,
-    LandingComponent,
+    LandingComponent
   ],
   providers: [
     MediatorService,
