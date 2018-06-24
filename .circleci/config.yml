@@ -76,9 +76,37 @@ jobs:
               #remove first-last double quotes
               TAG=$(sed -e 's/^"//' -e 's/"$//' <<<$TAG)    
               git add .
-              git tag -a $TAG -m 'CI build'
               git commit -m "${TAG} CI build version update [skip ci]"
               git push
+            fi
+  tag-build-job:
+  <<: *defaults
+  steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "03:8e:45:bf:ce:91:71:70:00:18:d6:f5:d0:c6:79:b4"
+      - checkout
+      - run: 
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+           # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+      - run: 
+          name: install-npm-wee
+          command: npm install
+      - run:
+          name: 'tag build'    
+          command: |
+            if [ $CIRCLE_BRANCH == "master" ]; then
+              #extract tag data
+              TAG=$(jq '[.version.major , .version.minor, .version.patch, .build.number | tostring] | join (".")' appversion.json)
+              #remove first-last double quotes
+              TAG=$(sed -e 's/^"//' -e 's/"$//' <<<$TAG)    
+              git tag -a $TAG -m 'CI build'
               git push --tags              
             fi
   deploy-firebase-stage-job:
@@ -112,6 +140,9 @@ jobs:
       #       - "5b:c6:98:ba:8b:54:f0:60:12:00:57:80:f8:da:65:74"
       #       - "b1:1c:98:9f:4d:d1:ff:2b:09:5d:81:70:8b:87:b0:f8"
       - run:
+          name: 'install firebase-tools'
+          command: 'sudo npm install -g firebase-tools'
+      - run:
           name: 'create build folder'
           command: 'mkdir build'
       - attach_workspace:
@@ -119,8 +150,10 @@ jobs:
       - run:
           name: Deploy Master to Firebase
           command: |
-            ./node_modules/.bin/firebase use prod
-            ./node_modules/.bin/firebase deploy --token=$FIREBASE_DEPLOY_TOKEN
+            cd build
+            npm run build
+            firebase use prod --token "$FIREBASE_DEPLOY_TOKEN"
+            firebase deploy --token=$FIREBASE_DEPLOY_TOKEN
 
 workflows:
   version: 2
@@ -155,7 +188,7 @@ workflows:
       - test-job:
           requires: 
             - build-job
-      - increment-build-job:
+      - tag-build-job:
           requires:
             - test-job
       - deploy-firebase-stage-job:
