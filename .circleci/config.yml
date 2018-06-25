@@ -131,7 +131,7 @@ jobs:
           name: 'Deploy Master to Firebase'
           command: |
             cd build
-            npm run build
+            npm run build_stage
             firebase use default --token "$FIREBASE_DEPLOY_TOKEN"
             firebase deploy --token "$FIREBASE_DEPLOY_TOKEN"
   deploy-firebase-prod-job:
@@ -178,7 +178,14 @@ workflows:
           filters:
             branches:
               only:                 
-                - master 
+                - master
+      - deploy-firebase-prod-job:
+          requires:
+            - increment-build-job
+          filters:
+            branches:
+              only:
+                - master
   nightly_build:
     triggers:
       - schedule:
