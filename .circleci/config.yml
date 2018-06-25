@@ -167,7 +167,16 @@ workflows:
       - increment-build-job:
           requires:
             - test-job
-
+      - tag-build-job:
+          requires:
+            - increment-build-job            
+      - deploy-firebase-stage-job:
+          requires: 
+            - increment-build-job
+          filters:
+            branches:
+              only:                 
+                - master 
   nightly_build:
     triggers:
       - schedule:
