@@ -10,24 +10,31 @@ import { ISubscription} from 'rxjs/Subscription';
 })
 export class VersionComponent implements OnInit, OnDestroy {
 
-  private subscription: ISubscription;
+  private subscriptions: ISubscription[] = [];
 
   constructor(private service: AppverService, private logger: Logger) { }
 
   public apiVer: string;
   public clientVer: string;
 
-  ngOnInit() {
-    this.subscription = this.service.getAppVer().subscribe(data => {
+  async ngOnInit() {
+    this.subscriptions.push(this.service.getServerAppVer().subscribe(data => {
       this.apiVer = data;
     }, err => {
       this.logger.log(err);
-    });
-    this.clientVer = 'TBD';
+    }));
+    this.subscriptions.push(this.service.getClientAppVer().subscribe(data => {
+      this.clientVer = data;
+    }, err => {
+      this.logger.log(err);
+    }));
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    if (!this.subscriptions) {return;}
+    this.subscriptions.forEach(subscription => {
+      subscription.unsubscribe();
+    });
   }
 
 }

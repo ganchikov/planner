@@ -28,7 +28,7 @@ describe('AppverService', () => {
   it('fetch data from server api',
     inject([HttpTestingController, AppverService], (httpMock: HttpTestingController, service: AppverService) => {
       const testData = '0.0.0.1';
-      service.getAppVer().subscribe(data => {
+      service.getServerAppVer().subscribe(data => {
         expect(data).toBe('0.0.0.1');
       });
       const req = httpMock.expectOne(url + 'appver');

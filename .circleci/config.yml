@@ -74,7 +74,9 @@ jobs:
               #extract tag data
               TAG=$(jq '[.version.major , .version.minor, .version.patch, .build.number | tostring] | join (".")' appversion.json)
               #remove first-last double quotes
-              TAG=$(sed -e 's/^"//' -e 's/"$//' <<<$TAG)    
+              TAG=$(sed -e 's/^"//' -e 's/"$//' <<<$TAG) 
+              #write version to the public txt file
+              echo $TAG > ./src/assets/appver.txt   
               git add .
               git commit -m "${TAG} CI build version update [skip ci]"
               git push
@@ -167,9 +169,9 @@ workflows:
       - increment-build-job:
           requires:
             - test-job
-      - tag-build-job:
-          requires:
-            - increment-build-job            
+      # - tag-build-job:
+      #     requires:
+      #       - increment-build-job            
       - deploy-firebase-stage-job:
           requires: 
             - increment-build-job
