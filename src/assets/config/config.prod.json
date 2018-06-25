@@ -26,8 +26,8 @@
         "domain": "xplanner.auth0.com",
         "responseType": "token id_token",
         "audience": "http://localhost:3030/api/v1",
-        "redirectUri": "https://planner-c9897.firebaseapp.com/callback",
-        "redirectHttpsUri": "https://planner-c9897.firebaseapp.com/callback",
+        "redirectUri": "http://planner-prd.firebaseapp.com/callback",
+        "redirectHttpsUri": "https://planner-prd.firebaseapp.com/callback",
         "scope": "openid profile"
         
     }
