@@ -1,13 +1,16 @@
 import { Logger } from './../../services/logger.service';
 import { AppverService } from './../../services/appver.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ISubscription} from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-version',
   templateUrl: './version.component.html',
   styleUrls: ['./version.component.css']
 })
-export class VersionComponent implements OnInit {
+export class VersionComponent implements OnInit, OnDestroy {
+
+  private subscription: ISubscription;
 
   constructor(private service: AppverService, private logger: Logger) { }
 
@@ -15,12 +18,16 @@ export class VersionComponent implements OnInit {
   public clientVer: string;
 
   ngOnInit() {
-    this.service.getAppVer().subscribe(data => {
+    this.subscription = this.service.getAppVer().subscribe(data => {
       this.apiVer = data;
     }, err => {
       this.logger.log(err);
     });
     this.clientVer = 'TBD';
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
 }
