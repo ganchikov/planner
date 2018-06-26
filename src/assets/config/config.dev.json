@@ -1,25 +1,14 @@
 {
     "env": {
-    "name": "DEV"
-     },
-    "appInsights": {
-        "instrumentationKey": "<dev-guid-here>"
+        "name": "DEV"
      },
     "logging": {
-        "console": true,
-        "appInsights": false
-    },
-    "aad": {
-        "requireAuth": true,
-        "tenant": "<dev-guid-here>",
-        "clientId": "<dev-guid-here>"
+        "console": true
     },
     "enableHttps": false,
     "apiServer": {
         "url": "http://localhost:3030/api/v1/",
-        "httpsUrl":  "https://localhost/api/v1/",
-        "metadata": "https://localhost/api/v1/",
-        "rules": "https://localhost/api/v1/"
+        "httpsUrl":  "https://localhost/api/v1/"
     }, 
     "auth0": {
         "clientID": "vc4oab1tqEmYqsCazSwZoQ0Y7xQsCpFz",
