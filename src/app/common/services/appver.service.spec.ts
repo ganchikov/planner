@@ -1,6 +1,4 @@
-import { RequestInterceptor } from './../interceptors/request.interceptor';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import {HttpClient} from '@angular/common/http';
 import { TestBed, inject } from '@angular/core/testing';
 
 import { AppverService } from './appver.service';

@@ -31,7 +31,7 @@ export class VersionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (!this.subscriptions) {return;}
+    if (!this.subscriptions) {return; }
     this.subscriptions.forEach(subscription => {
       subscription.unsubscribe();
     });
