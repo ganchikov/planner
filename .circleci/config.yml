@@ -108,8 +108,10 @@ jobs:
               TAG=$(jq '[.version.major , .version.minor, .version.patch, .build.number | tostring] | join (".")' appversion.json)
               #remove first-last double quotes
               TAG=$(sed -e 's/^"//' -e 's/"$//' <<<$TAG)    
-              git tag -a $TAG -m 'CI build'
-              git push --tags              
+              if ! $(git tag -l $TAG) ; then            
+                git tag -a $TAG -m 'CI build'
+                git push --tags              
+              fi              
             fi
   deploy-firebase-stage-job:
     <<: *defaults
@@ -158,12 +160,10 @@ workflows:
       - test-job:
           requires:
             - build-job
-      - increment-build-job:
+      # - increment-build-job:
+      - tag-build-job:
           requires:
             - test-job        
-      - deploy-firebase-stage-job:
-          requires: 
-            - increment-build-job
           filters:
             branches:
               only:                 
