@@ -111,7 +111,8 @@ jobs:
               TAG=$(jq '[.version.major , .version.minor, .version.patch, .build.number | tostring] | join (".")' appversion.json)
               #remove first-last double quotes
               TAG=$(sed -e 's/^"//' -e 's/"$//' <<<$TAG)    
-              if ! $(git tag -l $TAG) ; then            
+              RESTAG=$(git tag -l $TAG)
+              if[ "$RESTAG" = "" ] ; then            
                 git tag -a $TAG -m 'CI build'
                 git push --tags              
               fi              
