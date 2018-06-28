@@ -164,8 +164,7 @@ workflows:
       - test-job:
           requires:
             - build-job
-      # - increment-build-job:
-      - tag-build-job:
+      - increment-build-job:
           requires:
             - test-job        
           filters:
