@@ -101,6 +101,9 @@ jobs:
           name: install-npm-wee
           command: npm install
       - run:
+          name: 'install jq'
+          command: 'sudo apt-get install jq'
+      - run:
           name: 'tag build'    
           command: |
             if [ $CIRCLE_BRANCH == "master" ]; then
