@@ -112,7 +112,7 @@ jobs:
               #remove first-last double quotes
               TAG=$(sed -e 's/^"//' -e 's/"$//' <<<$TAG)    
               RESTAG=$(git tag -l $TAG)
-              if[ "$RESTAG" = "" ]; then            
+              if [ "$RESTAG" = "" ]; then            
                 git tag -a $TAG -m 'CI build'
                 git push --tags              
               fi              
