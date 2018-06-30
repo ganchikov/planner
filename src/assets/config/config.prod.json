@@ -14,7 +14,7 @@
         "clientID": "a8UrAWCGbcBI8tNq0T29ykH8DtiKXeqh",
         "domain": "xplanner.auth0.com",
         "responseType": "token id_token",
-        "audience": "https://planner-srv-prd.herokuapp.com/api/v1/",
+        "audience": "https://planner-srv-prd.herokuapp.com/api/v1",
         "redirectUri": "http://planner-prd.firebaseapp.com/callback",
         "redirectHttpsUri": "https://planner-prd.firebaseapp.com/callback",
         "scope": "openid profile"
