@@ -9,7 +9,7 @@ export class AuthServiceMock extends AuthService {
   private isLoggedIn: boolean;
 
   constructor() {
-    super(null, null);
+    super(null, null, null);
   }
 
   public userProfile: any;

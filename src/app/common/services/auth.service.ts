@@ -1,3 +1,4 @@
+import { Logger } from './logger.service';
 
 import {shareReplay, filter} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
@@ -9,7 +10,6 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import * as auth0 from 'auth0-js';
 import { AppConfig } from '../../app.config';
 import {Scopes} from '../constants/scopes';
-
 
 @Injectable()
 export class AuthService {
@@ -38,13 +38,14 @@ export class AuthService {
   private isAuthenticatedEventSource = new BehaviorSubject<boolean>(false);
   public onAuthenticatedStateChange = this.isAuthenticatedEventSource.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private logger: Logger) {
   }
 
-  public login(email: string, password: string ) {
+  private authenticateOnServer() {
     // this is just the HTTP call,
     // we still need to handle the reception of the token
-    return this.http.post (this.url.concat('authorize'), {email, password}).pipe(shareReplay());
+    const id_token = localStorage.getItem('id_token');
+    return this.http.post (this.url.concat('authenticate'), {id_token}).pipe(shareReplay());
   }
 
   public loginAuth0() {
@@ -58,14 +59,19 @@ export class AuthService {
       if (authResult && authResult.accessToken && authResult.idToken) {
         window.location.hash = '';
         this.setSession(authResult);
-        this.router.navigate(['/']);
-        this.isAuthenticatedEventSource.next(true);
+        this.authenticateOnServer().toPromise().then(result => {
+          this.router.navigate(['/']);
+          this.isAuthenticatedEventSource.next(true);
+        }).catch(reason => {
+          this.router.navigate(['/error']);
+          this.logger.log(err);
+        });
       } else if (err) {
         this.router.navigate(['/error']);
-        console.log(err);
+        this.logger.log(err);
       }
     });
-  }
+   }
 
   private setSession(authResult) {
     // Set the time that the Access Token will expire at
