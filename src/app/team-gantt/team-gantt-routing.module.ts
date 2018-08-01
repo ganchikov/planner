@@ -11,9 +11,6 @@ const appRoutes: Routes = [
     canActivate: [ScopeGuard],
     data: {
       expectedScopes: [
-        Scopes.team.read,
-        Scopes.person.read,
-        Scopes.absence.read
       ]
     }
   },
