@@ -14,7 +14,7 @@ import {Scopes} from '../constants/scopes';
 @Injectable()
 export class AuthService {
 
-  private url: string = AppConfig.settings.apiServer.url;
+  private url: string = AppConfig.settings.enableHttps ? AppConfig.settings.apiServer.httpsUrl : AppConfig.settings.apiServer.url;
 
   private requestedScopes: string = AppConfig.settings.auth0.scope.concat(' ', Object.entries(Scopes).map(
     entry => Object.entries(entry[1])
