@@ -411,18 +411,18 @@ export class TeamGanttComponent implements OnInit, OnChanges {
         css = '';
         break;
       case ModelType.person:
-        if (thisComponentRef.auth.hasScopes([Scopes.absence.edit])) {
+        // if (thisComponentRef.auth.hasScopes([Scopes.absence.edit])) {
           css = `<i class="fa gantt_button_grid gantt_grid_add fa-plus fa-lg" onClick="insertItem(${task.id})"></i>`;
-        } else {
-          css = `<i></i>`;
-        }
+        // } else {
+        //   css = `<i></i>`;
+        // }
         break;
       case ModelType.absence:
-      if (thisComponentRef.auth.hasScopes([Scopes.absence.delete])) {
+      // if (thisComponentRef.auth.hasScopes([Scopes.absence.delete])) {
         css = `<i id="btn" class="fa gantt_button_grid gantt_grid_delete fa-times fa-lg" onClick="deleteItem(${task.id.toString()})"></i>`;
-      } else {
-        css = `<i></i>`;
-      }
+      // } else {
+      //   css = `<i></i>`;
+      // }
     }
     return css;
   }

@@ -25,6 +25,6 @@ export class TeamGanttViewComponent implements OnInit {
   ngOnInit() {
     this.rangeDates[0] = new Date((new Date(Date.now())).getFullYear(), 0, 1);
     this.rangeDates[1] = new Date((new Date(Date.now())).getFullYear(), 11, 31);
-   }
+  }
 
 }

@@ -51,7 +51,7 @@ export class TeamDataService {
   }
 
   updateAbsence(absenceItem: Absence, callback: (error?) => void) {
-    this.http.put<Absence>(this.url + 'absences', absenceItem.GetObject()).subscribe(() => {
+    this.http.patch<Absence>(this.url + 'absences', absenceItem.GetObject()).subscribe(() => {
       callback();
     }, error => {
       callback(error);
@@ -67,7 +67,7 @@ export class TeamDataService {
   }
 
   updatePerson(personItem: Person, callback: (error?) => void) {
-    this.http.put<Person>(this.url + 'people', personItem.GetObject()).subscribe(() => {
+    this.http.patch<Person>(this.url + 'people', personItem._id, personItem.GetObject()).subscribe(() => {
           callback();
     }, error => {
       callback(error);
