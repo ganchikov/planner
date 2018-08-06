@@ -53,4 +53,11 @@ export class TeamGanttDataService {
     });
   }
 
+  updatePerson(personGanttItem: TeamGanttItem, callback: (error) => void) {
+    const personItem: Person = personGanttItem.GetTypedItem<Person>(Person);
+    this.teamDS.updatePerson(personItem, error => {
+      callback(error);
+    });
+  }
+
 }
