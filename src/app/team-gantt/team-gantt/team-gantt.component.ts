@@ -306,6 +306,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     const newGanttItem: TeamGanttItem = new TeamGanttItem(newTask);
     newTask['model_type'] = newGanttItem.model_type = ModelType.absence;
     const parentGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
+    newGanttItem.person = parentGanttItem._id;
     thisComponentRef.ganttData.insertAbsence(newGanttItem, parentGanttItem, (insertedItem, error) => {
       if (error) {
         gantt.message({type: 'error', text: error});
@@ -313,12 +314,6 @@ export class TeamGanttComponent implements OnInit, OnChanges {
         gantt.changeTaskId(id, insertedItem.id);
         idMap.push(new IDMapper(id.toString(), insertedItem.id.toString()));
         parentGanttItem.absences.push(insertedItem);
-        thisComponentRef.ganttData.updatePerson(parentGanttItem, err => {
-          if (err) {
-            gantt.message({type: 'error', text: error});
-            return false;
-          }
-        });
         gantt.updateTask(parentGanttItem.id.toString());
         gantt.refreshTask(insertedItem.id);
       }
@@ -359,18 +354,9 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   onAfterTaskDelete(id: string, deletedItem: TeamGanttItem) {
     if (deletedItem._id) {
-      const parentGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
-
       thisComponentRef.ganttData.deleteAbsence(deletedItem._id, error => {
         if (error) {
           gantt.message({type: 'error', text: error});
-        } else {
-          parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(itm => itm.id === deletedItem.id));
-          thisComponentRef.ganttData.updatePerson(parentGanttItem, err => {
-            if (err) {
-              gantt.message({type: 'error', text: error});
-            }
-          });
         }
       });
     }

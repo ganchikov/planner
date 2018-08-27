@@ -33,9 +33,7 @@ export class TeamGanttDataService {
         personItem.absences.push(insertedAbsenceItem);
         const insertedGanttItem: TeamGanttItem = insertedAbsenceItem.GetTypedItem<TeamGanttItem>(TeamGanttItem,
                     {map: [{from_field: 'name', to_field: 'text'}]});
-        this.teamDS.updatePerson(personItem, (err) => {
-          callback(insertedGanttItem, err);
-        });
+        callback(insertedGanttItem, null);
       }
     });
   }

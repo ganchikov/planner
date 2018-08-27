@@ -1,6 +1,7 @@
 import {AbsenceType} from '../enums/absence-type';
 import {BaseScheduledItem} from './base-scheduled-item';
 import {ModelType} from '../enums/model-type';
+import { ObjectID } from 'bson';
 
 export interface IAbsence {
     confirmed: boolean;
@@ -16,6 +17,14 @@ export class Absence extends BaseScheduledItem implements IAbsence {
         if (!ignore_object_type) {
             this.model_type = ModelType.absence;
         }
+    }
+
+    get person(): Object {
+        return this.GetValue('person');
+    }
+
+    set person(val: Object) {
+        this.SetValue<Object>('person', val);
     }
 
     get confirmed(): boolean {
