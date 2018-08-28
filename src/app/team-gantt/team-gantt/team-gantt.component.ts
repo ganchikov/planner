@@ -1,10 +1,9 @@
 import { Component, OnInit, OnChanges, SimpleChanges, ElementRef, ViewChild, Input, Renderer2, Inject} from '@angular/core';
 import {DOCUMENT} from '@angular/platform-browser';
+import {} from '@types/dhtmlxgantt';
 
-import {} from 'dhtmlx-gantt';
 import 'dhtmlx-gantt';
 import * as moment from 'moment';
-
 import { TeamGanttDataService} from '@app/team-gantt/team-gantt-data.service';
 import {TeamScheduleItem} from '@app/team-schedule/models/team-schedule-item';
 import {ModelType} from '@app/common/enums/model-type';
