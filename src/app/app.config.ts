@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { IAppConfig } from './common/models/app-config.model';
-import { environment } from '../environments/environment';
+import { IAppConfig } from '@app/common/models/app-config.model';
+import { environment } from '@env/environment';
 @Injectable()
 export class AppConfig {
 

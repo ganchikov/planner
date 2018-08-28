@@ -1,9 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { PrimeControlsModule } from './../../common/primecontrols.module';
-import { TeamDataService } from './../team-data.service';
-import { TeamDataServiceMock} from './../team-data.service.mock';
+import { TeamDataService } from '@app/team/team-data.service';
+import { TeamDataServiceMock} from '@app/team/team-data.service.mock';
 import { TeamTreeViewComponent } from './team-tree-view.component';
+import { PrimeControlsModule } from '@app/core/primecontrols.module';
 
 describe('TeamTreeViewComponent', () => {
   let component: TeamTreeViewComponent;

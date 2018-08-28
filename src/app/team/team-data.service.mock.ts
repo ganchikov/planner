@@ -1,16 +1,12 @@
-import { TeamDataService } from './team-data.service';
+import { TeamDataService } from '@app/team/team-data.service';
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {of} from 'rxjs/observable/of';
 import {catchError, tap} from 'rxjs/operators';
 
-import {Absence} from '../common/models/absence';
-import {Person} from '../common/models/person';
-import {Team} from '../common/models/team';
-
-import { AppConfig } from '../app.config';
-import {Logger} from '../common/services/logger.service';
+import {Absence, Person, Team} from '@app/common/models';
+import { AppConfig } from '@app/app.config';
 
 @Injectable()
 export class TeamDataServiceMock extends TeamDataService {

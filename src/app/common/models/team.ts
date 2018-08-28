@@ -1,6 +1,6 @@
 import {BaseItem} from './base-item';
 import {ModelType} from '../enums/model-type';
-import {Person} from './person';
+import {Person} from '../models/person';
 
 export interface ITeam {
     members: Person[];

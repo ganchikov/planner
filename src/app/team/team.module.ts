@@ -9,7 +9,7 @@ import { TeamRoutingModule } from './team-routing.module';
 import {TeamViewComponent} from './team-view/team-view.component';
 import {TeamTreeViewComponent} from './team-tree-view/team-tree-view.component';
 import { TeamDetailsComponent } from './team-details/team-detals.component';
-import { PrimeControlsModule } from '../common/primecontrols.module';
+import { PrimeControlsModule } from '@app/core/primecontrols.module';
 
 
 @NgModule({

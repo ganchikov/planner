@@ -1,6 +1,7 @@
 import {AbsenceType} from '../enums/absence-type';
-import {BaseScheduledItem} from './base-scheduled-item';
 import {ModelType} from '../enums/model-type';
+
+import {BaseScheduledItem} from './base-scheduled-item';
 import { ObjectID } from 'bson';
 
 export interface IAbsence {
@@ -41,7 +42,5 @@ export class Absence extends BaseScheduledItem implements IAbsence {
     set absence_type(val: AbsenceType) {
         this.SetValue<AbsenceType>('absence_type', val);
     }
-
-
 
 }

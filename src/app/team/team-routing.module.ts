@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {RouterModule, Routes} from '@angular/router';
-import {TeamViewComponent} from './team-view/team-view.component';
-import {TeamTreeViewComponent} from './team-tree-view/team-tree-view.component';
-import {TeamDetailsComponent} from './team-details/team-detals.component';
-import {ScopeGuardService as ScopeGuard} from '../common/services/scope-guard.service';
-import {Scopes} from '../common/constants/scopes';
+import {TeamViewComponent} from '@app/team/team-view/team-view.component';
+import {TeamTreeViewComponent} from '@app/team/team-tree-view/team-tree-view.component';
+import {TeamDetailsComponent} from '@app/team/team-details/team-detals.component';
+import {ScopeGuardService as ScopeGuard} from '@app/core/services';
+import {Scopes} from '@app/common/constants/scopes';
 
 const appRoutes: Routes = [
   {path: 'team', component: TeamViewComponent, canActivate: [ScopeGuard], data: {expectedScopes: [

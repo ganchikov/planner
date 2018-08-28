@@ -1,11 +1,11 @@
-import { AuthServiceMock } from './../../common/services/auth.service.mock';
-import { AuthService } from './../../common/services/auth.service';
-import { TeamDataService } from './../../team/team-data.service';
-import {TeamDataServiceMock} from './../../team/team-data.service.mock';
-import { TeamGanttDataService } from './../team-gantt-data.service';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TeamGanttComponent } from './team-gantt.component';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { AuthService, AuthServiceMock } from '@app/core/services';
+import { TeamDataService } from '@app/team/team-data.service';
+import {TeamDataServiceMock} from '@app/team/team-data.service.mock';
+import { TeamGanttDataService } from '@app/team-gantt/team-gantt-data.service';
+
+import { TeamGanttComponent } from '@app/team-gantt/team-gantt/team-gantt.component';
 
 describe('TeamGanttComponent', () => {
   let component: TeamGanttComponent;

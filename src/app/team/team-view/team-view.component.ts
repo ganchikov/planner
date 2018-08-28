@@ -1,8 +1,8 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import {TableModule} from 'primeng/table';
 
-import { TeamDataService } from '../team-data.service';
-import {Team} from '../../common/models/team';
+import { TeamDataService } from '@app/team/team-data.service';
+import {Team} from '@app/common/models';
 // import * as $ from 'jquery';
 
 @Component({

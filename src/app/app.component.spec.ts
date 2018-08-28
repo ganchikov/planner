@@ -1,19 +1,19 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { AuthServiceMock } from './common/services/auth.service.mock';
-import { AuthService } from './common/services/auth.service';
+import { AuthServiceMock } from '@app/core/services';
+import { AuthService } from '@app/core/services';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TestBed, async } from '@angular/core/testing';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {AppRoutingModule} from './app-routing.module';
-import {TeamModule} from './team/team.module';
-import { TeamGanttModule } from './team-gantt/team-gantt.module';
-import {PrimeControlsModule} from './common/primecontrols.module';
-import {AppCommonModule} from './common/app-common.module';
-import {AppConfig} from '../app/app.config';
+import {AppRoutingModule} from '@app/app-routing.module';
+import {TeamModule} from '@app/team/team.module';
+import { TeamGanttModule } from '@app/team-gantt/team-gantt.module';
+import {PrimeControlsModule} from '@app/core/primecontrols.module';
+import {CoreModule} from '@app/core/core.module';
+import {AppConfig} from '@app/app.config';
 
-import { AppComponent } from './app.component';
+import { AppComponent } from '@app/app.component';
 import { APP_BASE_HREF } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 describe('AppComponent', () => {

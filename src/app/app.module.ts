@@ -6,19 +6,21 @@ import {HTTP_INTERCEPTORS} from '@angular/common/http';
 
 import {MenuItem} from 'primeng/api';
 
-import { AppComponent } from './app.component';
-import {AppRoutingModule} from './app-routing.module';
-import {TeamModule} from './team/team.module';
-import { TeamGanttModule } from './team-gantt/team-gantt.module';
-import {PrimeControlsModule} from './common/primecontrols.module';
-import {AppCommonModule} from './common/app-common.module';
-import { RequestInterceptor } from './common/interceptors/request.interceptor';
+import { AppComponent } from '@app/app.component';
+import {AppRoutingModule} from '@app/app-routing.module';
+import {TeamModule} from '@app/team/team.module';
+import { TeamGanttModule } from '@app/team-gantt/team-gantt.module';
+import {TeamScheduleModule} from '@app/team-schedule/team-schedule.module';
+import {PrimeControlsModule} from '@app/core/primecontrols.module';
+import {CoreModule} from '@app/core/core.module';
+import { RequestInterceptor } from '@app/core/interceptors/request.interceptor';
+
 
 
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -28,8 +30,9 @@ import { RequestInterceptor } from './common/interceptors/request.interceptor';
     PrimeControlsModule,
     TeamModule,
     TeamGanttModule,
+    TeamScheduleModule,
     AppRoutingModule,
-    AppCommonModule
+    CoreModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true}

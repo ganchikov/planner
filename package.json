@@ -30,7 +30,7 @@
     "auth0-js": "^9.6.1",
     "bootstrap": "^4.1.1",
     "core-js": "^2.5.7",
-    "dhtmlx-gantt": "^5.1.0",
+    "dhtmlx-gantt": "^5.2.0",
     "font-awesome": "^4.7.0",
     "moment": "^2.22.2",
     "primeng": "^5.2.7",

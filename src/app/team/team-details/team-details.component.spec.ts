@@ -1,8 +1,7 @@
-import { Team } from './../../common/models/team';
-import { PrimeControlsModule } from './../../common/primecontrols.module';
-import { FormsModule } from '@angular/forms';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { FormsModule } from '@angular/forms';
+import { Team } from '@app/common/models';
+import { PrimeControlsModule } from '@app/core/primecontrols.module';
 import { TeamDetailsComponent } from './team-detals.component';
 
 describe('TeamDetailsComponent', () => {

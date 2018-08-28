@@ -27,21 +27,9 @@ export class BaseItem extends DataItem {
         this.SetValue<string>('name', val);
     }
 
-    // get parent_object(): BaseItem {
-    //     return this.GetValue('parent_object');
-    // }
-
-    // set parent_object(val: BaseItem) {
-    //     // this.SetValue<BaseItem>('parent_object', val);
-    //     this.parent_id = val.id;
-    // }
-
     get parent_id(): number {
-        // if (this.parent_object) {
-        //     return this.parent_object.id;
-        // } else {
-            return this.GetValue('parent_id');
-        // }
+        return this.GetValue('parent_id');
+
     }
 
     set parent_id(val: number) {
@@ -55,5 +43,4 @@ export class BaseItem extends DataItem {
     set model_type(val: ModelType) {
         this.SetValue<ModelType>('model_type', val);
     }
-
 }

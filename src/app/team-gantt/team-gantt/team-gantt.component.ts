@@ -1,16 +1,15 @@
 import { Component, OnInit, OnChanges, SimpleChanges, ElementRef, ViewChild, Input, Renderer2, Inject} from '@angular/core';
 import {DOCUMENT} from '@angular/platform-browser';
 
+import {} from 'dhtmlx-gantt';
 import 'dhtmlx-gantt';
-import {} from 'dhtmlxgantt';
 import * as moment from 'moment';
-import { TeamGanttDataService} from '../team-gantt-data.service';
-import {TeamGanttItem} from '../../common/models/team-gantt-item';
-import {Team} from '../../common/models/team';
-import {ModelType} from '../../common/enums/model-type';
-import {AbsenceType} from '../../common/enums/absence-type';
-import { AuthService } from '../../common/services/auth.service';
-import { Scopes } from '../../common/constants/scopes';
+
+import { TeamGanttDataService} from '@app/team-gantt/team-gantt-data.service';
+import {TeamScheduleItem} from '@app/team-schedule/models/team-schedule-item';
+import {ModelType} from '@app/common/enums/model-type';
+import {AbsenceType} from '@app/common/enums/absence-type';
+import { AuthService } from '@app/core/services';
 
 export enum ScaleMode {
   Day = 0,
@@ -95,14 +94,14 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   // Gantt service functions
 
-  renderComplexTask(task: TeamGanttItem): string {
-    if (!task.is_complex) {return ''; }
+  renderComplexTask(task: TeamScheduleItem): string {
+    if (!task.has_absences) {return ''; }
     class Duration {
       constructor(
         public offset: number,
         public duration: number) {}
     }
-    const absences: TeamGanttItem[] = task.GetValue('absences') as TeamGanttItem[];
+    const absences: TeamScheduleItem[] = task.GetValue('absences') as TeamScheduleItem[];
     const durations: Duration[] = [];
     let min_date: Date = absences[0].start_date;
     let max_date: Date = absences[0].end_date;
@@ -258,7 +257,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   // Gantt event handlers
 
-  onTaskLoading(task: TeamGanttItem) {
+  onTaskLoading(task: TeamScheduleItem) {
 
     if (task.model_type === ModelType.absence) {
       task['editable'] = true;
@@ -277,7 +276,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   onTaskClick(id: string, e: Event) {
     if (e.srcElement.className === 'gantt_add') {
-      const item: TeamGanttItem = gantt.getTask(id);
+      const item: TeamScheduleItem = gantt.getTask(id);
       if (item && item.model_type === ModelType.person) {
         return true;
       }
@@ -294,7 +293,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     if (!id) {return false; }
     const itm = idMap.find(map => map.temp_id === id);
     if (itm) {id = itm.perm_id; }
-    const item: TeamGanttItem = gantt.getTask(id);
+    const item: TeamScheduleItem = gantt.getTask(id);
     if (item.model_type === ModelType.absence) {
       return true;
     } else {
@@ -303,9 +302,9 @@ export class TeamGanttComponent implements OnInit, OnChanges {
   }
 
   onAfterTaskAdd(id: string, newTask: Object) {
-    const newGanttItem: TeamGanttItem = new TeamGanttItem(newTask);
+    const newGanttItem: TeamScheduleItem = new TeamScheduleItem(newTask);
     newTask['model_type'] = newGanttItem.model_type = ModelType.absence;
-    const parentGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
+    const parentGanttItem: TeamScheduleItem = gantt.getTask(gantt.getParent(id));
     newGanttItem.person = parentGanttItem._id;
     thisComponentRef.ganttData.insertAbsence(newGanttItem, parentGanttItem, (insertedItem, error) => {
       if (error) {
@@ -325,13 +324,13 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     if (updatedTask['model_type'] !== ModelType.absence) {return true; }
     const itm = idMap.find(map => map.temp_id === id);
     if (itm) {id = itm.perm_id; }
-    let updatedGanttTask: TeamGanttItem;
-    if (updatedTask instanceof TeamGanttItem) {
-      updatedGanttTask = updatedTask as TeamGanttItem;
+    let updatedGanttTask: TeamScheduleItem;
+    if (updatedTask instanceof TeamScheduleItem) {
+      updatedGanttTask = updatedTask as TeamScheduleItem;
     } else {
-      updatedGanttTask = new TeamGanttItem(updatedTask);
+      updatedGanttTask = new TeamScheduleItem(updatedTask);
     }
-    const parentGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
+    const parentGanttItem: TeamScheduleItem = gantt.getTask(gantt.getParent(id));
     thisComponentRef.ganttData.updateAbsence(updatedGanttTask, error => {
       if (error) {
         gantt.message({type: 'error', text: error});
@@ -346,13 +345,13 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     });
   }
 
-  onBeforeTaskDelete(id: string, deletedItem: TeamGanttItem) {
-    const parentGanttItem: TeamGanttItem = gantt.getTask(gantt.getParent(id));
+  onBeforeTaskDelete(id: string, deletedItem: TeamScheduleItem) {
+    const parentGanttItem: TeamScheduleItem = gantt.getTask(gantt.getParent(id));
     parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === deletedItem.id),
     1);
   }
 
-  onAfterTaskDelete(id: string, deletedItem: TeamGanttItem) {
+  onAfterTaskDelete(id: string, deletedItem: TeamScheduleItem) {
     if (deletedItem._id) {
       thisComponentRef.ganttData.deleteAbsence(deletedItem._id, error => {
         if (error) {
@@ -364,7 +363,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
 
   // Gantt templates
 
-  memberTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
+  memberTaskClassTemplate(start: Date, end: Date, task: TeamScheduleItem): string {
     if (task.model_type === ModelType.person) {
       return 'complex_gantt_bar';
     } else if (task.model_type === ModelType.absence) {
@@ -383,7 +382,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     }
   }
 
-  memberTaskTextTemplate(start: Date, end: Date, task: TeamGanttItem): string {
+  memberTaskTextTemplate(start: Date, end: Date, task: TeamScheduleItem): string {
     if (task.model_type === ModelType.person) {
       const str = thisComponentRef.renderComplexTask(task);
       return str;
@@ -392,7 +391,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     }
   }
 
-  interactiveTaskClassTemplate(start: Date, end: Date, task: TeamGanttItem): string {
+  interactiveTaskClassTemplate(start: Date, end: Date, task: TeamScheduleItem): string {
     if (task.model_type === ModelType.person) {
       return '';
     } else {
@@ -405,7 +404,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
     return 'WW' + weekNum;
   }
 
-  colContentTemplate (task: TeamGanttItem) {
+  colContentTemplate (task: TeamScheduleItem) {
     let css: string;
     switch (task.model_type) {
       case ModelType.team:

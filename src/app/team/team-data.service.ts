@@ -4,12 +4,9 @@ import {Observable} from 'rxjs';
 import {of} from 'rxjs/observable/of';
 import {catchError, tap} from 'rxjs/operators';
 
-import {Absence} from '../common/models/absence';
-import {Person} from '../common/models/person';
-import {Team} from '../common/models/team';
-
-import { AppConfig } from '../app.config';
-import {Logger} from '../common/services/logger.service';
+import {Absence, Person, Team} from '@app/common/models';
+import { AppConfig } from '@app/app.config';
+import {Logger} from '@app/core/services';
 
 @Injectable()
 export class TeamDataService {

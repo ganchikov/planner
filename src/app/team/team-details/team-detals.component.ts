@@ -1,10 +1,6 @@
 import {Component, OnInit, Input } from '@angular/core';
-
-import {ButtonModule} from 'primeng/button';
-import {InputTextModule} from 'primeng/inputtext';
 import {SelectItem} from 'primeng/api';
-
-import {Team} from '../../common/models/team';
+import {Team} from '@app/common/models';
 
 @Component({
   selector: 'app-team-details',

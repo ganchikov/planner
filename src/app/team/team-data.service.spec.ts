@@ -1,4 +1,4 @@
-import { Logger } from './../common/services/logger.service';
+import { Logger } from '@app/core/services';
 import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
