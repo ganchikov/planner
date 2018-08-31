@@ -38,7 +38,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
   scaleMode: ScaleMode;
 
   @Input()
-  rangeDates: Date[];
+  rangeDates: Date[] = [];
 
   private isInitialized = false;
 
