@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, throwError} from 'rxjs';
 import {of} from 'rxjs/observable/of';
-import {catchError, tap} from 'rxjs/operators';
+import {map, catchError, tap} from 'rxjs/operators';
 
 import {Absence, Person, Team} from '@app/common/models';
 import { AppConfig } from '@app/app.config';
-import {Logger} from '@app/core/services';
+import {Logger} from '@app/core/services/logger/logger.service';
+import { isNgTemplate } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
@@ -15,33 +16,29 @@ import {Logger} from '@app/core/services';
 export class ServerApiService {
 
 
-  private url = AppConfig.settings.enableHttps ? AppConfig.settings.apiServer.httpsUrl : AppConfig.settings.apiServer.url;
+  url = AppConfig.settings.enableHttps ? AppConfig.settings.apiServer.httpsUrl : AppConfig.settings.apiServer.url;
 
   constructor(private httpClient: HttpClient, private logger: Logger) { }
 
-  private log (message: string) {
-    this.logger.log('ServerApi: ' + message);
+  private log (error: Object) {
+    this.logger.log('ServerApi: ' + error);
   }
 
   private handleError<T> (operation = 'operation', result?: T) {
+    const logger = this.logger;
     return (error: any): Observable<T> => {
-      console.log(error);
-      this.log(`${operation} failed: ${error.message}`);
-      return of(result as T);
+      logger.log(`${operation} failed: ${error.message}`);
+      if (result) {
+        return of(result as T);
+      } else {
+        return throwError(error);
+      }
     };
   }
 
-  async getTeams(): Promise<Team[]> {
-    try {
-      const response = await this.httpClient.get<any>(this.url + 'teams').toPromise();
-      const result: Team[] = [];
-      for (const responseItem of response.data) {
-        const team = new Team(responseItem);
-        result.push(team);
-      }
-      return result;
-    } catch (err) {
-      this.handleError('get teams');
-    }
+  getTeams(): Observable<Team[]> {
+      return this.httpClient.get<any>(this.url + 'teams').pipe(
+        map(response => response.data.map(itm => new Team(itm)))
+        , catchError(this.handleError('getTeams')));
   }
 }
