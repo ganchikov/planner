@@ -4,14 +4,10 @@ import {Observable, throwError} from 'rxjs';
 import {of} from 'rxjs/observable/of';
 import {map, catchError, tap} from 'rxjs/operators';
 
-import {Absence, Person, Team} from '@app/common/models';
 import { AppConfig } from '@app/app.config';
 import {Logger} from '@app/core/services/logger/logger.service';
-import { isNgTemplate } from '@angular/compiler';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 
 export class ServerApiService {
 
