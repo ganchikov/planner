@@ -23,44 +23,44 @@ describe('ServerApiService', () => {
     httpMock.verify();
   });
 
-  describe('#getTeams', () => {
-    it('should return an Observable<Team[]>', () => {
-      const dummyResponse = {
-        data: [
-          {_id: '12345',
-            id: 1,
-            name: 'Test team1'},
-          {_id: '67890',
-            id: 1,
-            name: 'Test team1'
-          }
-        ]
-      };
+  // describe('#getTeams', () => {
+  //   it('should return an Observable<Team[]>', () => {
+  //     const dummyResponse = {
+  //       data: [
+  //         {_id: '12345',
+  //           id: 1,
+  //           name: 'Test team1'},
+  //         {_id: '67890',
+  //           id: 1,
+  //           name: 'Test team1'
+  //         }
+  //       ]
+  //     };
 
-      service.getTeams().subscribe(teams => {
-        expect(teams.length).toBe(2);
-      });
+  //     service.getTeams().subscribe(teams => {
+  //       expect(teams.length).toBe(2);
+  //     });
 
-      const req = httpMock.expectOne(service.url + 'teams');
-      expect(req.request.method).toBe('GET');
-      req.flush(dummyResponse);
+  //     const req = httpMock.expectOne(service.url + 'teams');
+  //     expect(req.request.method).toBe('GET');
+  //     req.flush(dummyResponse);
 
-    });
+  //   });
 
-    it('should throw error if trying to search without auth token', () => {
-      service.getTeams().subscribe(result => {
-        // expect(result).toBe(401);
-      }, error => {
-        expect(error.status).toBe(401);
-      });
-      const req = httpMock.expectOne(service.url + 'teams');
-      expect(req.request.method).toBe('GET');
-      req.error(new ErrorEvent('UnauthorizedError'),
-      {
-        status: 401,
-        statusText: 'credentials_required'
-      });
-    });
-  });
+  //   it('should throw error if trying to search without auth token', () => {
+  //     service.getTeams().subscribe(result => {
+  //       // expect(result).toBe(401);
+  //     }, error => {
+  //       expect(error.status).toBe(401);
+  //     });
+  //     const req = httpMock.expectOne(service.url + 'teams');
+  //     expect(req.request.method).toBe('GET');
+  //     req.error(new ErrorEvent('UnauthorizedError'),
+  //     {
+  //       status: 401,
+  //       statusText: 'credentials_required'
+  //     });
+  //   });
+  // });
 
 });

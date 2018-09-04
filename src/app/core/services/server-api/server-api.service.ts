@@ -36,9 +36,11 @@ export class ServerApiService {
     };
   }
 
-  getTeams(): Observable<Team[]> {
-      return this.httpClient.get<any>(this.url + 'teams').pipe(
-        map(response => response.data.map(itm => new Team(itm)))
-        , catchError(this.handleError('getTeams')));
+  runGetRequest<T> (route: string, mapper: (item: any) => T, methodName?: string): Observable<T[]> {
+    return this.httpClient.get<any>(this.url + route).pipe(
+      map(response => response.data.map(mapper)),
+      catchError(this.handleError(methodName ? methodName : route))
+    );
   }
+
 }
