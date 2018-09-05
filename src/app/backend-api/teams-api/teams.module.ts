@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TeamsService } from './teams.service';
+import { TeamsApiService } from './teams-api.service';
 
 @NgModule({
   imports: [
     CommonModule
   ],
   declarations: [],
-  providers: [TeamsService]
+  providers: [TeamsApiService]
 })
 export class TeamsModule { }

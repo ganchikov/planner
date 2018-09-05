@@ -8,7 +8,7 @@ import {
   AuthService,
   Logger,
   ScopeGuardService,
-  ServerApiService,
+  BaseApiService,
 } from '@app/core/services';
 
 import {
@@ -43,7 +43,7 @@ import { PrimeControlsModule } from './primecontrols.module';
     AuthService,
     Logger,
     ScopeGuardService,
-    ServerApiService,
+    BaseApiService,
     {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true}
   ],
   exports: [
