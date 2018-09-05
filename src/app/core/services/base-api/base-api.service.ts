@@ -9,8 +9,7 @@ import {Logger} from '@app/core/services/logger/logger.service';
 
 @Injectable()
 
-export class ServerApiService {
-
+export class BaseApiService {
 
   url = AppConfig.settings.enableHttps ? AppConfig.settings.apiServer.httpsUrl : AppConfig.settings.apiServer.url;
 
@@ -32,9 +31,16 @@ export class ServerApiService {
     };
   }
 
-  runGetRequest<T> (route: string, mapper: (item: any) => T, methodName?: string): Observable<T[]> {
+  doGetRequest<T> (route: string, mapper: (item: any) => T, methodName?: string): Observable<T[]> {
     return this.httpClient.get<any>(this.url + route).pipe(
       map(response => response.data.map(mapper)),
+      catchError(this.handleError(methodName ? methodName : route))
+    );
+  }
+
+  doPostRequest<T> (route: string, item: T, mapper: (item: any) => T, methodName?: string): Observable< {} | T> {
+    return this.httpClient.post(this.url + route, item).pipe(
+      map(response => mapper(response)),
       catchError(this.handleError(methodName ? methodName : route))
     );
   }

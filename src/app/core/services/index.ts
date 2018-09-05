@@ -4,4 +4,4 @@ export * from './auth/auth.service';
 export * from './auth/auth.service.mock';
 export * from './auth-guard/auth-guard.service';
 export * from './scope-guard/scope-guard.service';
-export * from './server-api/server-api.service';
+export * from './base-api/base-api.service';

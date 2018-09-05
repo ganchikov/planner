@@ -1,21 +1,21 @@
 import { TestBed, inject, getTestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
-import { TeamsService } from './teams.service';
-import { Logger, ServerApiService } from '@app/core/services';
+import { TeamsApiService } from './teams-api.service';
+import { Logger, BaseApiService } from '@app/core/services';
 
-describe('TeamsService', () => {
+describe('TeamsApiService', () => {
   let injector: TestBed;
-  let service: TeamsService;
+  let service: TeamsApiService;
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [TeamsService, ServerApiService, Logger],
+      providers: [TeamsApiService, BaseApiService, Logger],
       imports: [HttpClientTestingModule]
     });
     injector = getTestBed();
-    service = injector.get(TeamsService);
+    service = injector.get(TeamsApiService);
     httpMock = injector.get(HttpTestingController);
   });
 
@@ -23,7 +23,7 @@ describe('TeamsService', () => {
     httpMock.verify();
   });
 
-  it('should be created', inject([TeamsService], (svc: TeamsService) => {
+  it('should be created', inject([TeamsApiService], (svc: TeamsApiService) => {
     expect(service).toBeTruthy();
   }));
 
