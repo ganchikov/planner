@@ -1,10 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TeamScheduleComponent } from '@app/team-schedule/team-schedule/team-schedule.component';
-import { TeamScheduleDataService } from '../team-schedule-data.service';
+import { TeamsApiService, AbsencesApiService } from '@app/backend-api';
 import {TeamDataService} from '@app/team/team-data.service';
 import {TeamDataServiceMock} from '@app/team/team-data.service.mock';
-import { AuthService, AuthServiceMock } from '@app/core/services';
+import { AuthService, AuthServiceMock, BaseApiService, Logger } from '@app/core/services';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 
 describe('TeamScheduleComponent', () => {
@@ -13,10 +14,11 @@ describe('TeamScheduleComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      providers: [TeamScheduleDataService,
+      providers: [TeamsApiService, AbsencesApiService, BaseApiService, Logger,
         {provide: TeamDataService, useClass: TeamDataServiceMock},
         {provide: AuthService, useClass: AuthServiceMock}],
-      declarations: [ TeamScheduleComponent ]
+      declarations: [ TeamScheduleComponent ],
+      imports: [HttpClientTestingModule]
     })
     .compileComponents();
   }));

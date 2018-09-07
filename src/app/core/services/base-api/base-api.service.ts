@@ -38,7 +38,7 @@ export class BaseApiService {
     );
   }
 
-  doPostRequest<T> (route: string, item: T, mapper: (item: any) => T, methodName?: string): Observable<T> {
+  doPostRequest<T> (route: string, item: T, mapper: (item: any) => T, methodName?: string): Observable< {} | T> {
     return this.httpClient.post(this.url + route, item).pipe(
       map(response => mapper(response)),
       catchError(this.handleError(methodName ? methodName : route))
