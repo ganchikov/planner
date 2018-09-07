@@ -8,11 +8,12 @@ import * as moment from 'moment';
 import {ModelType, AbsenceType} from '@app/common/enums';
 import { Scopes } from '@app/common/constants/scopes';
 import { AuthService } from '@app/core/services';
+import {TeamsApiService, AbsencesApiService} from '@app/backend-api';
 
 import {ScaleMode} from '../enums/scale-mode';
 import {IDMapper} from '../models/id-mapper';
 import {TeamScheduleItem} from '../models/team-schedule-item';
-import { TeamScheduleDataService} from '../team-schedule-data.service';
+import { Absence } from '@app/common/models';
 
 let thisComponentRef: TeamScheduleComponent;
 
@@ -43,7 +44,8 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
   private isInitialized = false;
 
   constructor(
-    private scheduleService: TeamScheduleDataService,
+    private teamsApi: TeamsApiService,
+    private absenceApi: AbsencesApiService,
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private auth: AuthService,
@@ -56,8 +58,10 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     this.configureChart();
     gantt.init(this.ganttContainer.nativeElement, this.rangeDates[0], this.rangeDates[1]);
     this.isInitialized = true;
-    this.scheduleService.getTeamSchedule(items => {
+    this.teamsApi.getAllTeams().subscribe(items => {
       gantt.parse({data: items, links: []});
+    }, err => {
+      gantt.message({type: 'error', text: err});
     });
 
     const script = this.renderer.createElement('script');
@@ -292,17 +296,18 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     newTask['model_type'] = newGanttItem.model_type = ModelType.absence;
     const parentGanttItem: TeamScheduleItem = gantt.getTask(gantt.getParent(id));
     newGanttItem.person = parentGanttItem._id;
-    thisComponentRef.scheduleService.insertAbsence(newGanttItem, parentGanttItem, (insertedItem, error) => {
-      if (error) {
-        gantt.message({type: 'error', text: error});
-      } else {
-        gantt.changeTaskId(id, insertedItem.id);
-        idMap.push(new IDMapper(id.toString(), insertedItem.id.toString()));
-        parentGanttItem.absences.push(insertedItem);
+    thisComponentRef.absenceApi.insertAbsence(newGanttItem).subscribe(
+      insertedItem => {
+        const newId = (insertedItem as Absence).id;
+        gantt.changeTaskId(id, newId);
+        idMap.push(new IDMapper(id.toString(), newId.toString()));
+        parentGanttItem.absences.push(insertedItem as TeamScheduleItem);
         gantt.updateTask(parentGanttItem.id.toString());
-        gantt.refreshTask(insertedItem.id);
+        gantt.refreshTask(newId);
+      }, err => {
+        gantt.message({type: 'error', text: err});
       }
-    });
+    );
     return true;
   }
 
@@ -317,18 +322,22 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
       updatedGanttTask = new TeamScheduleItem(updatedTask);
     }
     const parentGanttItem: TeamScheduleItem = gantt.getTask(gantt.getParent(id));
-    thisComponentRef.scheduleService.updateAbsence(updatedGanttTask, error => {
-      if (error) {
-        gantt.message({type: 'error', text: error});
-      } else {
-        if (parentGanttItem.absences) {
-            parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === updatedGanttTask.id),
-              1);
-            parentGanttItem.absences.push(updatedGanttTask);
-          gantt.updateTask(parentGanttItem.id.toString());
-        }
-      }
-    });
+    thisComponentRef.absenceApi.updateAbsence(updatedGanttTask as Absence).subscribe(
+      /// TODO: Modify logic here
+    );
+
+    // .updateAbsence(updatedGanttTask, error => {
+    //   if (error) {
+    //     gantt.message({type: 'error', text: error});
+    //   } else {
+    //     if (parentGanttItem.absences) {
+    //         parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === updatedGanttTask.id),
+    //           1);
+    //         parentGanttItem.absences.push(updatedGanttTask);
+    //       gantt.updateTask(parentGanttItem.id.toString());
+    //     }
+    //   }
+    // });
   }
 
   onBeforeTaskDelete(id: string, deletedItem: TeamScheduleItem) {
@@ -339,12 +348,15 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
 
   onAfterTaskDelete(id: string, deletedItem: TeamScheduleItem) {
     if (deletedItem._id) {
-      thisComponentRef.scheduleService.deleteAbsence(deletedItem._id, error => {
-        if (error) {
-          gantt.message({type: 'error', text: error});
-        }
-      });
-    }
+      thisComponentRef.absenceApi.deleteAbsence(deletedItem as Absence).subscribe(
+        /// TODO: write logic here
+      );
+    //   thisComponentRef.scheduleService.deleteAbsence(deletedItem._id, error => {
+    //     if (error) {
+    //       gantt.message({type: 'error', text: error});
+    //     }
+    //   });
+    // }
   }
 
   // Gantt templates

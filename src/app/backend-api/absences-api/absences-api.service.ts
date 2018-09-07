@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import { IApiService } from '@app/common/interfaces';
 import { Absence } from '@app/common/models';
 import { BaseApiService } from '@app/core/services';
-import { Observable } from 'rx';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AbsencesApiService implements IApiService<Absence> {
+
+  route = 'absences';
 
   mapper = (item): Absence => {
     return new Absence(item);
@@ -15,32 +18,38 @@ export class AbsencesApiService implements IApiService<Absence> {
 
   constructor(public api: BaseApiService) { }
 
-  // insertAbsence(item: Absence): Observable<Absence[]> {
+  getAbsencesByPersonId(personId: Object): Observable<Absence[]> {
+    return this.api.doGetRequest(this.route + `?person=${personId}`, this.mapper, 'getAbsencesByPersonId');
 
-  // }
+  }
 
-  // insertAbsence(newItem: Absence, callback: (err?: any, insertedItem?: Absence) => void) {
-  //   this.http.post<Absence>(this.url + 'absences', newItem.GetObject()).subscribe(insertedItem => {
-  //       const insertedAbsenceItem: Absence = new Absence(insertedItem);
-  //       callback(null, insertedAbsenceItem);
-  //   }, error => {
-  //     callback(error);
-  //   });
-  // }
+  getAbsencesByDates(start_date?: Object, end_date?: Object): Observable<Absence[]> {
+    let route = this.route;
+    if (start_date) {
+      route += `?start_date=${start_date}`;
+      if (end_date) {
+        route += `&end_date=${end_date}`;
+      }
+    } else if (end_date) {
+      route += `?end_date=${end_date}`;
+    }
+    return this.api.doGetRequest(route, this.mapper, 'getAbsencesByDates');
+  }
 
-  // updateAbsence(absenceItem: Absence, callback: (error?) => void) {
-  //   this.http.patch<Absence>(this.url + 'absences', absenceItem.GetObject()).subscribe(() => {
-  //     callback();
-  //   }, error => {
-  //     callback(error);
-  //   });
-  // }
+  getAbsenceById(itemId: Object): Observable<{}| Absence> {
+    return this.api.doGetRequest(this.route + `/${itemId}`, this.mapper, 'getAbsenceById')
+      .pipe(map(absences => absences.length > 0 ? absences[0] : {}));
+  }
 
-  // deleteAbsence(absenceId: Object, callback: (error?) => void) {
-  //   this.http.delete(this.url + `absences/${absenceId.toString()}`).subscribe(() => {
-  //     callback();
-  //   }, error => {
-  //     callback(error);
-  //   });
-  // }
+  insertAbsence(item: Absence): Observable<{}|Absence> {
+    return this.api.doPostRequest<Absence>(this.route, item, this.mapper, 'insertAbsence');
+  }
+
+  updateAbsence(item: Absence): Observable<{}|Absence> {
+    return this.api.doPatchRequest<Absence>(this.route, item, this.mapper, 'updateAbsence');
+  }
+
+  deleteAbsence(item: Absence): Observable<{}|Absence> {
+    return this.api.doDeleteRequest<Absence>(this.route, item._id, 'deleteAbsence');
+  }
 }

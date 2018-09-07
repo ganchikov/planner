@@ -38,11 +38,23 @@ export class BaseApiService {
     );
   }
 
-  doPostRequest<T> (route: string, item: T, mapper: (item: any) => T, methodName?: string): Observable< {} | T> {
+  doPostRequest<T> (route: string, item: T, mapper: (item: any) => T, methodName?: string): Observable<T> {
     return this.httpClient.post(this.url + route, item).pipe(
       map(response => mapper(response)),
       catchError(this.handleError(methodName ? methodName : route))
     );
   }
 
+  doPatchRequest<T> (route: string, item: T, mapper: (item: any) => T, methodName?: string): Observable< {} | T> {
+    return this.httpClient.patch(this.url + route, item).pipe(
+      map(response => mapper(response)),
+      catchError(this.handleError(methodName ? methodName : route))
+    );
+  }
+
+  doDeleteRequest<T> (route: string, itemId: Object, methodName?: string): Observable< {} | T> {
+    return this.httpClient.delete(this.url + route + `/${itemId.toString()}`).pipe(
+      catchError(this.handleError(methodName ? methodName : route))
+    );
+  }
 }
