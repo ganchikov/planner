@@ -12,8 +12,9 @@ import {TeamsApiService, AbsencesApiService} from '@app/backend-api';
 
 import {ScaleMode} from '../enums/scale-mode';
 import {IDMapper} from '../models/id-mapper';
-import {TeamScheduleItem} from '../models/team-schedule-item';
+import {ScheduleItem} from '../models/schedule-item';
 import { Absence } from '@app/common/models';
+import { TeamScheduleService } from '../schedule.service';
 
 let thisComponentRef: TeamScheduleComponent;
 
@@ -44,8 +45,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
   private isInitialized = false;
 
   constructor(
-    private teamsApi: TeamsApiService,
-    private absenceApi: AbsencesApiService,
+    private schedule: TeamScheduleService,
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private auth: AuthService,
@@ -58,7 +58,9 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     this.configureChart();
     gantt.init(this.ganttContainer.nativeElement, this.rangeDates[0], this.rangeDates[1]);
     this.isInitialized = true;
-    this.teamsApi.getAllTeams().subscribe(items => {
+
+
+    this.schedule.getTeamSchedule().subscribe(items => {
       gantt.parse({data: items, links: []});
     }, err => {
       gantt.message({type: 'error', text: err});
@@ -87,14 +89,14 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     }
   }
 
-  renderComplexTask(task: TeamScheduleItem): string {
+  renderComplexTask(task: ScheduleItem): string {
     if (!task.has_absences) {return ''; }
     class Duration {
       constructor(
         public offset: number,
         public duration: number) {}
     }
-    const absences: TeamScheduleItem[] = task.GetValue('absences') as TeamScheduleItem[];
+    const absences: ScheduleItem[] = task.GetValue('absences') as ScheduleItem[];
     const durations: Duration[] = [];
     let min_date: Date = absences[0].start_date;
     let max_date: Date = absences[0].end_date;
@@ -248,7 +250,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
 
   }
 
-  onTaskLoading(task: TeamScheduleItem) {
+  onTaskLoading(task: ScheduleItem) {
     if (task.model_type === ModelType.absence) {
       task['editable'] = true;
     } else {
@@ -266,7 +268,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
 
   onTaskClick(id: string, e: Event) {
     if (e.srcElement.className === 'gantt_add') {
-      const item: TeamScheduleItem = gantt.getTask(id);
+      const item: ScheduleItem = gantt.getTask(id);
       if (item && item.model_type === ModelType.person) {
         return true;
       }
@@ -283,7 +285,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     if (!id) {return false; }
     const itm = idMap.find(map => map.temp_id === id);
     if (itm) {id = itm.perm_id; }
-    const item: TeamScheduleItem = gantt.getTask(id);
+    const item: ScheduleItem = gantt.getTask(id);
     if (item.model_type === ModelType.absence) {
       return true;
     } else {
@@ -292,16 +294,16 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
   }
 
   onAfterTaskAdd(id: string, newTask: Object) {
-    const newGanttItem: TeamScheduleItem = new TeamScheduleItem(newTask);
+    const newGanttItem: ScheduleItem = new ScheduleItem(newTask);
     newTask['model_type'] = newGanttItem.model_type = ModelType.absence;
-    const parentGanttItem: TeamScheduleItem = gantt.getTask(gantt.getParent(id));
+    const parentGanttItem: ScheduleItem = gantt.getTask(gantt.getParent(id));
     newGanttItem.person = parentGanttItem._id;
-    thisComponentRef.absenceApi.insertAbsence(newGanttItem).subscribe(
+    thisComponentRef.schedule.insertAbsence(newGanttItem).subscribe(
       insertedItem => {
-        const newId = (insertedItem as Absence).id;
+        const newId = insertedItem.id;
         gantt.changeTaskId(id, newId);
         idMap.push(new IDMapper(id.toString(), newId.toString()));
-        parentGanttItem.absences.push(insertedItem as TeamScheduleItem);
+        parentGanttItem.absences.push(insertedItem);
         gantt.updateTask(parentGanttItem.id.toString());
         gantt.refreshTask(newId);
       }, err => {
@@ -315,53 +317,46 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     if (updatedTask['model_type'] !== ModelType.absence) {return true; }
     const itm = idMap.find(map => map.temp_id === id);
     if (itm) {id = itm.perm_id; }
-    let updatedGanttTask: TeamScheduleItem;
-    if (updatedTask instanceof TeamScheduleItem) {
-      updatedGanttTask = updatedTask as TeamScheduleItem;
+    let updatedGanttTask: ScheduleItem;
+    if (updatedTask instanceof ScheduleItem) {
+      updatedGanttTask = updatedTask as ScheduleItem;
     } else {
-      updatedGanttTask = new TeamScheduleItem(updatedTask);
+      updatedGanttTask = new ScheduleItem(updatedTask);
     }
-    const parentGanttItem: TeamScheduleItem = gantt.getTask(gantt.getParent(id));
-    thisComponentRef.absenceApi.updateAbsence(updatedGanttTask as Absence).subscribe(
-      /// TODO: Modify logic here
+    const parentGanttItem: ScheduleItem = gantt.getTask(gantt.getParent(id));
+    thisComponentRef.schedule.updateAbsence(updatedGanttTask).subscribe(
+      result => {
+        if (parentGanttItem.absences) {
+          parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === updatedGanttTask.id),
+              1);
+          parentGanttItem.absences.push(result);
+          gantt.updateTask(parentGanttItem.id.toString());
+        }
+      }, error => {
+        gantt.message({type: 'error', text: error});
+      }
     );
-
-    // .updateAbsence(updatedGanttTask, error => {
-    //   if (error) {
-    //     gantt.message({type: 'error', text: error});
-    //   } else {
-    //     if (parentGanttItem.absences) {
-    //         parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === updatedGanttTask.id),
-    //           1);
-    //         parentGanttItem.absences.push(updatedGanttTask);
-    //       gantt.updateTask(parentGanttItem.id.toString());
-    //     }
-    //   }
-    // });
   }
 
-  onBeforeTaskDelete(id: string, deletedItem: TeamScheduleItem) {
-    const parentGanttItem: TeamScheduleItem = gantt.getTask(gantt.getParent(id));
+  onBeforeTaskDelete(id: string, deletedItem: ScheduleItem) {
+    const parentGanttItem: ScheduleItem = gantt.getTask(gantt.getParent(id));
     parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === deletedItem.id),
     1);
   }
 
-  onAfterTaskDelete(id: string, deletedItem: TeamScheduleItem) {
+  onAfterTaskDelete(id: string, deletedItem: ScheduleItem) {
     if (deletedItem._id) {
-      thisComponentRef.absenceApi.deleteAbsence(deletedItem as Absence).subscribe(
-        /// TODO: write logic here
+      thisComponentRef.schedule.deleteAbsence(deletedItem).subscribe(
+        error => {
+          gantt.message({type: 'error', text: error});
+        }
       );
-    //   thisComponentRef.scheduleService.deleteAbsence(deletedItem._id, error => {
-    //     if (error) {
-    //       gantt.message({type: 'error', text: error});
-    //     }
-    //   });
-    // }
+    }
   }
 
   // Gantt templates
 
-  memberTaskClassTemplate(start: Date, end: Date, task: TeamScheduleItem): string {
+  memberTaskClassTemplate(start: Date, end: Date, task: ScheduleItem): string {
     if (task.model_type === ModelType.person) {
       return 'complex_gantt_bar';
     } else if (task.model_type === ModelType.absence) {
@@ -380,7 +375,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     }
   }
 
-  memberTaskTextTemplate(start: Date, end: Date, task: TeamScheduleItem): string {
+  memberTaskTextTemplate(start: Date, end: Date, task: ScheduleItem): string {
     if (task.model_type === ModelType.person) {
       const str = thisComponentRef.renderComplexTask(task);
       return str;
@@ -389,7 +384,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     }
   }
 
-  interactiveTaskClassTemplate(start: Date, end: Date, task: TeamScheduleItem): string {
+  interactiveTaskClassTemplate(start: Date, end: Date, task: ScheduleItem): string {
     if (task.model_type === ModelType.person) {
       return '';
     } else {
@@ -402,7 +397,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     return 'WW' + weekNum;
   }
 
-  colContentTemplate (task: TeamScheduleItem) {
+  colContentTemplate (task: ScheduleItem) {
     let css: string;
     switch (task.model_type) {
       case ModelType.team:

@@ -7,6 +7,7 @@ import { TeamScheduleComponent } from '@app/team-schedule/team-schedule/team-sch
 import { TeamScheduleViewComponent } from '@app/team-schedule/team-schedule-view/team-schedule-view.component';
 import { TeamScheduleRoutingModule } from '@app/team-schedule/team-schedule-routing.module';
 import {TeamsApiService, AbsencesApiService} from '@app/backend-api';
+import { TeamScheduleService } from './schedule.service';
 
 @NgModule({
   imports: [
@@ -16,13 +17,14 @@ import {TeamsApiService, AbsencesApiService} from '@app/backend-api';
     PrimeControlsModule,
     TeamScheduleRoutingModule
   ],
+  providers: [
+    TeamsApiService,
+    AbsencesApiService,
+    TeamScheduleService
+  ],
   declarations: [
     TeamScheduleComponent,
     TeamScheduleViewComponent
-  ],
-  providers: [
-    TeamsApiService,
-    AbsencesApiService
   ]
 })
 export class TeamScheduleModule { }

@@ -5,40 +5,40 @@ import {ITeam} from '@app/common/models';
 import {Person} from '@app/common/models';
 import {IAbsence} from '@app/common/models';
 
-export class TeamScheduleItem extends Absence implements ITeam, IPerson {
+export class ScheduleItem extends Absence implements ITeam, IPerson {
 
     constructor(initializatorObj: Object) {
       super(initializatorObj, true);
       if (initializatorObj && initializatorObj.hasOwnProperty('members')) {
-        const members: TeamScheduleItem[] = [];
+        const members: ScheduleItem[] = [];
         for (const memberObj of initializatorObj['members']) {
-            const member = new TeamScheduleItem(memberObj);
+            const member = new ScheduleItem(memberObj);
             member.parent_id = this.id;
             members.push(member);
         }
-        this.SetValue<TeamScheduleItem[]>('members', members);
+        this.SetValue<ScheduleItem[]>('members', members);
       }
       if (initializatorObj && initializatorObj.hasOwnProperty('absences')) {
-        const absences: TeamScheduleItem[] = [];
+        const absences: ScheduleItem[] = [];
         for (const absenceObj of initializatorObj['absences']) {
-            const absence = new TeamScheduleItem(absenceObj);
+            const absence = new ScheduleItem(absenceObj);
             absence.parent_id = this.id;
             absences.push(absence);
         }
-        this.SetValue<TeamScheduleItem[]>('absences', absences);
+        this.SetValue<ScheduleItem[]>('absences', absences);
       }
     }
 
-    get members(): TeamScheduleItem[] {
+    get members(): ScheduleItem[] {
       return this.GetValue('members');
     }
 
-    get absences(): TeamScheduleItem[] {
+    get absences(): ScheduleItem[] {
       return this.GetValue('absences');
     }
 
-    set absences(val: TeamScheduleItem[]) {
-      this.SetValue<TeamScheduleItem[]>('absences', val);
+    set absences(val: ScheduleItem[]) {
+      this.SetValue<ScheduleItem[]>('absences', val);
     }
 
     get text(): string {

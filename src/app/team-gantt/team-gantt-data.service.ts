@@ -2,26 +2,26 @@ import { Injectable } from '@angular/core';
 import { TeamDataService } from '@app/team/team-data.service';
 
 import {Absence, Person} from '@app/common/models';
-import {TeamScheduleItem} from '@app/team-schedule/models/team-schedule-item';
+import {ScheduleItem} from '@app/team-schedule/models/schedule-item';
 
 @Injectable()
 export class TeamGanttDataService {
 
   constructor(private teamDS: TeamDataService) { }
 
-  getGanttTeamData(callback: (gantt_items: TeamScheduleItem[]) => void) {
+  getGanttTeamData(callback: (gantt_items: ScheduleItem[]) => void) {
     this.teamDS.getTeamData(items => {
-      const resultItems: TeamScheduleItem[] = [];
+      const resultItems: ScheduleItem[] = [];
       items.forEach(item => {
-        resultItems.push(...item.GetTypedItemAndFlatChildren<TeamScheduleItem>(TeamScheduleItem,
+        resultItems.push(...item.GetTypedItemAndFlatChildren<ScheduleItem>(ScheduleItem,
           {map: [{from_field: 'name', to_field: 'text'}]} ));
       });
       callback(resultItems);
     });
   }
 
-  insertAbsence(newGanttItem: TeamScheduleItem, parentGanttItem: TeamScheduleItem,
-                callback: (insertedGanttItem: TeamScheduleItem, err: any) => void) {
+  insertAbsence(newGanttItem: ScheduleItem, parentGanttItem: ScheduleItem,
+                callback: (insertedGanttItem: ScheduleItem, err: any) => void) {
     const newAbsenceItem: Absence = newGanttItem.GetTypedItem<Absence>(Absence, {map: [{from_field: 'text', to_field: 'name'}]});
     this.teamDS.insertAbsence(newAbsenceItem, (error, insertedAbsenceItem) => {
       if (error) {
@@ -29,14 +29,14 @@ export class TeamGanttDataService {
       } else {
         const personItem: Person = parentGanttItem.GetTypedItem<Person>(Person);
         personItem.absences.push(insertedAbsenceItem);
-        const insertedGanttItem: TeamScheduleItem = insertedAbsenceItem.GetTypedItem<TeamScheduleItem>(TeamScheduleItem,
+        const insertedGanttItem: ScheduleItem = insertedAbsenceItem.GetTypedItem<ScheduleItem>(ScheduleItem,
                     {map: [{from_field: 'name', to_field: 'text'}]});
         callback(insertedGanttItem, null);
       }
     });
   }
 
-  updateAbsence(absenceGanttItem: TeamScheduleItem, callback: (error) => void) {
+  updateAbsence(absenceGanttItem: ScheduleItem, callback: (error) => void) {
     const absenceItem: Absence = absenceGanttItem.GetTypedItem<Absence>(Absence, {map: [{from_field: 'text', to_field: 'name'}]});
     this.teamDS.updateAbsence(absenceItem, error => {
       callback(error);
@@ -49,7 +49,7 @@ export class TeamGanttDataService {
     });
   }
 
-  updatePerson(personGanttItem: TeamScheduleItem, callback: (error) => void) {
+  updatePerson(personGanttItem: ScheduleItem, callback: (error) => void) {
     const personItem: Person = personGanttItem.GetTypedItem<Person>(Person);
     this.teamDS.updatePerson(personItem, error => {
       callback(error);
