@@ -6,6 +6,7 @@ import {TeamDataService} from '@app/team/team-data.service';
 import {TeamDataServiceMock} from '@app/team/team-data.service.mock';
 import { AuthService, AuthServiceMock, BaseApiService, Logger } from '@app/core/services';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TeamScheduleService } from '../schedule.service';
 
 
 describe('TeamScheduleComponent', () => {
@@ -14,9 +15,9 @@ describe('TeamScheduleComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      providers: [TeamsApiService, AbsencesApiService, BaseApiService, Logger,
-        {provide: TeamDataService, useClass: TeamDataServiceMock},
-        {provide: AuthService, useClass: AuthServiceMock}],
+      providers: [TeamScheduleService, TeamsApiService, AbsencesApiService, BaseApiService, Logger,
+        {provide: AuthService, useClass: AuthServiceMock},
+      ],
       declarations: [ TeamScheduleComponent ],
       imports: [HttpClientTestingModule]
     })

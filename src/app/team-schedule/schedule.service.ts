@@ -12,11 +12,14 @@ export class TeamScheduleService {
 
   getTeamSchedule() {
     return this.teamApi.getAllTeams().pipe(
-      map(teams => teams.map(
-          team => new ScheduleItem(team)
-        )
-      )
-    );
+      map(teams => {
+        const resultSet = [];
+        teams.forEach(
+          team => resultSet.push(...team.GetTypedItemAndFlatChildren<ScheduleItem>(ScheduleItem,
+            {map: [{from_field: 'name', to_field: 'text'}]} ))
+        );
+        return resultSet;
+      }));
   }
 
   insertAbsence(newItem: ScheduleItem) {

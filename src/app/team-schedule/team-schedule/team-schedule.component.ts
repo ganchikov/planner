@@ -6,14 +6,11 @@ import * as moment from 'moment';
 
 
 import {ModelType, AbsenceType} from '@app/common/enums';
-import { Scopes } from '@app/common/constants/scopes';
 import { AuthService } from '@app/core/services';
-import {TeamsApiService, AbsencesApiService} from '@app/backend-api';
 
 import {ScaleMode} from '../enums/scale-mode';
 import {IDMapper} from '../models/id-mapper';
 import {ScheduleItem} from '../models/schedule-item';
-import { Absence } from '@app/common/models';
 import { TeamScheduleService } from '../schedule.service';
 
 let thisComponentRef: TeamScheduleComponent;

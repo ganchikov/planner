@@ -9,12 +9,7 @@ import {ScheduleItem} from '@app/team-schedule/models/schedule-item';
 import {ModelType} from '@app/common/enums/model-type';
 import {AbsenceType} from '@app/common/enums/absence-type';
 import { AuthService } from '@app/core/services';
-
-export enum ScaleMode {
-  Day = 0,
-  Week = 1,
-  Month = 2
-}
+import {ScaleMode} from '@app/team-schedule/enums/scale-mode';
 
 class IDMapper {
   constructor(public temp_id: string, public perm_id: string) {}

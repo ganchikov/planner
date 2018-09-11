@@ -1,6 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TeamScheduleViewComponent } from '@app/team-schedule/team-schedule-view/team-schedule-view.component';
+import { TeamScheduleViewComponent } from './team-schedule-view.component';
+import { PrimeControlsModule } from '@app/core/primecontrols.module';
+import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TeamScheduleComponent } from '../team-schedule/team-schedule.component';
+import { TeamScheduleService } from '@app/team-schedule/schedule.service';
+import { TeamsApiService, AbsencesApiService } from '@app/backend-api';
+import { BaseApiService, Logger, AuthService, AuthServiceMock } from '@app/core/services';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('TeamScheduleViewComponent', () => {
   let component: TeamScheduleViewComponent;
@@ -8,7 +16,16 @@ describe('TeamScheduleViewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TeamScheduleViewComponent ]
+      declarations: [ TeamScheduleViewComponent, TeamScheduleComponent ],
+      imports: [
+        PrimeControlsModule,
+        FormsModule,
+        BrowserAnimationsModule,
+        HttpClientTestingModule
+      ],
+      providers: [TeamScheduleService, TeamsApiService, AbsencesApiService, BaseApiService, Logger,
+        {provide: AuthService, useClass: AuthServiceMock},
+      ]
     })
     .compileComponents();
   }));

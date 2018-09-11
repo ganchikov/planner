@@ -28,11 +28,10 @@ import { RequestInterceptor } from '@app/core/interceptors/request.interceptor';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     PrimeControlsModule,
-    CoreModule,
     TeamModule,
-    TeamGanttModule,
     TeamScheduleModule,
-    AppRoutingModule
+    AppRoutingModule,
+    CoreModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true}

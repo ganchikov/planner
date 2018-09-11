@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {SelectItem} from 'primeng/api';
-import {ScaleMode} from '@app/team-gantt/team-gantt/team-gantt.component';
+import {ScaleMode} from '@app/team-schedule/enums/scale-mode';
 
 
 @Component({
