@@ -10,7 +10,7 @@ import { AppComponent } from '@app/app.component';
 import {AppRoutingModule} from '@app/app-routing.module';
 import {TeamModule} from '@app/team/team.module';
 import { TeamGanttModule } from '@app/team-gantt/team-gantt.module';
-import {TeamScheduleModule} from '@app/team-schedule/team-schedule.module';
+import {TeamCalendarModule} from '@app/team-calendar/team-calendar.module';
 import {PrimeControlsModule} from '@app/core/primecontrols.module';
 import {CoreModule} from '@app/core/core.module';
 import { RequestInterceptor } from '@app/core/interceptors/request.interceptor';
@@ -29,7 +29,7 @@ import { RequestInterceptor } from '@app/core/interceptors/request.interceptor';
     BrowserAnimationsModule,
     PrimeControlsModule,
     TeamModule,
-    TeamScheduleModule,
+    TeamCalendarModule,
     AppRoutingModule,
     CoreModule
   ],

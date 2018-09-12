@@ -3,11 +3,11 @@ import {SelectItem} from 'primeng/api';
 import {ScaleMode} from '../enums/scale-mode';
 
 @Component({
-  selector: 'app-team-schedule-view',
-  templateUrl: './team-schedule-view.component.html',
-  styleUrls: ['./team-schedule-view.component.css']
+  selector: 'app-team-calendar-view',
+  templateUrl: './team-calendar-view.component.html',
+  styleUrls: ['./team-calendar-view.component.css']
 })
-export class TeamScheduleViewComponent implements OnInit {
+export class TeamCalendarViewComponent implements OnInit {
 
   rangeDates: Date[] = [];
 

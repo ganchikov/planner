@@ -10,15 +10,15 @@ import { AuthService } from '@app/core/services';
 
 import {ScaleMode} from '../enums/scale-mode';
 import {IDMapper} from '../models/id-mapper';
-import {ScheduleItem} from '../models/schedule-item';
-import { TeamScheduleService } from '../schedule.service';
+import {CalendarItem} from '../models/calendar-item';
+import { TeamCalendarService } from '../team-calendar.service';
 
-let thisComponentRef: TeamScheduleComponent;
+let thisComponentRef: TeamCalendarComponent;
 
 const idMap: Array<IDMapper> = new Array();
 
 @Component({
-  selector: 'app-team-schedule',
+  selector: 'app-team-calendar',
   styles: [
     `:host {
       display: block;
@@ -29,7 +29,7 @@ const idMap: Array<IDMapper> = new Array();
     `],
   template: `<div #gantt_here style='width: 100%; height: 100%;'></div>`
 })
-export class TeamScheduleComponent implements OnInit, OnChanges {
+export class TeamCalendarComponent implements OnInit, OnChanges {
 
   @ViewChild('gantt_here') ganttContainer: ElementRef;
 
@@ -42,7 +42,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
   private isInitialized = false;
 
   constructor(
-    private schedule: TeamScheduleService,
+    private calendar: TeamCalendarService,
     private renderer: Renderer2,
     private elementRef: ElementRef,
     private auth: AuthService,
@@ -57,7 +57,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     this.isInitialized = true;
 
 
-    this.schedule.getTeamSchedule().subscribe(items => {
+    this.calendar.getTeamCalendar().subscribe(items => {
       gantt.parse({data: items, links: []});
     }, err => {
       gantt.message({type: 'error', text: err});
@@ -86,14 +86,14 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     }
   }
 
-  renderComplexTask(task: ScheduleItem): string {
+  renderComplexTask(task: CalendarItem): string {
     if (!task.has_absences) {return ''; }
     class Duration {
       constructor(
         public offset: number,
         public duration: number) {}
     }
-    const absences: ScheduleItem[] = task.GetValue('absences') as ScheduleItem[];
+    const absences: CalendarItem[] = task.GetValue('absences') as CalendarItem[];
     const durations: Duration[] = [];
     let min_date: Date = absences[0].start_date;
     let max_date: Date = absences[0].end_date;
@@ -247,7 +247,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
 
   }
 
-  onTaskLoading(task: ScheduleItem) {
+  onTaskLoading(task: CalendarItem) {
     if (task.model_type === ModelType.absence) {
       task['editable'] = true;
     } else {
@@ -265,7 +265,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
 
   onTaskClick(id: string, e: Event) {
     if (e.srcElement.className === 'gantt_add') {
-      const item: ScheduleItem = gantt.getTask(id);
+      const item: CalendarItem = gantt.getTask(id);
       if (item && item.model_type === ModelType.person) {
         return true;
       }
@@ -282,7 +282,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     if (!id) {return false; }
     const itm = idMap.find(map => map.temp_id === id);
     if (itm) {id = itm.perm_id; }
-    const item: ScheduleItem = gantt.getTask(id);
+    const item: CalendarItem = gantt.getTask(id);
     if (item.model_type === ModelType.absence) {
       return true;
     } else {
@@ -291,11 +291,11 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
   }
 
   onAfterTaskAdd(id: string, newTask: Object) {
-    const newGanttItem: ScheduleItem = new ScheduleItem(newTask);
+    const newGanttItem: CalendarItem = new CalendarItem(newTask);
     newTask['model_type'] = newGanttItem.model_type = ModelType.absence;
-    const parentGanttItem: ScheduleItem = gantt.getTask(gantt.getParent(id));
+    const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
     newGanttItem.person = parentGanttItem._id;
-    thisComponentRef.schedule.insertAbsence(newGanttItem).subscribe(
+    thisComponentRef.calendar.insertAbsence(newGanttItem).subscribe(
       insertedItem => {
         const newId = insertedItem.id;
         gantt.changeTaskId(id, newId);
@@ -314,14 +314,14 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     if (updatedTask['model_type'] !== ModelType.absence) {return true; }
     const itm = idMap.find(map => map.temp_id === id);
     if (itm) {id = itm.perm_id; }
-    let updatedGanttTask: ScheduleItem;
-    if (updatedTask instanceof ScheduleItem) {
-      updatedGanttTask = updatedTask as ScheduleItem;
+    let updatedGanttTask: CalendarItem;
+    if (updatedTask instanceof CalendarItem) {
+      updatedGanttTask = updatedTask as CalendarItem;
     } else {
-      updatedGanttTask = new ScheduleItem(updatedTask);
+      updatedGanttTask = new CalendarItem(updatedTask);
     }
-    const parentGanttItem: ScheduleItem = gantt.getTask(gantt.getParent(id));
-    thisComponentRef.schedule.updateAbsence(updatedGanttTask).subscribe(
+    const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
+    thisComponentRef.calendar.updateAbsence(updatedGanttTask).subscribe(
       result => {
         if (parentGanttItem.absences) {
           parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === updatedGanttTask.id),
@@ -335,15 +335,15 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     );
   }
 
-  onBeforeTaskDelete(id: string, deletedItem: ScheduleItem) {
-    const parentGanttItem: ScheduleItem = gantt.getTask(gantt.getParent(id));
+  onBeforeTaskDelete(id: string, deletedItem: CalendarItem) {
+    const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
     parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === deletedItem.id),
     1);
   }
 
-  onAfterTaskDelete(id: string, deletedItem: ScheduleItem) {
+  onAfterTaskDelete(id: string, deletedItem: CalendarItem) {
     if (deletedItem._id) {
-      thisComponentRef.schedule.deleteAbsence(deletedItem).subscribe(
+      thisComponentRef.calendar.deleteAbsence(deletedItem).subscribe(
         error => {
           gantt.message({type: 'error', text: error});
         }
@@ -353,7 +353,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
 
   // Gantt templates
 
-  memberTaskClassTemplate(start: Date, end: Date, task: ScheduleItem): string {
+  memberTaskClassTemplate(start: Date, end: Date, task: CalendarItem): string {
     if (task.model_type === ModelType.person) {
       return 'complex_gantt_bar';
     } else if (task.model_type === ModelType.absence) {
@@ -372,7 +372,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     }
   }
 
-  memberTaskTextTemplate(start: Date, end: Date, task: ScheduleItem): string {
+  memberTaskTextTemplate(start: Date, end: Date, task: CalendarItem): string {
     if (task.model_type === ModelType.person) {
       const str = thisComponentRef.renderComplexTask(task);
       return str;
@@ -381,7 +381,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     }
   }
 
-  interactiveTaskClassTemplate(start: Date, end: Date, task: ScheduleItem): string {
+  interactiveTaskClassTemplate(start: Date, end: Date, task: CalendarItem): string {
     if (task.model_type === ModelType.person) {
       return '';
     } else {
@@ -394,7 +394,7 @@ export class TeamScheduleComponent implements OnInit, OnChanges {
     return 'WW' + weekNum;
   }
 
-  colContentTemplate (task: ScheduleItem) {
+  colContentTemplate (task: CalendarItem) {
     let css: string;
     switch (task.model_type) {
       case ModelType.team:
