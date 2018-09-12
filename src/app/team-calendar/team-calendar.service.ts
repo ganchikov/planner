@@ -1,40 +1,40 @@
 import { Injectable } from '@angular/core';
 import { TeamsApiService, AbsencesApiService } from '@app/backend-api';
 import { map } from 'rxjs/operators';
-import { ScheduleItem } from '@app/team-schedule/models/schedule-item';
+import { CalendarItem } from './models/calendar-item';
 import { Absence } from '@app/common/models';
 
 @Injectable()
-export class TeamScheduleService {
+export class TeamCalendarService {
 
   constructor(private teamApi: TeamsApiService,
     private absenceApi: AbsencesApiService) { }
 
-  getTeamSchedule() {
+  getTeamCalendar() {
     return this.teamApi.getAllTeams().pipe(
       map(teams => {
         const resultSet = [];
         teams.forEach(
-          team => resultSet.push(...team.GetTypedItemAndFlatChildren<ScheduleItem>(ScheduleItem,
+          team => resultSet.push(...team.GetTypedItemAndFlatChildren<CalendarItem>(CalendarItem,
             {map: [{from_field: 'name', to_field: 'text'}]} ))
         );
         return resultSet;
       }));
   }
 
-  insertAbsence(newItem: ScheduleItem) {
+  insertAbsence(newItem: CalendarItem) {
     return this.absenceApi.insertAbsence(newItem.GetTypedItem(Absence)).pipe(
-      map(item => new ScheduleItem(item))
+      map(item => new CalendarItem(item))
     );
   }
 
-  updateAbsence(updatedItem: ScheduleItem) {
+  updateAbsence(updatedItem: CalendarItem) {
     return this.absenceApi.updateAbsence(updatedItem.GetTypedItem(Absence)).pipe(
-      map(item => new ScheduleItem(item))
+      map(item => new CalendarItem(item))
     );
   }
 
-  deleteAbsence(item: ScheduleItem) {
+  deleteAbsence(item: CalendarItem) {
     return this.absenceApi.deleteAbsence(item.GetTypedItem(Absence));
   }
 }
