@@ -26,6 +26,11 @@ export class HeaderComponent implements OnInit {
         routerLink: ['/team-calendar']
       },
       {
+        label: 'Gantt',
+        icon: 'fa-calendar',
+        routerLink: ['/team-gantt']
+      },
+      {
         label: 'Tasks',
         icon: 'fa-tasks',
         routerLink: ['/prime-test']

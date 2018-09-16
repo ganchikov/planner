@@ -33,7 +33,9 @@ export class BaseApiService {
 
   doGetRequest<T> (route: string, mapper: (item: any) => T, methodName?: string): Observable<T[]> {
     return this.httpClient.get<any>(this.url + route).pipe(
-      map(response => response.data.map(mapper)),
+      map(response => {
+        return response.data.map(mapper);
+        }),
       catchError(this.handleError(methodName ? methodName : route))
     );
   }

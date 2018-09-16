@@ -28,7 +28,7 @@ export class TeamDataService {
   }
 
   getTeamData(callback: (teams: Team[]) => void) {
-    this.http.get<any>(this.url + 'teams').subscribe(responseObjects => {
+    this.http.get<any>(this.url + 'teams-calendar').subscribe(responseObjects => {
         const results: Team[] = [];
         for (const respObj of responseObjects.data) {
           const team = new Team(respObj);
