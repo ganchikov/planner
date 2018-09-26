@@ -1,4 +1,3 @@
-import { ModelType } from '@app/common/enums/model-type';
 import { ModelType, AbsenceType } from '@app/common/enums';
 import { BaseItem } from '@app/common/models';
 import * as moment from 'moment';
