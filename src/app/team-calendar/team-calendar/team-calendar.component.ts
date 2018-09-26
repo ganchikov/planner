@@ -300,7 +300,7 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
         const newId = insertedItem.id;
         gantt.changeTaskId(id, newId);
         idMap.push(new IDMapper(id.toString(), newId.toString()));
-        parentGanttItem.absences.push(insertedItem);
+        // parentGanttItem.absences.push(insertedItem);
         gantt.updateTask(parentGanttItem.id.toString());
         gantt.refreshTask(newId);
       }, err => {
@@ -405,6 +405,9 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
         break;
       case ModelType.absence:
         css = `<i id="btn" class="fa gantt_button_grid gantt_grid_delete fa-times fa-lg" onClick="deleteItem(${task.id.toString()})"></i>`;
+        break;
+      default:
+        css = '';
     }
     return css;
   }

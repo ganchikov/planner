@@ -1,3 +1,6 @@
+import { ModelType } from '@app/common/enums/model-type';
+import { ModelType, AbsenceType } from '@app/common/enums';
+import { BaseItem } from '@app/common/models';
 import * as moment from 'moment';
 import {Absence, Team} from '@app/common/models';
 import {IPerson} from '@app/common/models';
@@ -5,40 +8,10 @@ import {ITeam} from '@app/common/models';
 import {Person} from '@app/common/models';
 import {IAbsence} from '@app/common/models';
 
-export class CalendarItem extends Absence implements ITeam, IPerson {
+export class CalendarItem extends BaseItem {
 
     constructor(initializatorObj: Object) {
-      super(initializatorObj, true);
-      if (initializatorObj && initializatorObj.hasOwnProperty('members')) {
-        const members: CalendarItem[] = [];
-        for (const memberObj of initializatorObj['members']) {
-            const member = new CalendarItem(memberObj);
-            member.parent_id = this.id;
-            members.push(member);
-        }
-        this.SetValue<CalendarItem[]>('members', members);
-      }
-      if (initializatorObj && initializatorObj.hasOwnProperty('absences')) {
-        const absences: CalendarItem[] = [];
-        for (const absenceObj of initializatorObj['absences']) {
-            const absence = new CalendarItem(absenceObj);
-            absence.parent_id = this.id;
-            absences.push(absence);
-        }
-        this.SetValue<CalendarItem[]>('absences', absences);
-      }
-    }
-
-    get members(): CalendarItem[] {
-      return this.GetValue('members');
-    }
-
-    get absences(): CalendarItem[] {
-      return this.GetValue('absences');
-    }
-
-    set absences(val: CalendarItem[]) {
-      this.SetValue<CalendarItem[]>('absences', val);
+      super(initializatorObj);
     }
 
     get text(): string {
@@ -49,12 +22,28 @@ export class CalendarItem extends Absence implements ITeam, IPerson {
       this.SetValue<string>('text', val);
     }
 
-    get parent(): number {
-      return this.parent_id;
+    get person(): Object {
+      return this.GetValue('person');
     }
 
-    set parent(parent_id: number) {
-      this.parent_id = parent_id;
+    set person(person_id: Object) {
+      this.SetValue<Object>('person', person_id);
+    }
+
+    get confirmed(): boolean {
+      return this.GetValue('confirmed');
+    }
+
+    set confirmed(val: boolean) {
+      this.SetValue<boolean>('confirmed', val);
+    }
+
+    get parent(): number {
+      return this.GetValue('parent');
+    }
+
+    set parent(parent: number) {
+      this.SetValue<number>('parent', parent);
     }
 
     get type(): string {
@@ -65,6 +54,10 @@ export class CalendarItem extends Absence implements ITeam, IPerson {
       return true;
     }
 
+    get has_absences(): boolean {
+      return this.GetValue('has_absences');
+    }
+
     get unscheduled(): boolean {
       return this.GetValue('unscheduled');
     }
@@ -73,34 +66,8 @@ export class CalendarItem extends Absence implements ITeam, IPerson {
       this.SetValue('unscheduled', val);
     }
 
-    get has_absences(): boolean {
-        if (this.GetValue('absences') !== undefined && (this.GetValue('absences') as Array<Absence>).length > 0 ) {
-          return true;
-        } else {
-          return false;
-        }
-    }
-
     get start_date(): Date {
-      let date: Date;
-      if (this.has_absences) {
-        const absences: Absence[] = this.GetValue('absences');
-        date = moment(absences[0].start_date).toDate();
-        for (const absence of absences) {
-            if (moment(absence.start_date).isBefore(moment(date))) {
-                date = moment(absence.start_date).toDate();
-            }
-        }
-        this.unscheduled = false;
-      } else {
-        if (this.GetValue('start_date') === undefined) {
-            this.unscheduled = true;
-            date = new Date(Date.now());
-        } else {
-          date = moment(this.GetValue('start_date')).toDate();
-        }
-      }
-      return date;
+      return moment(this.GetValue('start_date')).toDate();
     }
 
     set start_date(val: Date) {
@@ -108,28 +75,26 @@ export class CalendarItem extends Absence implements ITeam, IPerson {
     }
 
     get end_date(): Date {
-      let date: Date;
-      if (this.has_absences) {
-          const absences: Absence[] = this.GetValue('absences');
-          date = moment(absences[0].end_date).toDate();
-          for (const absence of absences) {
-              if (moment(absence.end_date).isAfter(moment(date))) {
-                  date = moment(absence.end_date).toDate();
-              }
-          }
-          this.unscheduled = false;
-      } else {
-        if (this.GetValue('end_date') === undefined) {
-            this.unscheduled = true;
-            date = new Date(Date.now());
-        } else {
-          date = moment(this.GetValue('end_date')).toDate();
-        }
-      }
-      return date;
+      return moment(this.GetValue('end_date')).toDate();
     }
 
     set end_date(val: Date) {
       this.SetValue<Date>('end_date', val);
+    }
+
+    get model_type(): ModelType {
+      return this.GetValue('model_type');
+    }
+
+    set model_type(val: ModelType) {
+      this.SetValue<ModelType>('model_type', val);
+    }
+
+    get absences(): CalendarItem[] {
+      return this.GetValue('absences');
+    }
+
+    get absence_type(): AbsenceType {
+      return this.GetValue('absence_type');
     }
   }
