@@ -11,6 +11,7 @@ import { AuthService } from '@app/core/services';
 import {ScaleMode} from '../enums/scale-mode';
 import {IDMapper} from '../models/id-mapper';
 import {CalendarItem} from '../models/calendar-item';
+import {DateItem} from '../models/date-item';
 import { TeamCalendarService } from '../team-calendar.service';
 
 let thisComponentRef: TeamCalendarComponent;
@@ -87,13 +88,13 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
   }
 
   renderComplexTask(task: CalendarItem): string {
-    if (!task.has_absences) {return ''; }
+    if (!task.dates) {return ''; }
     class Duration {
       constructor(
         public offset: number,
         public duration: number) {}
     }
-    const absences: CalendarItem[] = task.GetValue('absences') as CalendarItem[];
+    const absences: DateItem[] = task.dates;
     const durations: Duration[] = [];
     let min_date: Date = absences[0].start_date;
     let max_date: Date = absences[0].end_date;
@@ -323,10 +324,12 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
     const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
     thisComponentRef.calendar.updateAbsence(updatedGanttTask).subscribe(
       result => {
-        if (parentGanttItem.absences) {
-          parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === updatedGanttTask.id),
-              1);
-          parentGanttItem.absences.push(result);
+        if (parentGanttItem.dates) {
+          parentGanttItem.dates.splice(parentGanttItem.dates.findIndex(item =>
+              item.id === updatedGanttTask.id
+              ),
+            1);
+          parentGanttItem.dates.push(new DateItem(result.id, result.start_date, result.end_date));
           gantt.updateTask(parentGanttItem.id.toString());
         }
       }, error => {
@@ -337,7 +340,8 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
 
   onBeforeTaskDelete(id: string, deletedItem: CalendarItem) {
     const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
-    parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === deletedItem.id),
+    parentGanttItem.dates.splice(parentGanttItem.dates.findIndex(
+      item => item.id === deletedItem.id),
     1);
   }
 

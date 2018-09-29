@@ -6,6 +6,7 @@ import {IPerson} from '@app/common/models';
 import {ITeam} from '@app/common/models';
 import {Person} from '@app/common/models';
 import {IAbsence} from '@app/common/models';
+import { DateItem } from '@app/team-calendar/models/date-item';
 
 export class CalendarItem extends BaseItem {
 
@@ -38,11 +39,11 @@ export class CalendarItem extends BaseItem {
     }
 
     get parent(): number {
-      return this.GetValue('parent');
+      return this.GetValue('parent_id');
     }
 
     set parent(parent: number) {
-      this.SetValue<number>('parent', parent);
+      this.SetValue<number>('parent_id', parent);
     }
 
     get type(): string {
@@ -51,10 +52,6 @@ export class CalendarItem extends BaseItem {
 
     get open(): boolean {
       return true;
-    }
-
-    get has_absences(): boolean {
-      return this.GetValue('has_absences');
     }
 
     get unscheduled(): boolean {
@@ -89,8 +86,8 @@ export class CalendarItem extends BaseItem {
       this.SetValue<ModelType>('model_type', val);
     }
 
-    get absences(): CalendarItem[] {
-      return this.GetValue('absences');
+    get dates(): DateItem[] {
+      return this.GetValue('dates');
     }
 
     get absence_type(): AbsenceType {
