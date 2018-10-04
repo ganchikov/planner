@@ -27,8 +27,10 @@ export class TeamCalendarService {
   }
 
   insertAbsence(newItem: CalendarItem) {
-    return this.absenceApi.insertAbsence(newItem.GetTypedItem(Absence)).pipe(
-      map(item => new CalendarItem(item))
+    return this.absenceApi.insertAbsence(newItem.GetTypedItem(Absence, {map: [{from_field: 'text', to_field: 'name'}]} )).pipe(
+      map(item => {
+        return new CalendarItem(item);
+      })
     );
   }
 

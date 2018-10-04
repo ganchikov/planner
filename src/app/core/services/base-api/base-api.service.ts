@@ -1,3 +1,4 @@
+import { BaseItem } from './../../../common/models/base-item';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
@@ -31,7 +32,7 @@ export class BaseApiService {
     };
   }
 
-  doGetRequest<T> (route: string, mapper: (item: any) => T, methodName?: string): Observable<T[]> {
+  doGetRequest<T extends BaseItem> (route: string, mapper: (item: any) => T, methodName?: string): Observable<T[]> {
     return this.httpClient.get<any>(this.url + route).pipe(
       map(response => {
         return response.data.map(mapper);
@@ -40,15 +41,15 @@ export class BaseApiService {
     );
   }
 
-  doPostRequest<T> (route: string, item: T, mapper: (item: any) => T, methodName?: string): Observable< {} | T> {
-    return this.httpClient.post(this.url + route, item).pipe(
+  doPostRequest<T extends BaseItem> (route: string, item: T, mapper: (item: any) => T, methodName?: string): Observable< {} | T> {
+    return this.httpClient.post(this.url + route, item.GetObject()).pipe(
       map(response => mapper(response)),
       catchError(this.handleError(methodName ? methodName : route))
     );
   }
 
-  doPatchRequest<T> (route: string, item: T, mapper: (item: any) => T, methodName?: string): Observable< {} | T> {
-    return this.httpClient.patch(this.url + route, item).pipe(
+  doPatchRequest<T extends BaseItem> (route: string, item: T, mapper: (item: any) => T, methodName?: string): Observable< {} | T> {
+    return this.httpClient.patch(this.url + route, item.GetObject()).pipe(
       map(response => mapper(response)),
       catchError(this.handleError(methodName ? methodName : route))
     );

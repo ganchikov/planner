@@ -4,12 +4,7 @@ import {ModelType} from '../enums/model-type';
 import {BaseScheduledItem} from './base-scheduled-item';
 import { ObjectID } from 'bson';
 
-export interface IAbsence {
-    confirmed: boolean;
-    absence_type: AbsenceType;
-}
-
-export class Absence extends BaseScheduledItem implements IAbsence {
+export class Absence extends BaseScheduledItem {
     constructor(
         initializatorObj: Object,
         ignore_object_type?: boolean

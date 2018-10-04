@@ -25,7 +25,11 @@ export class DataItem {
 
     constructor(initializator: Object) {
         if (initializator) {
-            for (const src_prop of Object.keys(initializator)) {
+            for (const src_prop of
+                    initializator instanceof DataItem ?
+                    (initializator as DataItem)._fields.map(itm => itm.key)
+                    : Object.keys(initializator)
+                ) {
                 const dst_props: string[] = this.getProperties(this);
                 // const dst_props: string[] = [];
                 for (const dst_prop of dst_props) {

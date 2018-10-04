@@ -1,3 +1,4 @@
+import { Absence } from '@app/common/models';
 import { Component, OnInit, OnChanges, SimpleChanges, ElementRef, ViewChild, Input, Renderer2, Inject} from '@angular/core';
 import {DOCUMENT} from '@angular/platform-browser';
 import {} from '@types/dhtmlxgantt';
@@ -92,17 +93,20 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
     class Duration {
       constructor(
         public offset: number,
-        public duration: number) {}
+        public duration: number
+      ) {}
     }
     const absences: DateItem[] = task.dates;
     const durations: Duration[] = [];
-    let min_date: Date = absences[0].start_date;
-    let max_date: Date = absences[0].end_date;
 
     absences.sort((a, b) => {
       if (a.start_date > b.start_date) {return 1; } else if (a.start_date < b.start_date) {return -1; }
       return 0;
     });
+
+    let min_date: Date = absences[0].start_date;
+    let max_date: Date = absences[0].end_date;
+    
     for (const absence of absences) {
       if (moment(absence.start_date).isBefore(min_date)) {min_date = absence.start_date; }
       if (moment(absence.end_date).isAfter(max_date)) {max_date = absence.end_date; }
@@ -120,23 +124,6 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
                         `width:${duration.duration}%; height: 15px; margin-top: 7.5px;'></div>`;
     }
     return taskHTML;
-  }
-
-  renderJavaScriptCode() {
-    return `
-      function deleteItem(id) {
-        gantt.confirm({text: 'Delete absence?', ok: 'Yes', cancel: 'No', callback: function(result) {
-          if (result) { gantt.deleteTask(id);}
-        }});
-      }
-      function insertItem(parentId) {
-        const parentItem = gantt.getTask(parentId);
-        const newItemText = parentItem.text + ' vacation';
-        const startDate = new Date(Date.now());
-        const startDateStr = (startDate.getDay()+1) + '-' + (startDate.getMonth()+1) + '-' + startDate.getFullYear();
-        gantt.createTask({text: newItemText, start_date: startDateStr, duration: 7},parentId);
-      }
-    `;
   }
 
   setScaleMode(scaleMode: ScaleMode) {
@@ -301,7 +288,7 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
         const newId = insertedItem.id;
         gantt.changeTaskId(id, newId);
         idMap.push(new IDMapper(id.toString(), newId.toString()));
-        // parentGanttItem.absences.push(insertedItem);
+        parentGanttItem.dates.push({id: insertedItem.id, start_date: insertedItem.start_date, end_date: insertedItem.end_date});
         gantt.updateTask(parentGanttItem.id.toString());
         gantt.refreshTask(newId);
       }, err => {
@@ -361,18 +348,22 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
     if (task.model_type === ModelType.person) {
       return 'complex_gantt_bar';
     } else if (task.model_type === ModelType.absence) {
-      switch (task.absence_type) {
-        case AbsenceType.dayoff:
-          return 'dayff_gantt_bar';
-        case AbsenceType.sickleave:
-          return 'sickleave_gantt_bar';
-        case AbsenceType.vacation:
-          if (String(task.confirmed) === 'true' || task.confirmed === true) {
-            return 'confirmed_vacation_gantt_bar';
-          } else {
-            return 'unconfirmed_vacation_gantt_bar';
-          }
-      }
+      return thisComponentRef.getAbsenceTypeClass(task.absence_type, task.confirmed);
+    }
+  }
+
+  getAbsenceTypeClass(absence_type: AbsenceType, confirmed: boolean) {
+    switch (absence_type) {
+      case AbsenceType.dayoff:
+        return 'dayff_gantt_bar';
+      case AbsenceType.sickleave:
+        return 'sickleave_gantt_bar';
+      case AbsenceType.vacation:
+        if (confirmed === true) {
+          return 'confirmed_vacation_gantt_bar';
+        } else {
+          return 'unconfirmed_vacation_gantt_bar';
+        }
     }
   }
 
@@ -416,5 +407,21 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
     return css;
   }
 
+  renderJavaScriptCode() {
+    return `
+      function deleteItem(id) {
+        gantt.confirm({text: 'Delete absence?', ok: 'Yes', cancel: 'No', callback: function(result) {
+          if (result) { gantt.deleteTask(id);}
+        }});
+      }
+      function insertItem(parentId) {
+        const parentItem = gantt.getTask(parentId);
+        const newItemText = parentItem.text + ' vacation';
+        const startDate = new Date(Date.now());
+        const startDateStr = (startDate.getDay()+1) + '-' + (startDate.getMonth()+1) + '-' + startDate.getFullYear();
+        gantt.createTask({text: newItemText, start_date: startDateStr, duration: 7},parentId);
+      }
+    `;
+  }
 
 }

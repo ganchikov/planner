@@ -2,11 +2,7 @@ import {BaseScheduledItem} from './base-scheduled-item';
 import {ModelType} from '../enums/model-type';
 import {Absence} from './absence';
 
-export interface IPerson {
-    absences: Absence[];
-}
-
-export class Person extends BaseScheduledItem implements IPerson {
+export class Person extends BaseScheduledItem  {
     constructor(
         initializatorObj: Object
     ) {
