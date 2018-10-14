@@ -89,7 +89,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
   // Gantt service functions
 
   renderComplexTask(task: CalendarItem): string {
-    if (!task.has_absences) {return ''; }
+    if (!task.dates) {return ''; }
     class Duration {
       constructor(
         public offset: number,
@@ -306,7 +306,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
       } else {
         gantt.changeTaskId(id, insertedItem.id);
         idMap.push(new IDMapper(id.toString(), insertedItem.id.toString()));
-        parentGanttItem.absences.push(insertedItem);
+        parentGanttItem.dates.push(insertedItem);
         gantt.updateTask(parentGanttItem.id.toString());
         gantt.refreshTask(insertedItem.id);
       }

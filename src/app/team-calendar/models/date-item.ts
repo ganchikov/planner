@@ -2,12 +2,20 @@ import * as moment from 'moment';
 
 export class DateItem {
     public id: number;
-    public start_date: Date;
-    public end_date: Date;
+    private _start_date: Date;
+    private _end_date: Date;
     constructor(id?: number, start_date?: Date, end_date?: Date) {
         this.id = id;
-        this.start_date = moment(start_date).toDate();
-        this.end_date = moment(end_date).toDate();
+        this._start_date = start_date;
+        this._end_date = end_date;
+    }
+
+    get start_date(): Date {
+        return moment(this._start_date).toDate();
+    }
+
+    get end_date(): Date {
+        return moment(this._end_date).toDate();
     }
 }
 

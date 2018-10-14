@@ -3,10 +3,8 @@ import { ModelType, AbsenceType } from '@app/common/enums';
 import { BaseItem } from '@app/common/models';
 import * as moment from 'moment';
 import {Absence, Team} from '@app/common/models';
-import {IPerson} from '@app/common/models';
 import {ITeam} from '@app/common/models';
 import {Person} from '@app/common/models';
-import {IAbsence} from '@app/common/models';
 import { DateItem } from '@app/team-calendar/models/date-item';
 
 export class CalendarItem extends BaseItem {
