@@ -92,4 +92,15 @@ export class CalendarItem extends BaseItem {
     get absence_type(): AbsenceType {
       return this.GetValue('absence_type');
     }
+
+    public recalculateDates() {
+      let min_date: Date = this.dates[0].start_date;
+      let max_date: Date = this.dates[0].end_date;
+      for (const date of this.dates) {
+        if (moment(date.start_date).isBefore(min_date)) {min_date = date.start_date; }
+        if (moment(date.end_date).isAfter(max_date)) {max_date = date.end_date; }
+      }
+      this.start_date = min_date;
+      this.end_date = max_date;
+    }
   }

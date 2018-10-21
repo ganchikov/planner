@@ -296,53 +296,53 @@ export class TeamGanttComponent implements OnInit, OnChanges {
   }
 
   onAfterTaskAdd(id: string, newTask: Object) {
-    const newGanttItem: CalendarItem = new CalendarItem(newTask);
-    newTask['model_type'] = newGanttItem.model_type = ModelType.absence;
-    const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
-    newGanttItem.person = parentGanttItem._id;
-    thisComponentRef.ganttData.insertAbsence(newGanttItem, parentGanttItem, (insertedItem, error) => {
-      if (error) {
-        gantt.message({type: 'error', text: error});
-      } else {
-        gantt.changeTaskId(id, insertedItem.id);
-        idMap.push(new IDMapper(id.toString(), insertedItem.id.toString()));
-        parentGanttItem.dates.push(insertedItem);
-        gantt.updateTask(parentGanttItem.id.toString());
-        gantt.refreshTask(insertedItem.id);
-      }
-    });
-    return true;
+    // const newGanttItem: CalendarItem = new CalendarItem(newTask);
+    // newTask['model_type'] = newGanttItem.model_type = ModelType.absence;
+    // const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
+    // newGanttItem.person = parentGanttItem._id;
+    // thisComponentRef.ganttData.insertAbsence(newGanttItem, parentGanttItem, (insertedItem, error) => {
+    //   if (error) {
+    //     gantt.message({type: 'error', text: error});
+    //   } else {
+    //     gantt.changeTaskId(id, insertedItem.id);
+    //     idMap.push(new IDMapper(id.toString(), insertedItem.id.toString()));
+    //     parentGanttItem.dates.push(insertedItem);
+    //     gantt.updateTask(parentGanttItem.id.toString());
+    //     gantt.refreshTask(insertedItem.id);
+    //   }
+    // });
+    // return true;
   }
 
   onAfterTaskUpdate(id: string, updatedTask: Object) {
-    if (updatedTask['model_type'] !== ModelType.absence) {return true; }
-    const itm = idMap.find(map => map.temp_id === id);
-    if (itm) {id = itm.perm_id; }
-    let updatedGanttTask: CalendarItem;
-    if (updatedTask instanceof CalendarItem) {
-      updatedGanttTask = updatedTask as CalendarItem;
-    } else {
-      updatedGanttTask = new CalendarItem(updatedTask);
-    }
-    const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
-    thisComponentRef.ganttData.updateAbsence(updatedGanttTask, error => {
-      if (error) {
-        gantt.message({type: 'error', text: error});
-      } else {
-        if (parentGanttItem.absences) {
-            parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === updatedGanttTask.id),
-              1);
-            parentGanttItem.absences.push(updatedGanttTask);
-          gantt.updateTask(parentGanttItem.id.toString());
-        }
-      }
-    });
+    // if (updatedTask['model_type'] !== ModelType.absence) {return true; }
+    // const itm = idMap.find(map => map.temp_id === id);
+    // if (itm) {id = itm.perm_id; }
+    // let updatedGanttTask: CalendarItem;
+    // if (updatedTask instanceof CalendarItem) {
+    //   updatedGanttTask = updatedTask as CalendarItem;
+    // } else {
+    //   updatedGanttTask = new CalendarItem(updatedTask);
+    // }
+    // const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
+    // thisComponentRef.ganttData.updateAbsence(updatedGanttTask, error => {
+    //   if (error) {
+    //     gantt.message({type: 'error', text: error});
+    //   } else {
+    //     if (parentGanttItem.absences) {
+    //         parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === updatedGanttTask.id),
+    //           1);
+    //         parentGanttItem.absences.push(updatedGanttTask);
+    //       gantt.updateTask(parentGanttItem.id.toString());
+    //     }
+    //   }
+    // });
   }
 
   onBeforeTaskDelete(id: string, deletedItem: CalendarItem) {
-    const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
-    parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === deletedItem.id),
-    1);
+    // const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
+    // parentGanttItem.absences.splice(parentGanttItem.absences.findIndex(item => item.id === deletedItem.id),
+    // 1);
   }
 
   onAfterTaskDelete(id: string, deletedItem: CalendarItem) {

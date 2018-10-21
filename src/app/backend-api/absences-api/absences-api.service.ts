@@ -50,6 +50,8 @@ export class AbsencesApiService implements IApiService<Absence> {
   }
 
   deleteAbsence(item: Absence): Observable<{}|Absence> {
-    return this.api.doDeleteRequest<Absence>(this.route, item._id, 'deleteAbsence');
+    return this.api.doDeleteRequest<Absence>(this.route, item._id, (response) => {
+      return response;
+    }, 'deleteAbsence');
   }
 }

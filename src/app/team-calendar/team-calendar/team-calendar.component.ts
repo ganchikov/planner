@@ -106,7 +106,7 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
 
     let min_date: Date = absences[0].start_date;
     let max_date: Date = absences[0].end_date;
-    
+
     for (const absence of absences) {
       if (moment(absence.start_date).isBefore(min_date)) {min_date = absence.start_date; }
       if (moment(absence.end_date).isAfter(max_date)) {max_date = absence.end_date; }
@@ -281,18 +281,19 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
   onAfterTaskAdd(id: string, newTask: Object) {
     const newGanttItem: CalendarItem = new CalendarItem(newTask);
     newTask['model_type'] = newGanttItem.model_type = ModelType.absence;
-    const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
+    const parentGanttItem = gantt.getTask(gantt.getParent(id));
     newGanttItem.person = parentGanttItem._id;
     thisComponentRef.calendar.insertAbsence(newGanttItem).subscribe(
       insertedItem => {
         const newId = insertedItem.id;
         gantt.changeTaskId(id, newId);
         idMap.push(new IDMapper(id.toString(), newId.toString()));
-        parentGanttItem.dates.push({id: insertedItem.id, start_date: insertedItem.start_date, end_date: insertedItem.end_date});
-        gantt.updateTask(parentGanttItem.id.toString());
+        parentGanttItem.dates.push({id: insertedItem.id, start_date: insertedItem.start_date, end_date: calendarItem.end_date});
+        parentGanttItem.recalculateDates();
+        gantt.updateTask(parentGanttItem.id);
         gantt.refreshTask(newId);
       }, err => {
-        gantt.message({type: 'error', text: err});
+        gantt.message({type: 'error', text: err.message});
       }
     );
     return true;
@@ -317,10 +318,11 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
               ),
             1);
           parentGanttItem.dates.push(new DateItem(result.id, result.start_date, result.end_date));
+          parentGanttItem.recalculateDates();
           gantt.updateTask(parentGanttItem.id.toString());
         }
-      }, error => {
-        gantt.message({type: 'error', text: error});
+      }, err => {
+        gantt.message({type: 'error', text: err.message});
       }
     );
   }
@@ -330,13 +332,17 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
     parentGanttItem.dates.splice(parentGanttItem.dates.findIndex(
       item => item.id === deletedItem.id),
     1);
+    parentGanttItem.recalculateDates();
   }
 
   onAfterTaskDelete(id: string, deletedItem: CalendarItem) {
     if (deletedItem._id) {
       thisComponentRef.calendar.deleteAbsence(deletedItem).subscribe(
-        error => {
-          gantt.message({type: 'error', text: error});
+        response => {
+          // gantt.message({type: 'info', text: `item ${id} deleted`});
+        },
+        err => {
+          gantt.message({type: 'error', text: err.message});
         }
       );
     }

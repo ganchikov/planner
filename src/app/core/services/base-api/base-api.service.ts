@@ -1,3 +1,4 @@
+import { BaseItem } from '@app/common/models';
 import { BaseItem } from './../../../common/models/base-item';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -55,9 +56,13 @@ export class BaseApiService {
     );
   }
 
-  doDeleteRequest<T> (route: string, itemId: Object, methodName?: string): Observable< {} | T> {
-    return this.httpClient.delete(this.url + route + `/${itemId.toString()}`).pipe(
-      catchError(this.handleError(methodName ? methodName : route))
-    );
+  doDeleteRequest<T extends BaseItem> (route: string,
+    itemId: Object,
+    mapper?: (item: any) => any,
+    methodName?: string): Observable< {} | T> {
+      return this.httpClient.delete(this.url + route + `/${itemId.toString()}`).pipe(
+        map(response => mapper ? mapper(response) : response),
+        catchError(this.handleError(methodName ? methodName : route))
+      );
   }
 }
