@@ -89,7 +89,7 @@ export class TeamGanttComponent implements OnInit, OnChanges {
   // Gantt service functions
 
   renderComplexTask(task: CalendarItem): string {
-    if (!task.schedule_dates) {return ''; }
+    // if (!task.schedule_dates) {return ''; }
     class Duration {
       constructor(
         public offset: number,

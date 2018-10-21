@@ -91,6 +91,11 @@ export class CalendarItem extends BaseItem {
     }
 
     public recalculateStartEndDates() {
+      if (this.schedule_dates.length === 0) {
+        this.start_date = new Date(Date.now());
+        this.end_date = new Date(Date.now());
+        return;
+      }
       let min_date: Date = this.schedule_dates[0].start_date;
       let max_date: Date = this.schedule_dates[0].end_date;
       for (const date of this.schedule_dates) {

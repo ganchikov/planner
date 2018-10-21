@@ -333,14 +333,14 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
     }
   }
 
-  getAbsenceTypeClass(absence_type: AbsenceType, confirmed: boolean) {
+  getAbsenceTypeClass(absence_type: AbsenceType, confirmed: any) {
     switch (absence_type) {
       case AbsenceType.dayoff:
         return 'dayff_gantt_bar';
       case AbsenceType.sickleave:
         return 'sickleave_gantt_bar';
       case AbsenceType.vacation:
-        if (confirmed === true) {
+        if (confirmed === true || confirmed === 'true') {
           return 'confirmed_vacation_gantt_bar';
         } else {
           return 'unconfirmed_vacation_gantt_bar';
