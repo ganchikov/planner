@@ -5,7 +5,7 @@ import {} from '@types/dhtmlxgantt';
 import 'dhtmlx-gantt';
 import * as moment from 'moment';
 import { TeamGanttDataService} from '@app/team-gantt/team-gantt-data.service';
-import {CalendarItem} from '@app/team-calendar/models/calendar-item';
+import {CalendarItem} from '@app/common/models';
 import {ModelType} from '@app/common/enums/model-type';
 import {AbsenceType} from '@app/common/enums/absence-type';
 import { AuthService } from '@app/core/services';

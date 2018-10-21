@@ -1,20 +1,18 @@
-import { Absence } from '@app/common/models';
 import { Component, OnInit, OnChanges, SimpleChanges, ElementRef, ViewChild, Input, Renderer2, Inject} from '@angular/core';
 import {DOCUMENT} from '@angular/platform-browser';
 import {} from '@types/dhtmlxgantt';
 import 'dhtmlx-gantt';
 import * as moment from 'moment';
 
-
+import { Absence, CalendarItem, DateItem } from '@app/common/models';
 import {ModelType, AbsenceType} from '@app/common/enums';
 import { AuthService } from '@app/core/services';
+import {TeamsCalendarApiService} from '@app/backend-api';
 
-import {ScaleMode} from '../enums/scale-mode';
 import {IDMapper} from '../models/id-mapper';
-import {CalendarItem} from '../models/calendar-item';
-import {DateItem} from '../models/date-item';
+import { Duration } from '../models/duration';
+import {ScaleMode} from '../enums/scale-mode';
 import { TeamCalendarService } from '../team-calendar.service';
-import { Duration } from '@app/team-calendar/models/duration';
 
 let thisComponentRef: TeamCalendarComponent;
 
@@ -45,6 +43,7 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
   private isInitialized = false;
 
   constructor(
+    private calendarApi: TeamsCalendarApiService,
     private calendar: TeamCalendarService,
     private renderer: Renderer2,
     private elementRef: ElementRef,
@@ -60,7 +59,7 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
     this.isInitialized = true;
 
 
-    this.calendar.getTeamCalendar().subscribe(items => {
+    this.calendarApi.getTeamCalendar().subscribe(items => {
       gantt.parse({data: items, links: []});
     }, err => {
       gantt.message({type: 'error', text: err});
@@ -91,8 +90,8 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
 
   renderComplexTask(task: CalendarItem): string {
     if (!task.schedule_dates) {return ''; }
-    const durations: Duration[] = task.getAbsoluteDurations();
-    const total_duration: number = task.getTotalDuration();
+    const durations: Duration[] = this.calendar.getAbsoluteDurations(task);
+    const total_duration: number = this.calendar.getTotalDuration(task);
     let taskHTML = '';
     for (const duration of durations) {
       const relOffset =  duration.offset * 100 / total_duration;

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TeamDataService } from '@app/team/team-data.service';
 
 import {Absence, Person} from '@app/common/models';
-import {CalendarItem} from '@app/team-calendar/models/calendar-item';
+import {CalendarItem} from '@app/common/models';
 
 @Injectable()
 export class TeamGanttDataService {

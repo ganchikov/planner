@@ -29,7 +29,6 @@ import { RequestInterceptor } from '@app/core/interceptors/request.interceptor';
     BrowserAnimationsModule,
     PrimeControlsModule,
     TeamModule,
-    TeamGanttModule,
     TeamCalendarModule,
     AppRoutingModule,
     CoreModule

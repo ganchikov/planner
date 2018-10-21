@@ -6,7 +6,7 @@ import { PrimeControlsModule } from '@app/core/primecontrols.module';
 import { TeamCalendarComponent } from './team-calendar/team-calendar.component';
 import { TeamCalendarViewComponent } from './team-calendar-view/team-calendar-view.component';
 import { TeamCalendarRoutingModule } from './team-calendar-routing.module';
-import {TeamsApiService, AbsencesApiService} from '@app/backend-api';
+import { TeamsApiService, AbsencesApiService, TeamsCalendarApiService } from '@app/backend-api';
 import { TeamCalendarService } from './team-calendar.service';
 
 @NgModule({
@@ -18,8 +18,8 @@ import { TeamCalendarService } from './team-calendar.service';
     TeamCalendarRoutingModule
   ],
   providers: [
-    TeamsApiService,
     AbsencesApiService,
+    TeamsCalendarApiService,
     TeamCalendarService
   ],
   declarations: [

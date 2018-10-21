@@ -1,9 +1,13 @@
+import * as moment from 'moment';
+
 import { Injectable } from '@angular/core';
 import { TeamsApiService, AbsencesApiService } from '@app/backend-api';
 import { map } from 'rxjs/operators';
-import { CalendarItem } from './models/calendar-item';
+import { CalendarItem } from '@app/common/models';
 import { Absence } from '@app/common/models';
 import { BaseApiService } from '@app/core/services';
+
+import {Duration} from './models/duration';
 
 @Injectable()
 export class TeamCalendarService {
@@ -11,20 +15,6 @@ export class TeamCalendarService {
   constructor(private baseApi: BaseApiService,
     private absenceApi: AbsencesApiService) { }
 
-  getTeamCalendar() {
-    return this.baseApi.doGetRequest('teams-calendar?flat=true', item => {
-      return new CalendarItem(item);
-    }, 'getTeamCalendar');
-    // return this.teamApi.getAllTeams().pipe(
-    //   map(teams => {
-    //     const resultSet = [];
-    //     teams.forEach(
-    //       team => resultSet.push(...team.GetTypedItemAndFlatChildren<CalendarItem>(CalendarItem,
-    //         {map: [{from_field: 'name', to_field: 'text'}]} ))
-    //     );
-    //     return resultSet;
-    //   }));
-  }
 
   insertAbsence(newItem: CalendarItem) {
     return this.absenceApi.insertAbsence(newItem.GetTypedItem(Absence, {map: [{from_field: 'text', to_field: 'name'}]} )).pipe(
@@ -43,4 +33,40 @@ export class TeamCalendarService {
   deleteAbsence(item: CalendarItem) {
     return this.absenceApi.deleteAbsence(item.GetTypedItem(Absence));
   }
+
+  public recalculateStartEndDates(item: CalendarItem) {
+    let min_date: Date = item.schedule_dates[0].start_date;
+    let max_date: Date = item.schedule_dates[0].end_date;
+    for (const date of item.schedule_dates) {
+      if (moment(date.start_date).isBefore(min_date)) {min_date = date.start_date; }
+      if (moment(date.end_date).isAfter(max_date)) {max_date = date.end_date; }
+    }
+    item.start_date = min_date;
+    item.end_date = max_date;
+  }
+
+  public sortScheduleDates(item: CalendarItem) {
+    item.schedule_dates.sort((a, b) => {
+      if (moment(a.start_date).isAfter(b.start_date)) {return 1; } else
+      if (moment(a.start_date).isBefore(b.start_date)) {return -1; }
+      return 0;
+    });
+  }
+
+  public getAbsoluteDurations(item: CalendarItem): Duration[] {
+
+    this.recalculateStartEndDates(item);
+    const durations: Duration[] = [];
+    for (const dateItem of item.schedule_dates) {
+      const offset: number = moment(dateItem.start_date).diff(moment(item.start_date), 'days');
+      const duration: number = moment(dateItem.end_date).diff(moment(dateItem.start_date), 'days');
+      durations.push(new Duration(offset, duration));
+    }
+    return durations;
+  }
+
+  public getTotalDuration(item: CalendarItem): number {
+    return moment(item.end_date).diff(moment(item.start_date), 'days');
+  }
+
 }
