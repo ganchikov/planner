@@ -257,15 +257,22 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
   onAfterTaskAdd(id: string, newTask: Object) {
     const newGanttItem: CalendarItem = new CalendarItem(newTask);
     newTask['model_type'] = newGanttItem.model_type = ModelType.absence;
-    const parentGanttItem = gantt.getTask(gantt.getParent(id));
+    const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
     newGanttItem.person = parentGanttItem._id;
+
+    thisComponentRef.calendar.addScheduleDates(parentGanttItem, new DateItem(
+      newGanttItem.id,
+      newGanttItem.start_date,
+      newGanttItem.end_date
+    ));
+    gantt.updateTask(parentGanttItem.id.toString());
+
     thisComponentRef.calendar.insertAbsence(newGanttItem).subscribe(
       insertedItem => {
         const newId = insertedItem.id;
         gantt.changeTaskId(id, newId);
         idMap.push(new IDMapper(id.toString(), newId.toString()));
-        parentGanttItem.schedule_dates.push({id: insertedItem.id, start_date: insertedItem.start_date, end_date: insertedItem.end_date});
-        gantt.updateTask(parentGanttItem.id);
+        thisComponentRef.calendar.updateScheduleDateId(parentGanttItem, Number.parseInt(id), newId);
         gantt.refreshTask(newId);
       }, err => {
         gantt.message({type: 'error', text: err.message});
@@ -287,14 +294,11 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
     const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
     thisComponentRef.calendar.updateAbsence(updatedGanttTask).subscribe(
       result => {
-        if (parentGanttItem.schedule_dates) {
-          parentGanttItem.schedule_dates.splice(parentGanttItem.schedule_dates.findIndex(item =>
-              item.id === updatedGanttTask.id
-              ),
-            1);
-          parentGanttItem.schedule_dates.push(new DateItem(result.id, result.start_date, result.end_date));
-          gantt.updateTask(parentGanttItem.id.toString());
-        }
+        thisComponentRef.calendar.replaceScheduleDate(parentGanttItem,
+          updatedGanttTask.id,
+          new DateItem(result.id, result.start_date, result.end_date)
+        );
+        gantt.updateTask(parentGanttItem.id.toString());
       }, err => {
         gantt.message({type: 'error', text: err.message});
       }

@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { Injectable } from '@angular/core';
 import { TeamsApiService, AbsencesApiService } from '@app/backend-api';
 import { map } from 'rxjs/operators';
-import { CalendarItem } from '@app/common/models';
+import { CalendarItem, DateItem } from '@app/common/models';
 import { Absence } from '@app/common/models';
 import { BaseApiService } from '@app/core/services';
 
@@ -69,4 +69,20 @@ export class TeamCalendarService {
     return moment(item.end_date).diff(moment(item.start_date), 'days');
   }
 
+  public addScheduleDates(item: CalendarItem, schedule_date: DateItem) {
+    item.schedule_dates.push(schedule_date);
+  }
+
+  public updateScheduleDateId(item: CalendarItem, oldId: number, newId: number) {
+    const dateItem = item.schedule_dates.find(el => el.id === oldId);
+    dateItem.id = newId;
+  }
+
+  public replaceScheduleDate(item: CalendarItem, id: number, new_schedule_date: DateItem) {
+    if (item.schedule_dates) {
+      return;
+    }
+    item.schedule_dates.splice(item.schedule_dates.findIndex(el => el.id === id), 1);
+    item.schedule_dates.push(new_schedule_date);
+  }
 }
