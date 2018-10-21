@@ -1,11 +1,8 @@
-import { PageNotFoundComponent } from './../../core/components/pagenotfound/pagenotfound.component';
+import * as moment from 'moment';
 import { ModelType, AbsenceType } from '@app/common/enums';
 import { BaseItem } from '@app/common/models';
-import * as moment from 'moment';
-import {Absence, Team} from '@app/common/models';
-import {ITeam} from '@app/common/models';
-import {Person} from '@app/common/models';
-import { DateItem } from '@app/team-calendar/models/date-item';
+import { DateItem } from './date-item';
+import { Duration } from './duration';
 
 export class CalendarItem extends BaseItem {
 
@@ -85,22 +82,46 @@ export class CalendarItem extends BaseItem {
       this.SetValue<ModelType>('model_type', val);
     }
 
-    get dates(): DateItem[] {
-      return this.GetValue('dates');
+    get schedule_dates(): DateItem[] {
+      return this.GetValue('schedule_dates');
     }
 
     get absence_type(): AbsenceType {
       return this.GetValue('absence_type');
     }
 
-    public recalculateDates() {
-      let min_date: Date = this.dates[0].start_date;
-      let max_date: Date = this.dates[0].end_date;
-      for (const date of this.dates) {
+    public recalculateStartEndDates() {
+      let min_date: Date = this.schedule_dates[0].start_date;
+      let max_date: Date = this.schedule_dates[0].end_date;
+      for (const date of this.schedule_dates) {
         if (moment(date.start_date).isBefore(min_date)) {min_date = date.start_date; }
         if (moment(date.end_date).isAfter(max_date)) {max_date = date.end_date; }
       }
       this.start_date = min_date;
       this.end_date = max_date;
     }
+
+    public sortScheduleDates() {
+      this.schedule_dates.sort((a, b) => {
+        if (moment(a.start_date).isAfter(b.start_date)) {return 1; } else
+        if (moment(a.start_date).isBefore(b.start_date)) {return -1; }
+        return 0;
+      });
+    }
+
+    public getAbsoluteDurations(): Duration[] {
+      this.recalculateStartEndDates();
+      const durations: Duration[] = [];
+      for (const dateItem of this.schedule_dates) {
+        const offset: number = moment(dateItem.start_date).diff(moment(this.start_date), 'days');
+        const duration: number = moment(dateItem.end_date).diff(moment(dateItem.start_date), 'days');
+        durations.push(new Duration(offset, duration));
+      }
+      return durations;
+    }
+
+    public getTotalDuration(): number {
+      return moment(this.end_date).diff(moment(this.start_date), 'days');
+    }
+
   }

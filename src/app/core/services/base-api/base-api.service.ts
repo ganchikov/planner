@@ -1,5 +1,4 @@
 import { BaseItem } from '@app/common/models';
-import { BaseItem } from './../../../common/models/base-item';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';

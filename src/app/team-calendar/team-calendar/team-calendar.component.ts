@@ -14,6 +14,7 @@ import {IDMapper} from '../models/id-mapper';
 import {CalendarItem} from '../models/calendar-item';
 import {DateItem} from '../models/date-item';
 import { TeamCalendarService } from '../team-calendar.service';
+import { Duration } from '@app/team-calendar/models/duration';
 
 let thisComponentRef: TeamCalendarComponent;
 
@@ -89,39 +90,15 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
   }
 
   renderComplexTask(task: CalendarItem): string {
-    if (!task.dates) {return ''; }
-    class Duration {
-      constructor(
-        public offset: number,
-        public duration: number
-      ) {}
-    }
-    const absences: DateItem[] = task.dates;
-    const durations: Duration[] = [];
-
-    absences.sort((a, b) => {
-      if (a.start_date > b.start_date) {return 1; } else if (a.start_date < b.start_date) {return -1; }
-      return 0;
-    });
-
-    let min_date: Date = absences[0].start_date;
-    let max_date: Date = absences[0].end_date;
-
-    for (const absence of absences) {
-      if (moment(absence.start_date).isBefore(min_date)) {min_date = absence.start_date; }
-      if (moment(absence.end_date).isAfter(max_date)) {max_date = absence.end_date; }
-      const offset: number = moment(absence.start_date).diff(moment(min_date), 'days');
-      const duration: number = moment(absence.end_date).diff(moment(absence.start_date), 'days');
-      durations.push(new Duration(offset, duration));
-    }
-
-    const total_duration: number = moment(max_date).diff(moment(min_date), 'days');
+    if (!task.schedule_dates) {return ''; }
+    const durations: Duration[] = task.getAbsoluteDurations();
+    const total_duration: number = task.getTotalDuration();
     let taskHTML = '';
     for (const duration of durations) {
-      duration.offset =  duration.offset * 100 / total_duration;
-      duration.duration = duration.duration * 100 / total_duration;
-      taskHTML += `<div class='gantt_task_line' style='left:${duration.offset}%; ` +
-                        `width:${duration.duration}%; height: 15px; margin-top: 7.5px;'></div>`;
+      const relOffset =  duration.offset * 100 / total_duration;
+      const relDuration = duration.duration * 100 / total_duration;
+      taskHTML += `<div class='gantt_task_line' style='left:${relOffset}%; ` +
+                        `width:${relDuration}%; height: 15px; margin-top: 7.5px;'></div>`;
     }
     return taskHTML;
   }
@@ -288,8 +265,7 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
         const newId = insertedItem.id;
         gantt.changeTaskId(id, newId);
         idMap.push(new IDMapper(id.toString(), newId.toString()));
-        parentGanttItem.dates.push({id: insertedItem.id, start_date: insertedItem.start_date, end_date: calendarItem.end_date});
-        parentGanttItem.recalculateDates();
+        parentGanttItem.schedule_dates.push({id: insertedItem.id, start_date: insertedItem.start_date, end_date: insertedItem.end_date});
         gantt.updateTask(parentGanttItem.id);
         gantt.refreshTask(newId);
       }, err => {
@@ -312,13 +288,12 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
     const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
     thisComponentRef.calendar.updateAbsence(updatedGanttTask).subscribe(
       result => {
-        if (parentGanttItem.dates) {
-          parentGanttItem.dates.splice(parentGanttItem.dates.findIndex(item =>
+        if (parentGanttItem.schedule_dates) {
+          parentGanttItem.schedule_dates.splice(parentGanttItem.schedule_dates.findIndex(item =>
               item.id === updatedGanttTask.id
               ),
             1);
-          parentGanttItem.dates.push(new DateItem(result.id, result.start_date, result.end_date));
-          parentGanttItem.recalculateDates();
+          parentGanttItem.schedule_dates.push(new DateItem(result.id, result.start_date, result.end_date));
           gantt.updateTask(parentGanttItem.id.toString());
         }
       }, err => {
@@ -329,10 +304,10 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
 
   onBeforeTaskDelete(id: string, deletedItem: CalendarItem) {
     const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
-    parentGanttItem.dates.splice(parentGanttItem.dates.findIndex(
+    parentGanttItem.schedule_dates.splice(parentGanttItem.schedule_dates.findIndex(
       item => item.id === deletedItem.id),
     1);
-    parentGanttItem.recalculateDates();
+    // parentGanttItem.recalculateStartEndDates();
   }
 
   onAfterTaskDelete(id: string, deletedItem: CalendarItem) {
