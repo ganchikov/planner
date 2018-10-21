@@ -89,7 +89,7 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
   }
 
   renderComplexTask(task: CalendarItem): string {
-    if (!task.schedule_dates) {return ''; }
+    if (task.schedule_dates.length === 0) {return ''; }
     const durations: Duration[] = this.calendar.getAbsoluteDurations(task);
     const total_duration: number = this.calendar.getTotalDuration(task);
     let taskHTML = '';

@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 import { ModelType, AbsenceType } from '@app/common/enums';
-import { BaseItem } from '@app/common/models';
+import { BaseItem } from './base-item';
 import { DateItem } from './date-item';
 
 export class CalendarItem extends BaseItem {
