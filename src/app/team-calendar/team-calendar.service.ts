@@ -25,13 +25,13 @@ export class TeamCalendarService {
   }
 
   updateAbsence(updatedItem: CalendarItem) {
-    return this.absenceApi.updateAbsence(updatedItem.GetTypedItem(Absence)).pipe(
+    return this.absenceApi.updateAbsence(updatedItem.GetTypedItem(Absence, {map: [{from_field: 'text', to_field: 'name'}]} )).pipe(
       map(item => new CalendarItem(item))
     );
   }
 
   deleteAbsence(item: CalendarItem) {
-    return this.absenceApi.deleteAbsence(item.GetTypedItem(Absence));
+    return this.absenceApi.deleteAbsence(item.GetTypedItem(Absence, {map: [{from_field: 'text', to_field: 'name'}]} ));
   }
 
   public recalculateStartEndDates(item: CalendarItem) {

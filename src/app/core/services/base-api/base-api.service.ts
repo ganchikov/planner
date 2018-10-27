@@ -49,7 +49,7 @@ export class BaseApiService {
   }
 
   doPatchRequest<T extends BaseItem> (route: string, item: T, mapper: (item: any) => T, methodName?: string): Observable< {} | T> {
-    return this.httpClient.patch(this.url + route, item.GetObject()).pipe(
+    return this.httpClient.patch(this.url + route + `/${item._id}`, item.GetObject()).pipe(
       map(response => mapper(response)),
       catchError(this.handleError(methodName ? methodName : route))
     );
