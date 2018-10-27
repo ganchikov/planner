@@ -89,4 +89,8 @@ export class CalendarItem extends BaseItem {
       return this.GetValue('absence_type');
     }
 
+    set absence_type(val: AbsenceType) {
+      this.SetValue<AbsenceType>('absence_type', val);
+    }
+
   }

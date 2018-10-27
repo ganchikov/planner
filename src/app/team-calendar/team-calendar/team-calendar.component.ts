@@ -255,24 +255,25 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
   }
 
   onAfterTaskAdd(id: string, newTask: Object) {
-    const newGanttItem: CalendarItem = new CalendarItem(newTask);
-    newTask['model_type'] = newGanttItem.model_type = ModelType.absence;
-    const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
-    newGanttItem.person = parentGanttItem._id;
+    const newCalendarItem: CalendarItem = new CalendarItem(newTask);
+    newTask['model_type'] = newCalendarItem.model_type = ModelType.absence;
+    const parentCalendarItem: CalendarItem = gantt.getTask(gantt.getParent(id));
+    newCalendarItem.person = parentCalendarItem._id;
 
-    thisComponentRef.calendar.addScheduleDates(parentGanttItem, new DateItem(
-      newGanttItem.id,
-      newGanttItem.start_date,
-      newGanttItem.end_date
+    thisComponentRef.calendar.addScheduleDates(parentCalendarItem, new DateItem(
+      newCalendarItem.id,
+      newCalendarItem.start_date,
+      newCalendarItem.end_date
     ));
-    gantt.updateTask(parentGanttItem.id.toString());
+    gantt.updateTask(parentCalendarItem.id.toString());
 
-    thisComponentRef.calendar.insertAbsence(newGanttItem).subscribe(
-      insertedItem => {
-        const newId = insertedItem.id;
+    thisComponentRef.calendar.insertAbsence(newCalendarItem).subscribe(
+      result => {
+        const newId = result.id;
         gantt.changeTaskId(id, newId);
+        gantt.getTask(newId)['_id'] = result._id;
         idMap.push(new IDMapper(id.toString(), newId.toString()));
-        thisComponentRef.calendar.updateScheduleDateId(parentGanttItem, Number.parseInt(id), newId);
+        thisComponentRef.calendar.updateScheduleDateId(parentCalendarItem, Number.parseInt(id), newId);
         gantt.refreshTask(newId);
       }, err => {
         gantt.message({type: 'error', text: err.message});
@@ -285,20 +286,20 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
     if (updatedTask['model_type'] !== ModelType.absence) {return true; }
     const itm = idMap.find(map => map.temp_id === id);
     if (itm) {id = itm.perm_id; }
-    let updatedGanttTask: CalendarItem;
+    let updatedCalendarItem: CalendarItem;
     if (updatedTask instanceof CalendarItem) {
-      updatedGanttTask = updatedTask as CalendarItem;
+      updatedCalendarItem = updatedTask as CalendarItem;
     } else {
-      updatedGanttTask = new CalendarItem(updatedTask);
+      updatedCalendarItem = new CalendarItem(updatedTask);
     }
-    const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
-    thisComponentRef.calendar.updateAbsence(updatedGanttTask).subscribe(
+    const parentCalendarItem: CalendarItem = gantt.getTask(gantt.getParent(id));
+    thisComponentRef.calendar.replaceScheduleDate(parentCalendarItem,
+      updatedCalendarItem.id,
+      new DateItem(updatedCalendarItem.id, updatedCalendarItem.start_date, updatedCalendarItem.end_date)
+    );
+    gantt.updateTask(parentCalendarItem.id.toString());
+    thisComponentRef.calendar.updateAbsence(updatedCalendarItem).subscribe(
       result => {
-        thisComponentRef.calendar.replaceScheduleDate(parentGanttItem,
-          updatedGanttTask.id,
-          new DateItem(result.id, result.start_date, result.end_date)
-        );
-        gantt.updateTask(parentGanttItem.id.toString());
       }, err => {
         gantt.message({type: 'error', text: err.message});
       }
@@ -306,24 +307,28 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
   }
 
   onBeforeTaskDelete(id: string, deletedItem: CalendarItem) {
-    const parentGanttItem: CalendarItem = gantt.getTask(gantt.getParent(id));
-    parentGanttItem.schedule_dates.splice(parentGanttItem.schedule_dates.findIndex(
+    const parentCalendarItem: CalendarItem = gantt.getTask(gantt.getParent(id));
+    parentCalendarItem.schedule_dates.splice(parentCalendarItem.schedule_dates.findIndex(
       item => item.id === deletedItem.id),
     1);
     // parentGanttItem.recalculateStartEndDates();
   }
 
-  onAfterTaskDelete(id: string, deletedItem: CalendarItem) {
-    if (deletedItem._id) {
-      thisComponentRef.calendar.deleteAbsence(deletedItem).subscribe(
-        response => {
-          // gantt.message({type: 'info', text: `item ${id} deleted`});
-        },
-        err => {
-          gantt.message({type: 'error', text: err.message});
-        }
-      );
+  onAfterTaskDelete(id: string, deletedTask: Object) {
+    let deletedCalendarItem: CalendarItem;
+    if (deletedTask instanceof CalendarItem) {
+      deletedCalendarItem = deletedTask as CalendarItem;
+    } else {
+      deletedCalendarItem = new CalendarItem(deletedTask);
     }
+    thisComponentRef.calendar.deleteAbsence(deletedCalendarItem).subscribe(
+      result => {
+        // gantt.message({type: 'info', text: `item ${id} deleted`});
+      },
+      err => {
+        gantt.message({type: 'error', text: err.message});
+      }
+    );
   }
 
   // Gantt templates

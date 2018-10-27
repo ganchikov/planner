@@ -79,9 +79,6 @@ export class TeamCalendarService {
   }
 
   public replaceScheduleDate(item: CalendarItem, id: number, new_schedule_date: DateItem) {
-    if (item.schedule_dates) {
-      return;
-    }
     item.schedule_dates.splice(item.schedule_dates.findIndex(el => el.id === id), 1);
     item.schedule_dates.push(new_schedule_date);
   }
