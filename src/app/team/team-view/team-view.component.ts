@@ -3,6 +3,8 @@ import {TableModule} from 'primeng/table';
 
 import { TeamDataService } from '@app/team/team-data.service';
 import {Team} from '@app/common/models';
+import { TeamDetailsComponent } from './../team-details/team-detals.component';
+
 // import * as $ from 'jquery';
 
 @Component({
@@ -14,6 +16,9 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
 
   teams: Team[];
   cols: any[];
+
+  @ViewChild(TeamDetailsComponent)
+  private teamDetailsComponent: TeamDetailsComponent;
 
   constructor(private teamService: TeamDataService) {
    }
@@ -38,7 +43,18 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
   }
 
   onMenuClick(event: any) {
-    console.log(event);
+    switch (event) {
+      case 'new_team':
+        this.addNewTeam();
+        break;
+      case 'new_member':
+    }
+  }
+
+  addNewTeam() {
+    this.teamDetailsComponent.header = 'New Team';
+    this.teamDetailsComponent.team = new Team({});
+    this.teamDetailsComponent.visible = true;
   }
 
 

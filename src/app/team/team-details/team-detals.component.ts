@@ -1,4 +1,4 @@
-import {Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {SelectItem} from 'primeng/api';
 import {Team} from '@app/common/models';
 
@@ -11,23 +11,21 @@ export class TeamDetailsComponent implements OnInit {
 
   constructor() { }
 
-  private _team: Team;
+  @Input()
+  team: Team;
 
   @Input()
   visible = false;
 
-  get team() {
-    return this._team;
-  }
-
   @Input()
-  set team(team: Team) {
-    this._team = team;
-  }
+  header = 'New Team';
+
+  @Output()
+  teamSaved: EventEmitter<Team> = new EventEmitter();
 
   get members() {
-      if (this._team && this._team.members) {
-        const items: SelectItem[] = this._team.members.map<SelectItem>((member, index, members): SelectItem => {
+      if (this.team && this.team.members) {
+        const items: SelectItem[] = this.team.members.map<SelectItem>((member, index, members): SelectItem => {
           const val: SelectItem = {label: member.name,
             value: {id: member._id,
                     name: member.name,
@@ -43,6 +41,14 @@ export class TeamDetailsComponent implements OnInit {
 
   ngOnInit() {
       this.team = new Team({});
+  }
+
+  saveClick(event: any) {
+    console.log(event);
+  }
+
+  discardClick(event: any) {
+    console.log(event);
   }
 
 }

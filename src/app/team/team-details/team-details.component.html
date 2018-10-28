@@ -1,18 +1,43 @@
-<p-dialog [(visible)]="visible" [contentStyle]="{'overflow':'visible', 'max-height':'200px'}" >
+<p-dialog [(visible)]="visible" [contentStyle]="{'overflow':'visible'}" [modal]="true">
   <p-header>
-    Edit Team
+    {{header}}
   </p-header>
-  <div class="ui-fluid ui-corner-all">
+  <div class="p-grid p-justify-center p-align-center">
+    <div class="p-col-4">
+      Id
+    </div>
+    <div class="p-col-8">
+      {{team.id}}
+    </div>
+    <div class="p-col-4">
+      Name
+    </div>
+    <div class="p-col-8">
+      <input pInputText type="text" [(ngModel)]='team.name'/>    </div>
+    <div class="p-col-8">
+    </div>
+    <div class="p-col-4">
+      <p-button icon="pi pi-check" label="Save" (click)="saveClick($event)"></p-button>
+    </div>
+    <div class="p-col-8">
+    </div>
+    <div class="p-col-4">
+      <p-button label="Discard" (click)="discardClick($event)"></p-button>
+    </div>
+  </div>
+  <!-- <div class="ui-fluid ui-corner-all">
     <div class="ui-g">
-      <div class="ui-g ui-g-12 ui-md-6 ui-g-nopad">
+      <div class="ui-g ui-g-12 ui-md-12 ui-g-nopad">
         <div class="ui-g-12 ui-md-3 ui-label">
           Id
         </div>
         <div class="ui-g-12 ui-md-9">
-          <input pInputText type="text" [value]='team.id'/>
+          {{team.id}}
         </div>
       </div>
-      <div class="ui-g ui-g-12 ui-md-6 ui-g-nopad">
+    </div>
+    <div class="ui-g">
+      <div class="ui-g ui-g-12 ui-md-12 ui-g-nopad">
         <div class="ui-g-12 ui-md-3 ui-label">
           Name
         </div>
@@ -23,13 +48,13 @@
     </div>
     <div class="ui-g">
       <div class="ui-g ui-g-12 ui-md-12 ui-g-nopad">
-        <div class="ui-g-12 ui-md-3 ui-label">
-          Members
+        <div class="ui-g-12 ui-md-6">
+          <p-button icon="pi pi-check" label="Save" (click)="saveClick($event)"></p-button>
         </div>
-        <div class="ui-g-12 ui-md-9">
-          <p-listbox [options]="members"></p-listbox>
+        <div class="ui-g-12 ui-md-6">
+          <p-button label="Discard" (click)="discardClick($event)"></p-button>
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </p-dialog>
