@@ -211,6 +211,16 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
 
   }
 
+  showInfoMessage(msg: string) {
+    gantt.message({type: 'info', text: msg, expire: 5000});
+  }
+
+  showErrorMessage(msg: string) {
+    gantt.message({type: 'error', text: msg, expire: -1});
+  }
+
+  /// Event handlers
+
   onTaskLoading(task: CalendarItem) {
     if (task.model_type === ModelType.absence) {
       task['editable'] = true;
@@ -275,8 +285,9 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
         idMap.push(new IDMapper(id.toString(), newId.toString()));
         thisComponentRef.calendar.updateScheduleDateId(parentCalendarItem, Number.parseInt(id), newId);
         gantt.refreshTask(newId);
+        thisComponentRef.showInfoMessage(`${result.absence_type} for ${parentCalendarItem.text} added: ${newId}`);
       }, err => {
-        gantt.message({type: 'error', text: err.message});
+        thisComponentRef.showErrorMessage(err.message);
       }
     );
     return true;
@@ -300,8 +311,9 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
     gantt.updateTask(parentCalendarItem.id.toString());
     thisComponentRef.calendar.updateAbsence(updatedCalendarItem).subscribe(
       result => {
+        thisComponentRef.showInfoMessage(`${result.absence_type} for ${parentCalendarItem.text} updated: ${id}`);
       }, err => {
-        gantt.message({type: 'error', text: err.message});
+        thisComponentRef.showErrorMessage(err.message);
       }
     );
   }
@@ -323,10 +335,10 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
     }
     thisComponentRef.calendar.deleteAbsence(deletedCalendarItem).subscribe(
       result => {
-        // gantt.message({type: 'info', text: `item ${id} deleted`});
+        thisComponentRef.showInfoMessage(`${deletedCalendarItem.absence_type} deleted: ${id}`);
       },
       err => {
-        gantt.message({type: 'error', text: err.message});
+        thisComponentRef.showErrorMessage(err.message);
       }
     );
   }
