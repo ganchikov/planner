@@ -37,5 +37,9 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
   }
 
+  onMenuClick(event: any) {
+    console.log(event);
+  }
+
 
 }

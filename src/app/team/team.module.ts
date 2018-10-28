@@ -10,6 +10,7 @@ import {TeamViewComponent} from './team-view/team-view.component';
 import {TeamTreeViewComponent} from './team-tree-view/team-tree-view.component';
 import { TeamDetailsComponent } from './team-details/team-detals.component';
 import { PrimeControlsModule } from '@app/core/primecontrols.module';
+import { TeamMenuComponent } from './team-menu/team-menu.component';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { PrimeControlsModule } from '@app/core/primecontrols.module';
     TeamViewComponent,
     TeamTreeViewComponent,
     TeamDetailsComponent,
+    TeamMenuComponent,
   ],
   providers: [
     TeamDataService

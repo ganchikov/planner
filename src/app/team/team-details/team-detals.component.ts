@@ -13,6 +13,9 @@ export class TeamDetailsComponent implements OnInit {
 
   private _team: Team;
 
+  @Input()
+  visible = false;
+
   get team() {
     return this._team;
   }
@@ -39,7 +42,7 @@ export class TeamDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-      // this.team = new Team();
+      this.team = new Team({});
   }
 
 }

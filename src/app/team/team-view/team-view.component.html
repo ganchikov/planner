@@ -1,6 +1,5 @@
-<p>
-Team View
-</p>
+<app-team-menu (menuClick)="onMenuClick"></app-team-menu>
+<app-team-details [visible]="false"></app-team-details>
 <p-table [value]="teams" [columns]="cols" selectionMode="single">
     <ng-template pTemplate="header" let-columns>
         <tr>
