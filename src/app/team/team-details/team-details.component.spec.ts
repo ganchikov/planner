@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Team } from '@app/common/models';
 import { PrimeControlsModule } from '@app/core/primecontrols.module';
 import { TeamDetailsComponent } from './team-detals.component';
@@ -11,7 +12,7 @@ describe('TeamDetailsComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ TeamDetailsComponent ],
-      imports: [FormsModule, PrimeControlsModule]
+      imports: [FormsModule, NoopAnimationsModule, PrimeControlsModule]
     })
     .compileComponents();
   }));

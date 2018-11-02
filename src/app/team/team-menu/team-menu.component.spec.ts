@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { PrimeControlsModule } from '@app/core/primecontrols.module';
 
 import { TeamMenuComponent } from './team-menu.component';
 
@@ -8,7 +9,8 @@ describe('TeamMenuComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TeamMenuComponent ]
+      declarations: [ TeamMenuComponent ],
+      imports: [PrimeControlsModule]
     })
     .compileComponents();
   }));
