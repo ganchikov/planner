@@ -6,7 +6,7 @@
 @import "assets/themes/basic/theme.min.css";
 
 body {
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 
 html, body {
@@ -47,10 +47,10 @@ html, body {
 
 .fa {
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px;
     text-align: center;
     opacity: 0.2;
-    padding: 5px;
+    margin-right: 5px;
 }
 
 .fa:hover {

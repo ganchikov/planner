@@ -20,14 +20,24 @@ const idMap: Array<IDMapper> = new Array();
 
 @Component({
   selector: 'app-team-calendar',
-  styles: [
-    `:host {
-      display: block;
-      height: 600px;
-      position: relative;
-      width: 100%
-    }
-    `],
+  // styles: [
+  //   `:host {
+  //     display: block;
+  //     height: 600px;
+  //     position: relative;
+  //     width: 100%
+  //   },
+  //   .gantt_tree_indent {
+  //     width: 10px
+  //   },
+  //   :host >>> .gantt_tree_icon {
+  //     width: 10px
+  //   },
+  //   :host >>> .gantt_tree_icon.gantt_file {
+  //     background-image: none
+  //   }
+  //   `],
+  styleUrls: ['./team-calendar.component.css'],
   template: `<div #gantt_here style='width: 100%; height: 100%;'></div>`
 })
 export class TeamCalendarComponent implements OnInit, OnChanges {
@@ -162,9 +172,9 @@ export class TeamCalendarComponent implements OnInit, OnChanges {
       ]
     };
     gantt.config.columns = [
-      {name: 'text', label: 'Item', tree: true, width: 200},
-      {name: 'start_date', label: 'From', width: 115},
-      {name: 'end_date', label: 'To', width: 115},
+      {name: 'text', label: 'Item', tree: true, width: 250},
+      {name: 'start_date', label: 'From', width: 120},
+      {name: 'end_date', label: 'To', width: 120},
       {name: 'confirmed', label: 'Confirmed',
         template: function(obj) {
           return obj.confirmed === undefined ? '' : obj.confirmed;

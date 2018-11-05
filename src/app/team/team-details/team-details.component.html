@@ -1,60 +1,47 @@
-<p-dialog [(visible)]="visible" [contentStyle]="{'overflow':'visible'}" [modal]="true">
+<!-- <div class="modal fade" id="team-details" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">New Team</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="team-name" class="col-form-label">Team Name:</label>
+            <input type="text" class="form-control" id="team-name">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+
+
+
+<p-dialog [(visible)]="visible" [contentStyle]="{'overflow':'visible'}" [modal]="true"
+[responsive]="true" [width]="350" [minWidth]="200" [resizable]="false" >
   <p-header>
     {{header}}
   </p-header>
-  <div class="p-grid p-justify-center p-align-center">
-    <div class="p-col-4">
-      Id
-    </div>
-    <div class="p-col-8">
-      {{team.id}}
-    </div>
-    <div class="p-col-4">
-      Name
-    </div>
-    <div class="p-col-8">
-      <input pInputText type="text" [(ngModel)]='team.name'/>    </div>
-    <div class="p-col-8">
-    </div>
-    <div class="p-col-4">
-      <p-button icon="pi pi-check" label="Save" (click)="saveClick($event)"></p-button>
-    </div>
-    <div class="p-col-8">
-    </div>
-    <div class="p-col-4">
-      <p-button label="Discard" (click)="discardClick($event)"></p-button>
-    </div>
-  </div>
-  <!-- <div class="ui-fluid ui-corner-all">
-    <div class="ui-g">
-      <div class="ui-g ui-g-12 ui-md-12 ui-g-nopad">
-        <div class="ui-g-12 ui-md-3 ui-label">
-          Id
-        </div>
-        <div class="ui-g-12 ui-md-9">
-          {{team.id}}
-        </div>
+  <form>
+    <div class="form-group row">
+      <label for="inputName" class="col-sm-2 col-form-label">Name</label>
+      <div class="col-sm-10">
+        <input pInputText name="taskName" type="text" class="form-control" id="inputName" placeholder="Text" [(ngModel)]='team.name'/> 
       </div>
     </div>
-    <div class="ui-g">
-      <div class="ui-g ui-g-12 ui-md-12 ui-g-nopad">
-        <div class="ui-g-12 ui-md-3 ui-label">
-          Name
-        </div>
-        <div class="ui-g-12 ui-md-9">
-          <input pInputText type="text" [(ngModel)]='team.name'/>
-        </div>
-      </div>
-    </div>
-    <div class="ui-g">
-      <div class="ui-g ui-g-12 ui-md-12 ui-g-nopad">
-        <div class="ui-g-12 ui-md-6">
-          <p-button icon="pi pi-check" label="Save" (click)="saveClick($event)"></p-button>
-        </div>
-        <div class="ui-g-12 ui-md-6">
-          <p-button label="Discard" (click)="discardClick($event)"></p-button>
-        </div>
-      </div>
-    </div>
-  </div> -->
+  </form>
+  <p-footer>
+      <button type="button" pButton icon="pi pi-check" (click)="visible=false" label="Save" class="btn btn-primary" style="margin-right:5px"></button>
+      <button type="button" pButton icon="pi pi-close" (click)="visible=false" label="Close" class="btn btn-secondary"></button>
+  </p-footer>
+  
 </p-dialog>

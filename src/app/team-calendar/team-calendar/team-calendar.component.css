@@ -1,0 +1,19 @@
+:host {
+    display: block;
+    height: 600px;
+    position: relative;
+    width: 100%
+}
+:host >>> .gantt_tree_indent {
+    width: 10px
+}
+:host >>> .gantt_tree_content {
+    font-size: 0.9em
+}
+:host >>> .gantt_tree_icon.gantt_blank {
+    width: 10px
+}
+:host >>> .gantt_tree_icon.gantt_file {
+    width: 10px;
+    background-image: none
+}
