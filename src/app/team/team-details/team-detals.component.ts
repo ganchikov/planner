@@ -44,11 +44,14 @@ export class TeamDetailsComponent implements OnInit {
   }
 
   saveClick(event: any) {
-    console.log(event);
+    console.log(this.team);
+    this.teamSaved.emit(this.team);
+    this.visible = false;
   }
 
   discardClick(event: any) {
     console.log(event);
+    this.visible = false;
   }
 
 }

@@ -1,31 +1,3 @@
-<!-- <div class="modal fade" id="team-details" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New Team</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form>
-          <div class="form-group">
-            <label for="team-name" class="col-form-label">Team Name:</label>
-            <input type="text" class="form-control" id="team-name">
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save Changes</button>
-      </div>
-    </div>
-  </div>
-</div> -->
-
-
-
-
 <p-dialog [(visible)]="visible" [contentStyle]="{'overflow':'visible'}" [modal]="true"
 [responsive]="true" [width]="350" [minWidth]="200" [resizable]="false" >
   <p-header>
@@ -40,8 +12,8 @@
     </div>
   </form>
   <p-footer>
-      <button type="button" pButton icon="pi pi-check" (click)="visible=false" label="Save" class="btn btn-primary" style="margin-right:5px"></button>
-      <button type="button" pButton icon="pi pi-close" (click)="visible=false" label="Close" class="btn btn-secondary"></button>
+      <button type="button" pButton icon="pi pi-check" (click)="saveClick($event)" label="Save" class="btn btn-primary" style="margin-right:5px"></button>
+      <button type="button" pButton icon="pi pi-close" (click)="discardClick($event)" label="Close" class="btn btn-secondary"></button>
   </p-footer>
   
 </p-dialog>

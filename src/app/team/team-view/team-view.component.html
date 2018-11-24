@@ -1,6 +1,6 @@
 <app-team-menu (menuClick)="onMenuClick($event)"></app-team-menu>
-<app-team-details [visible]="false"></app-team-details>
-<p-table [value]="teams" [columns]="cols" selectionMode="single">
+<app-team-details [visible]="false" (teamSaved)="onTeamSaved($event)"></app-team-details>
+<p-table [value]="teams" [columns]="cols" selectionMode="single" [(selection)]="selectedTeam">
     <ng-template pTemplate="header" let-columns>
         <tr>
             <th *ngFor="let col of columns" >
@@ -9,7 +9,7 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-team let-member let-columns="columns">
-        <tr class="ui-widget-content">
+        <tr class="ui-widget-content" [pSelectableRow]="team">
             <td colspan="6">
                 <span style="font-weight:bold">{{team.name}}</span> 
             </td>

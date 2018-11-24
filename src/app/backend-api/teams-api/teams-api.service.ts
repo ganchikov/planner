@@ -7,6 +7,8 @@ import { IApiService } from '@app/common/interfaces';
 @Injectable()
 export class TeamsApiService implements IApiService<Team> {
 
+  route = 'teams';
+
   constructor(public api: BaseApiService) {
   }
 
@@ -15,8 +17,13 @@ export class TeamsApiService implements IApiService<Team> {
   }
 
   getAllTeams(): Observable<Team[]> {
-    return this.api.doGetRequest<Team>('teams',
+    return this.api.doGetRequest<Team>(this.route,
       this.mapper, 'getAllTeams'
     );
   }
+
+  insertTeam(item: Team): Observable<{}|Team> {
+    return this.api.doPostRequest<Team>(this.route, item, this.mapper, 'insertTeam');
+  }
+
 }
