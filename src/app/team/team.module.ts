@@ -1,4 +1,3 @@
-import { TeamsApiService } from '@app/backend-api';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -29,7 +28,6 @@ import { TeamMenuComponent } from './team-menu/team-menu.component';
     TeamMenuComponent,
   ],
   providers: [
-    TeamsApiService,
     TeamDataService
   ]
 })

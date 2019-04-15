@@ -28,52 +28,48 @@ export class TeamDataService {
   }
 
   getTeamData(callback: (teams: Team[]) => void) {
-    // this.http.get<any>(this.url + 'teams-calendar').subscribe(responseObjects => {
-    //     const results: Team[] = [];
-    //     for (const respObj of responseObjects.data) {
-    //       const team = new Team(respObj);
-    //       results.push(team);
-    //     }
-    //     callback(results);
-    // });
+    this.http.get<any>(this.url + 'teams-calendar').subscribe(responseObjects => {
+        const results: Team[] = [];
+        for (const respObj of responseObjects.data) {
+          const team = new Team(respObj);
+          results.push(team);
+        }
+        callback(results);
+    });
   }
 
-  insertTeam(team: Team) {
-
+  insertAbsence(newItem: Absence, callback: (err?: any, insertedItem?: Absence) => void) {
+    this.http.post<Absence>(this.url + 'absences', newItem.GetObject()).subscribe(insertedItem => {
+        const insertedAbsenceItem: Absence = new Absence(insertedItem);
+        callback(null, insertedAbsenceItem);
+    }, error => {
+      callback(error);
+    });
   }
 
-  // insertAbsence(newItem: Absence, callback: (err?: any, insertedItem?: Absence) => void) {
-  //   this.http.post<Absence>(this.url + 'absences', newItem.GetObject()).subscribe(insertedItem => {
-  //       const insertedAbsenceItem: Absence = new Absence(insertedItem);
-  //       callback(null, insertedAbsenceItem);
-  //   }, error => {
-  //     callback(error);
-  //   });
-  // }
+  updateAbsence(absenceItem: Absence, callback: (error?) => void) {
+    this.http.patch<Absence>(this.url + 'absences', absenceItem.GetObject()).subscribe(() => {
+      callback();
+    }, error => {
+      callback(error);
+    });
+  }
 
-  // updateAbsence(absenceItem: Absence, callback: (error?) => void) {
-  //   this.http.patch<Absence>(this.url + 'absences', absenceItem.GetObject()).subscribe(() => {
-  //     callback();
-  //   }, error => {
-  //     callback(error);
-  //   });
-  // }
+  deleteAbsence(absenceId: Object, callback: (error?) => void) {
+    this.http.delete(this.url + `absences/${absenceId.toString()}`).subscribe(() => {
+      callback();
+    }, error => {
+      callback(error);
+    });
+  }
 
-  // deleteAbsence(absenceId: Object, callback: (error?) => void) {
-  //   this.http.delete(this.url + `absences/${absenceId.toString()}`).subscribe(() => {
-  //     callback();
-  //   }, error => {
-  //     callback(error);
-  //   });
-  // }
-
-  // updatePerson(personItem: Person, callback: (error?) => void) {
-  //   this.http.patch<Person>(this.url + 'people', personItem._id, personItem.GetObject()).subscribe(() => {
-  //         callback();
-  //   }, error => {
-  //     callback(error);
-  //   });
-  // }
+  updatePerson(personItem: Person, callback: (error?) => void) {
+    this.http.patch<Person>(this.url + 'people', personItem._id, personItem.GetObject()).subscribe(() => {
+          callback();
+    }, error => {
+      callback(error);
+    });
+  }
 
 
 }

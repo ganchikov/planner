@@ -1,9 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import {TableModule} from 'primeng/table';
 
-import { TeamsApiService } from '@app/backend-api';
 import { TeamDataService } from '@app/team/team-data.service';
-
 import {Team} from '@app/common/models';
 import { TeamDetailsComponent } from './../team-details/team-detals.component';
 
@@ -16,25 +14,18 @@ import { TeamDetailsComponent } from './../team-details/team-detals.component';
 })
 export class TeamViewComponent implements OnInit, AfterViewInit {
 
-  teams: Team[] = [];
-
-  selectedTeam: Team;
-
+  teams: Team[];
   cols: any[];
 
   @ViewChild(TeamDetailsComponent)
   private teamDetailsComponent: TeamDetailsComponent;
 
-  constructor(private teamsApi: TeamsApiService) {
+  constructor(private teamService: TeamDataService) {
    }
 
   ngOnInit() {
     this.initColumns();
-    this.teamsApi.getAllTeams().subscribe(itm => {
-      this.teams.push(...itm);
-    }, err => {
-
-    });
+    this.teamService.getTeamData(teams => this.teams = teams);
   }
 
   initColumns() {
@@ -66,11 +57,5 @@ export class TeamViewComponent implements OnInit, AfterViewInit {
     this.teamDetailsComponent.visible = true;
   }
 
-  onTeamSaved(team: Team) {
-    this.teamsApi.insertTeam(team).subscribe(insertedTeam => {
-      this.teams.push(insertedTeam as Team);
-    }, err => {
-    });
-  }
 
 }
