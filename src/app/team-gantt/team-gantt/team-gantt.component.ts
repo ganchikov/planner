@@ -1,7 +1,5 @@
 import { Component, OnInit, OnChanges, SimpleChanges, ElementRef, ViewChild, Input, Renderer2, Inject} from '@angular/core';
 import {DOCUMENT} from '@angular/platform-browser';
-import {} from '@types/dhtmlxgantt';
-
 import 'dhtmlx-gantt';
 import * as moment from 'moment';
 import { TeamGanttDataService} from '@app/team-gantt/team-gantt-data.service';

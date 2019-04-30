@@ -1,8 +1,7 @@
 import { BaseItem } from '@app/common/models';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {Observable, throwError} from 'rxjs';
-import {of} from 'rxjs/observable/of';
+import {Observable, throwError, of} from 'rxjs';
 import {map, catchError, tap} from 'rxjs/operators';
 
 import { AppConfig } from '@app/app.config';

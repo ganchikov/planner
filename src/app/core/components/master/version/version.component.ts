@@ -1,6 +1,6 @@
 import { Logger, AppVerService } from '@app/core/services';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ISubscription} from 'rxjs/Subscription';
+import { SubscriptionLike as ISubscription} from 'rxjs';
 
 @Component({
   selector: 'app-version',

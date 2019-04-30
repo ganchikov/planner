@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
-import {Observable} from 'rxjs';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable, BehaviorSubject} from 'rxjs';
 import {shareReplay, filter} from 'rxjs/operators';
 import * as auth0 from 'auth0-js';
 import { AppConfig } from '@app/app.config';
