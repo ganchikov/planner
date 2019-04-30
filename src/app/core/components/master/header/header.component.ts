@@ -17,22 +17,22 @@ export class HeaderComponent implements OnInit {
     this.menuitems = [
       {
         label: 'Teams',
-        icon: 'fa-users',
+        icon: 'fas fa-users',
         routerLink: ['/team']
       },
       {
         label: 'Calendar',
-        icon: 'fa-calendar',
+        icon: 'fas fa-calendar',
         routerLink: ['/team-calendar']
       },
       {
         label: 'Gantt',
-        icon: 'fa-calendar',
+        icon: 'fas fa-calendar',
         routerLink: ['/team-gantt']
       },
       {
         label: 'Tasks',
-        icon: 'fa-tasks',
+        icon: 'fas fa-tasks',
         routerLink: ['/prime-test']
       }
     ];

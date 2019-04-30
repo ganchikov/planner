@@ -2,12 +2,12 @@
 <p-menubar [model]="menuitems">  
   <div>
       <ng-template #Login>
-          <button pButton label="Login" icon="fa-sign-in" (click)="login($event)">
+          <button pButton label="Login" icon="fas fa-sign-in-alt" (click)="login($event)">
           </button>
       </ng-template>
       <ng-template #Logout>
         <app-profile></app-profile>
-        <button pButton label="Logout" icon="fa-sign-out" (click)="logout($event)">
+        <button pButton label="Logout" icon="fas fa-sign-out-alt" (click)="logout($event)">
         </button>
       </ng-template>
       <ng-container *ngTemplateOutlet="authService.isAuthenticated() ? Logout : Login">
